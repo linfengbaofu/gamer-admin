@@ -47,7 +47,7 @@
 import { getBaseConfig, updateBaseConfig, addBaseConfig } from "@/api/billard/baseConfig";
 
 export default {
-  name: "RechargeConfig",
+  name: "BaseConfig",
   data() {
     return {
       // 更新按钮loading状态

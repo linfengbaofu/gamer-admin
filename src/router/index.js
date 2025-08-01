@@ -73,11 +73,11 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       },
       {
-        path: '/billard/guess/:matchId(\\d+)',
+        path: '/gamer/guess/:matchId(\\d+)',
         name: 'GuessDetail',
         component: Layout,
         hidden: true,
-        component: () => import('@/views/billard/guess/detail'),
+        component: () => import('@/views/gamer/guess/detail'),
         beforeEnter: (to, from, next) => {
           to.meta.title = `竞猜管理-${to.params.matchId}`;
           next();
