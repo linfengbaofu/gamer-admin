@@ -1,0 +1,57 @@
+name: Build and Compress Dist
+
+on:
+  push:
+    branches:
+      - main  # 或者你希望触发构建的其他分支，如 'master' 或 'develop'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用 GitHub 提供的 Ubuntu 环境
+
+    steps:
+    # 1. 检出代码
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # 2. 设置 Node.js 环境
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12.9.0'  # 设置 Node.js 版本，可以根据需要选择
+
+    # 3. 设置 SHELL 环境变量
+    - name: Set SHELL environment variable
+      run: echo "SHELL=/bin/bash" >> $GITHUB_ENV  # 设置 SHELL 环境变量为 bash
+
+    # 4. 安装 npm 依赖
+    - name: Install dependencies
+      run: npm install  # 使用 npm 来安装依赖
+
+    # 5. 打包项目
+    - name: Build project
+      run: npm run build  # 使用 npm 来执行打包命令
+
+    # 6. 创建 Git 标签
+    - name: Create Git tag
+      id: create_tag
+      run: |
+        TAG_NAME="v$(date +'%Y%m%d%H%M%S')"  # 使用当前时间戳作为标签
+        git tag $TAG_NAME  # 创建标签
+        git push origin $TAG_NAME  # 推送标签到 GitHub
+        echo "tag=$TAG_NAME" >> $GITHUB_ENV  # 将标签作为环境变量传递
+
+    # 7. 压缩 dist 目录并设置密码
+    - name: Compress dist directory and set password
+      run: |
+        sudo apt-get install -y zip  # 安装 zip 工具
+        zip -r -P "${{ secrets.ZIP_PASSWORD }}" admin-dist.zip dist  # 使用 GitHub Secrets 中的密码
+
+    # 8. 上传压缩包到 GitHub Release
+    - name: Upload to GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: admin-dist.zip
+        tag_name: ${{ env.tag }}  # 使用创建的标签
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 自动生成的令牌
