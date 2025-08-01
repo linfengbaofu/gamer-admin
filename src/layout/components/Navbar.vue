@@ -498,36 +498,36 @@ export default {
       }
     },
     async getRecentRecords() {
-      try {
-        // 获取最近5条待审核充值记录
-        const rechargeParams = {
-          pageNum: 1,
-          pageSize: 5,
-          recordStatus: 0  // 只查询待审核状态
-        }
-        const rechargeResponse = await listRechargeRecord(rechargeParams)
-        if (rechargeResponse.code === 200) {
-          this.recentRechargeRecords = rechargeResponse.rows || []
-          this.recentRechargeRecordstotal = rechargeResponse.total || 0
-        }
+      // try {
+      //   // 获取最近5条待审核充值记录
+      //   const rechargeParams = {
+      //     pageNum: 1,
+      //     pageSize: 5,
+      //     recordStatus: 0  // 只查询待审核状态
+      //   }
+      //   const rechargeResponse = await listRechargeRecord(rechargeParams)
+      //   if (rechargeResponse.code === 200) {
+      //     this.recentRechargeRecords = rechargeResponse.rows || []
+      //     this.recentRechargeRecordstotal = rechargeResponse.total || 0
+      //   }
 
-        // 获取最近5条待审核提现记录
-        const withdrawalParams = {
-          pageNum: 1,
-          pageSize: 5,
-          recordStatus: 0  // 只查询待审核状态
-        }
-        const withdrawalResponse = await listWithdrawalRecord(withdrawalParams)
-        if (withdrawalResponse.code === 200) {
-          this.recentWithdrawalRecords = withdrawalResponse.rows || []
-          this.recentWithdrawalRecordstotal = withdrawalResponse.total || 0
-        }
+      //   // 获取最近5条待审核提现记录
+      //   const withdrawalParams = {
+      //     pageNum: 1,
+      //     pageSize: 5,
+      //     recordStatus: 0  // 只查询待审核状态
+      //   }
+      //   const withdrawalResponse = await listWithdrawalRecord(withdrawalParams)
+      //   if (withdrawalResponse.code === 200) {
+      //     this.recentWithdrawalRecords = withdrawalResponse.rows || []
+      //     this.recentWithdrawalRecordstotal = withdrawalResponse.total || 0
+      //   }
 
-        // 计算未读数量（所有待审核记录）
-        this.updateUnreadCount()
-      } catch (error) {
-        console.error('获取最近记录失败:', error)
-      }
+      //   // 计算未读数量（所有待审核记录）
+      //   this.updateUnreadCount()
+      // } catch (error) {
+      //   console.error('获取最近记录失败:', error)
+      // }
     },
     updateUnreadCount() {
       // 由于已经只查询待审核状态，所以未读数量就是记录总数
