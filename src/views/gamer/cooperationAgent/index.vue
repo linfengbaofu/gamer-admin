@@ -17,6 +17,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="合营账号" prop="userName">
+        <el-input
+          v-model="queryParams.userName"
+          placeholder="请输入合营账号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="昵称" prop="nickName">
+        <el-input
+          v-model="queryParams.nickName"
+          placeholder="请输入昵称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="联系方式" prop="mbTelephone">
         <el-input
           v-model="queryParams.mbTelephone"
@@ -59,6 +75,8 @@
       <el-table-column label="申请单号" align="center" prop="applyNo" />
       <el-table-column label="申请人ID" align="center" prop="mbId" />
       <el-table-column label="申请人" align="center" prop="mbAccount" />
+      <el-table-column label="合营账号" align="center" prop="userName" />
+      <el-table-column label="昵称" align="center" prop="nickName" />
 
       <el-table-column label="联系方式" align="center" prop="mbTelephone" />
       <el-table-column label="域名" align="center" prop="domainUrl" />
@@ -106,6 +124,12 @@
         </el-form-item>
         <el-form-item label="申请人ID" prop="mbId">
           <el-input v-model="form.mbId" placeholder="请输入申请人ID" />
+        </el-form-item>
+        <el-form-item label="合营账号" prop="userName">
+          <el-input v-model="form.userName" placeholder="请输入合营账号" />
+        </el-form-item>
+        <el-form-item label="昵称" prop="nickName">
+          <el-input v-model="form.nickName" placeholder="请输入昵称" />
         </el-form-item>
         <el-form-item label="联系方式" prop="mbTelephone">
           <el-input v-model="form.mbTelephone" placeholder="请输入联系方式" />
@@ -160,6 +184,8 @@ export default {
         pageSize: 10,
         applyNo: null,
         mbId: null,
+        userName: null,
+        nickName: null,
         mbTelephone: null,
         domainUrl: null,
         agentStatus: null,
@@ -171,6 +197,12 @@ export default {
       rules: {
         mbId: [
           { required: true, message: "申请人id不能为空", trigger: "blur" }
+        ],
+        userName: [
+          { required: true, message: "合营账号不能为空", trigger: "blur" }
+        ],
+        nickName: [
+          { required: true, message: "昵称不能为空", trigger: "blur" }
         ],
       }
     };
@@ -199,6 +231,8 @@ export default {
         agentId: null,
         applyNo: null,
         mbId: null,
+        userName: null,
+        nickName: null,
         mbTelephone: null,
         domainUrl: null,
         agentStatus: null,

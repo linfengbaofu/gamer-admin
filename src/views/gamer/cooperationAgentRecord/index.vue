@@ -25,6 +25,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="合营账号" prop="userName">
+        <el-input
+          v-model="queryParams.userName"
+          placeholder="请输入合营账号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="昵称" prop="nickName">
+        <el-input
+          v-model="queryParams.nickName"
+          placeholder="请输入昵称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="联系方式" prop="mbTelephone">
         <el-input
           v-model="queryParams.mbTelephone"
@@ -62,6 +78,8 @@
       <el-table-column label="申请单号" align="center" prop="applyNo" />
       <el-table-column label="申请人ID" align="center" prop="mbId" />
       <el-table-column label="申请人" align="center" prop="mbAccount" />
+      <el-table-column label="合营账号" align="center" prop="userName" />
+      <el-table-column label="昵称" align="center" prop="nickName" />
       <el-table-column label="联系方式" align="center" prop="mbTelephone" />
       <el-table-column label="域名" align="center" prop="domainUrl" />
       <el-table-column label="记录状态" align="center" prop="applyStatus" >
@@ -108,6 +126,12 @@
         </el-form-item>
         <el-form-item label="申请人ID" prop="mbId">
           <el-input v-model="form.mbId" placeholder="请输入申请人ID" readonly/>
+        </el-form-item>
+        <el-form-item label="合营账号" prop="userName">
+          <el-input v-model="form.userName" placeholder="请输入合营账号" readonly/>
+        </el-form-item>
+        <el-form-item label="昵称" prop="nickName">
+          <el-input v-model="form.nickName" placeholder="请输入昵称" readonly/>
         </el-form-item>
         <el-form-item label="审核状态" prop="applyStatus">
           <el-select v-model="form.applyStatus" placeholder="请选择审核状态">
@@ -158,6 +182,9 @@ export default {
         pageSize: 10,
         applyNo: null,
         mbId: null,
+        mbAccount: null,
+        userName: null,
+        nickName: null,
         mbTelephone: null,
         domainUrl: null,
         applyStatus: null,
@@ -205,6 +232,9 @@ export default {
         recordId: null,
         applyNo: null,
         mbId: null,
+        mbAccount: null,
+        userName: null,
+        nickName: null,
         mbTelephone: null,
         domainUrl: null,
         applyStatus: null,

@@ -15,27 +15,16 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="百州API地址" prop="baizhouApiUrl">
-        <el-input v-model="form.baizhouApiUrl" placeholder="请输入百州支付接口地址" />
+      <el-form-item label="一级佣金比例(%)" prop="firstLevelCommissionRate">
+        <el-input v-model="form.firstLevelCommissionRate" placeholder="请输入一级佣金比例" />
       </el-form-item>
-      <el-form-item label="百州商户ID" prop="baizhouMchId">
-        <el-input v-model="form.baizhouMchId" placeholder="请输入百州商户ID" />
+      <el-form-item label="二级佣金比例(%)" prop="secondLevelCommissionRate">
+        <el-input v-model="form.secondLevelCommissionRate" placeholder="请输入二级佣金比例" />
       </el-form-item>
-      <el-form-item label="百州接口密钥" prop="baizhouApiKey">
-        <el-input v-model="form.baizhouApiKey" placeholder="请输入百州接口密钥" type="password" show-password />
+      <el-form-item label="三级佣金比例(%)" prop="threeLevelCommissionRate">
+        <el-input v-model="form.threeLevelCommissionRate" placeholder="请输入三级佣金比例" />
       </el-form-item>
-      <el-form-item label="百州签名类型" prop="baizhouSignType">
-        <el-input v-model="form.baizhouSignType" placeholder="请输入百州签名类型" />
-      </el-form-item>
-      <el-form-item label="百州接口版本" prop="baizhouVersion">
-        <el-input v-model="form.baizhouVersion" placeholder="请输入百州接口版本" />
-      </el-form-item>
-      <el-form-item label="百州回调地址" prop="baizhouNotifyUrl">
-        <el-input v-model="form.baizhouNotifyUrl" placeholder="请输入百州回调地址" />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="form.remark" placeholder="请输入备注" />
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" :loading="updateLoading" @click="handleUpdate">确定</el-button>
       </el-form-item>
@@ -63,12 +52,9 @@ export default {
         inviteCommissionRate: null,
         betCommissionRate: null,
         exchangeRate: null,
-        baizhouApiUrl: null,
-        baizhouMchId: null,
-        baizhouApiKey: null,
-        baizhouSignType: null,
-        baizhouVersion: null,
-        baizhouNotifyUrl: null
+        firstLevelCommissionRate: null,
+        secondLevelCommissionRate: null,
+        threeLevelCommissionRate: null
       }
     };
   },
@@ -84,7 +70,10 @@ export default {
           this.form = {
             ...data,
             inviteCommissionRate: data.inviteCommissionRate ? Number((data.inviteCommissionRate * 100).toFixed(8)) : null,
-            betCommissionRate: data.betCommissionRate ? Number((data.betCommissionRate * 100).toFixed(8)) : null
+            betCommissionRate: data.betCommissionRate ? Number((data.betCommissionRate * 100).toFixed(8)) : null,
+            firstLevelCommissionRate: data.firstLevelCommissionRate ? Number((data.firstLevelCommissionRate * 100).toFixed(8)) : null,
+            secondLevelCommissionRate: data.secondLevelCommissionRate ? Number((data.secondLevelCommissionRate * 100).toFixed(8)) : null,
+            threeLevelCommissionRate: data.threeLevelCommissionRate ? Number((data.threeLevelCommissionRate * 100).toFixed(8)) : null
           };
         }
       });
@@ -96,7 +85,10 @@ export default {
       const submitData = {
         ...this.form,
         inviteCommissionRate: this.form.inviteCommissionRate ? Number((this.form.inviteCommissionRate / 100).toFixed(8)) : null,
-        betCommissionRate: this.form.betCommissionRate ? Number((this.form.betCommissionRate / 100).toFixed(8)) : null
+        betCommissionRate: this.form.betCommissionRate ? Number((this.form.betCommissionRate / 100).toFixed(8)) : null,
+        firstLevelCommissionRate: this.form.firstLevelCommissionRate ? Number((this.form.firstLevelCommissionRate / 100).toFixed(8)) : null,
+        secondLevelCommissionRate: this.form.secondLevelCommissionRate ? Number((this.form.secondLevelCommissionRate / 100).toFixed(8)) : null,
+        threeLevelCommissionRate: this.form.threeLevelCommissionRate ? Number((this.form.threeLevelCommissionRate / 100).toFixed(8)) : null
       };
       updateBaseConfig(submitData).then(response => {
         this.$modal.msgSuccess("更新成功");
