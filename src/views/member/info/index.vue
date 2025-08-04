@@ -100,7 +100,8 @@
 
       <el-table-column label="头像地址" align="center" prop="avatar" show-overflow-tooltip >
         <template slot-scope="scope">
-          <el-image :src="scope.row.avatar" style="width: 50px; height: 50px" />
+          <el-image v-if="scope.row.avatar" :src="scope.row.avatar" style="width: 50px; height: 50px" />
+          <span v-else>无头像</span>
         </template>
       </el-table-column>
       <el-table-column label="用户昵称" align="center" prop="nickName" show-overflow-tooltip />

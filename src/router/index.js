@@ -61,30 +61,20 @@ export const constantRoutes = [
     component: () => import('@/views/error/401'),
     hidden: true
   },
-  // {
-  //   path: '',
-  //   component: Layout,
-  //   redirect: 'index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/index'),
-  //       name: 'Index',
-  //       meta: { title: '首页', icon: 'dashboard', affix: true }
-  //     },
-  //     {
-  //       path: '/gamer/guess/:matchId(\\d+)',
-  //       name: 'GuessDetail',
-  //       component: Layout,
-  //       hidden: true,
-  //       component: () => import('@/views/gamer/guess/detail'),
-  //       beforeEnter: (to, from, next) => {
-  //         to.meta.title = `竞猜管理-${to.params.matchId}`;
-  //         next();
-  //       }
-  //     },
-  //   ]
-  // },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/index'),
+        name: 'Index',
+        meta: { title: '首页', icon: 'dashboard', affix: true }
+      },
+      
+    ]
+  },
   {
     path: '/user',
     component: Layout,
