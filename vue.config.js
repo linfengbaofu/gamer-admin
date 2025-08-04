@@ -7,7 +7,7 @@ function resolve(dir) {
 
 const CompressionPlugin = require("compression-webpack-plugin");
 
-const name = process.env.VUE_APP_TITLE || "89俱乐部管理系统"; // 网页标题
+const name = process.env.VUE_APP_TITLE || "Game ADMIN 后台管理系统"; // 网页标题
 
 const port = process.env.port || process.env.npm_config_port || 80; // 端口
 const timeStamp = new Date().getTime();
