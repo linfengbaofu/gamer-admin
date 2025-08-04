@@ -41,61 +41,21 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="英文封面" prop="usImg">
-        <el-input
-          v-model="queryParams.usImg"
-          placeholder="请输入英文封面"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="日语封面" prop="jpImg">
-        <el-input
-          v-model="queryParams.jpImg"
-          placeholder="请输入日语封面"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="韩语封面" prop="krImg">
-        <el-input
-          v-model="queryParams.krImg"
-          placeholder="请输入韩语封面"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="中文繁体封面" prop="twImg">
-        <el-input
-          v-model="queryParams.twImg"
-          placeholder="请输入中文繁体封面"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      
       <el-form-item label="所属平台" prop="platform">
-        <el-input
-          v-model="queryParams.platform"
-          placeholder="请输入所属平台"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.platform" placeholder="请选择所属平台">
+          <el-option v-for="dict in dict.type.record_game_platform" :key="dict.value" :label="dict.label" :value="dict.value" />
+        </el-select>
       </el-form-item>
       <el-form-item label="是否热门" prop="isHot">
-        <el-input
-          v-model="queryParams.isHot"
-          placeholder="请输入是否热门"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isHot" placeholder="请选择是否热门">
+          <el-option v-for="dict in dict.type.record_is_hot" :key="dict.value" :label="dict.label" :value="dict.value" />
+        </el-select>
       </el-form-item>
       <el-form-item label="是否启用" prop="isOpen">
-        <el-input
-          v-model="queryParams.isOpen"
-          placeholder="请输入是否启用"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isOpen" placeholder="请选择是否启用">
+          <el-option v-for="dict in dict.type.record_is_enable" :key="dict.value" :label="dict.label" :value="dict.value" />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -116,17 +76,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['member:GameInfo:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="danger"
           plain
           icon="el-icon-delete"
@@ -136,7 +85,7 @@
           v-hasPermi="['member:GameInfo:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -145,29 +94,60 @@
           @click="handleExport"
           v-hasPermi="['member:GameInfo:export']"
         >导出</el-button>
-      </el-col>
+      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="GameInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" width="150" fixed="left" />
       <el-table-column label="游戏id" align="center" prop="gameid" />
-      <el-table-column label="英文名称" align="center" prop="usName" />
-      <el-table-column label="日语名称" align="center" prop="jpName" />
-      <el-table-column label="韩语名称" align="center" prop="krName" />
-      <el-table-column label="中文繁体名称" align="center" prop="twName" />
-      <el-table-column label="英文封面" align="center" prop="usImg" />
-      <el-table-column label="日语封面" align="center" prop="jpImg" />
-      <el-table-column label="韩语封面" align="center" prop="krImg" />
-      <el-table-column label="中文繁体封面" align="center" prop="twImg" />
-      <el-table-column label="所属平台" align="center" prop="platform" />
-      <el-table-column label="游戏类型" align="center" prop="gametype" />
-      <el-table-column label="游戏状态" align="center" prop="status" />
-      <el-table-column label="是否热门" align="center" prop="isHot" />
-      <el-table-column label="是否启用" align="center" prop="isOpen" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="英文名称" align="center" prop="usName" width="150" />
+      <el-table-column label="日语名称" align="center" prop="jpName" width="150" />
+      <el-table-column label="韩语名称" align="center" prop="krName" width="150" />
+      <el-table-column label="中文繁体名称" align="center" prop="twName" width="150" />
+      <el-table-column label="英文封面" align="center" prop="usImg" width="150" >
+        <template slot-scope="scope">
+          <el-image :src="scope.row.usImg" style="width: 100px; height: 100px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="日语封面" align="center" prop="jpImg" width="150" >
+        <template slot-scope="scope">
+          <el-image :src="scope.row.jpImg" style="width: 100px; height: 100px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="韩语封面" align="center" prop="krImg" width="150" >
+        <template slot-scope="scope">
+          <el-image :src="scope.row.krImg" style="width: 100px; height: 100px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="中文繁体封面" align="center" prop="twImg" width="150" >
+        <template slot-scope="scope">
+          <el-image :src="scope.row.twImg" style="width: 100px; height: 100px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="所属平台" align="center" prop="platform" width="150" >
+        <template slot-scope="scope">
+          <el-tag v-for="dict in dict.type.record_game_platform" :key="dict.value" :type="dict.value === scope.row.platform ? 'success' : 'info'">{{ dict.label }}</el-tag>
+          </template>
+      </el-table-column>
+      <el-table-column label="游戏类型" align="center" prop="gametype" width="150" >
+        <template slot-scope="scope">
+          <el-tag v-for="dict in dict.type.record_game_type" :key="dict.value" :type="dict.value === scope.row.gametype ? 'success' : 'info'">{{ dict.label }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="游戏状态" align="center" prop="status" width="150" >
+        <template slot-scope="scope">
+          <el-tag v-for="dict in dict.type.record_game_status" :key="dict.value" :type="dict.value === scope.row.status ? 'success' : 'info'">{{ dict.label }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否启用" align="center" prop="isOpen" width="150" >
+        <template slot-scope="scope">
+          <el-tag v-for="dict in dict.type.record_is_enable" :key="dict.value" :type="dict.value === scope.row.isOpen ? 'success' : 'info'">{{ dict.label }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
+      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -196,48 +176,87 @@
     />
 
     <!-- 添加或修改游戏列表对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="游戏id" prop="gameid">
-          <el-input v-model="form.gameid" placeholder="请输入游戏id" />
-        </el-form-item>
-        <el-form-item label="英文名称" prop="usName">
-          <el-input v-model="form.usName" placeholder="请输入英文名称" />
-        </el-form-item>
-        <el-form-item label="日语名称" prop="jpName">
-          <el-input v-model="form.jpName" placeholder="请输入日语名称" />
-        </el-form-item>
-        <el-form-item label="韩语名称" prop="krName">
-          <el-input v-model="form.krName" placeholder="请输入韩语名称" />
-        </el-form-item>
-        <el-form-item label="中文繁体名称" prop="twName">
-          <el-input v-model="form.twName" placeholder="请输入中文繁体名称" />
-        </el-form-item>
-        <el-form-item label="英文封面" prop="usImg">
-          <el-input v-model="form.usImg" placeholder="请输入英文封面" />
-        </el-form-item>
-        <el-form-item label="日语封面" prop="jpImg">
-          <el-input v-model="form.jpImg" placeholder="请输入日语封面" />
-        </el-form-item>
-        <el-form-item label="韩语封面" prop="krImg">
-          <el-input v-model="form.krImg" placeholder="请输入韩语封面" />
-        </el-form-item>
-        <el-form-item label="中文繁体封面" prop="twImg">
-          <el-input v-model="form.twImg" placeholder="请输入中文繁体封面" />
-        </el-form-item>
-        <el-form-item label="所属平台" prop="platform">
-          <el-input v-model="form.platform" placeholder="请输入所属平台" />
-        </el-form-item>
-        <el-form-item label="是否热门" prop="isHot">
-          <el-input v-model="form.isHot" placeholder="请输入是否热门" />
-        </el-form-item>
-        <el-form-item label="是否启用" prop="isOpen">
-          <el-input v-model="form.isOpen" placeholder="请输入是否启用" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-tabs v-model="activeTab" type="border-card">
+        <!-- 基本设置 -->
+        <el-tab-pane label="基本设置" name="basic">
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+            <el-form-item label="游戏id" prop="gameid">
+              <el-input v-model="form.gameid" placeholder="请输入游戏id" />
+            </el-form-item>
+            <el-form-item label="英文名称" prop="usName">
+              <el-input v-model="form.usName" placeholder="请输入英文名称" />
+            </el-form-item>
+            <el-form-item label="英文封面" prop="usImg">
+              <image-upload v-model="form.usImg" :limit="1" />
+            </el-form-item>
+            <el-form-item label="所属平台" prop="platform">
+              <el-select v-model="form.platform" placeholder="请选择所属平台">
+                <el-option v-for="dict in dict.type.record_game_platform" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="游戏类型" prop="gametype">
+              <el-select v-model="form.gametype" placeholder="请选择游戏类型">
+                <el-option v-for="dict in dict.type.record_game_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="游戏状态" prop="status">
+              <el-select v-model="form.status" placeholder="请选择游戏状态">
+                <el-option v-for="dict in dict.type.record_game_status" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否热门" prop="isHot">
+              <el-select v-model="form.isHot" placeholder="请选择是否热门">
+                <el-option v-for="dict in dict.type.record_is_hot" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否启用" prop="isOpen">
+              <el-select v-model="form.isOpen" placeholder="请选择是否启用">
+                <el-option v-for="dict in dict.type.record_is_enable" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+
+        <!-- 日语设置 -->
+        <el-tab-pane label="日语设置" name="japanese">
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+            <el-form-item label="日语名称" prop="jpName">
+              <el-input v-model="form.jpName" placeholder="请输入日语名称" />
+            </el-form-item>
+            <el-form-item label="日语封面" prop="jpImg">
+              <image-upload v-model="form.jpImg" :limit="1" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+
+        <!-- 韩语设置 -->
+        <el-tab-pane label="韩语设置" name="korean">
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+            <el-form-item label="韩语名称" prop="krName">
+              <el-input v-model="form.krName" placeholder="请输入韩语名称" />
+            </el-form-item>
+            <el-form-item label="韩语封面" prop="krImg">
+              <image-upload v-model="form.krImg" :limit="1" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+
+        <!-- 中文繁体设置 -->
+        <el-tab-pane label="中文繁体设置" name="traditional">
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+            <el-form-item label="中文繁体名称" prop="twName">
+              <el-input v-model="form.twName" placeholder="请输入中文繁体名称" />
+            </el-form-item>
+            <el-form-item label="中文繁体封面" prop="twImg">
+              <image-upload v-model="form.twImg" :limit="1" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -251,6 +270,7 @@ import { listGameInfo, getGameInfo, delGameInfo, addGameInfo, updateGameInfo } f
 
 export default {
   name: "GameInfo",
+  dicts: ['record_is_enable', 'record_is_hot', 'record_game_status', 'record_game_type', 'record_game_platform'],
   data() {
     return {
       // 遮罩层
@@ -294,7 +314,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      // 当前激活的tab
+      activeTab: 'basic'
     };
   },
   created() {
@@ -337,6 +359,7 @@ export default {
         remark: null
       };
       this.resetForm("form");
+      this.activeTab = 'basic';
     },
     /** 搜索按钮操作 */
     handleQuery() {
