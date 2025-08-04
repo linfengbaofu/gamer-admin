@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="用户id" prop="mbId">
         <el-input
           v-model="queryParams.mbId"
@@ -33,50 +33,11 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="游戏初始金额" prop="enterMoney">
-        <el-input
-          v-model="queryParams.enterMoney"
-          placeholder="请输入游戏初始金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="结算之后玩家身上的钱" prop="afterSettlementMoney">
-        <el-input
-          v-model="queryParams.afterSettlementMoney"
-          placeholder="请输入结算之后玩家身上的钱"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="下注金额" prop="gameBet">
-        <el-input
-          v-model="queryParams.gameBet"
-          placeholder="请输入下注金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="派奖金额" prop="gameWin">
-        <el-input
-          v-model="queryParams.gameWin"
-          placeholder="请输入派奖金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      
       <el-form-item label="传回游戏记录id" prop="recordId">
         <el-input
           v-model="queryParams.recordId"
           placeholder="请输入传回游戏记录id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="盈利" prop="income">
-        <el-input
-          v-model="queryParams.income"
-          placeholder="请输入盈利"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -96,38 +57,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['member:GameRecord:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['member:GameRecord:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['member:GameRecord:remove']"
-        >删除</el-button>
-      </el-col>
+      
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -143,36 +73,20 @@
 
     <el-table v-loading="loading" :data="GameRecordList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="游戏记录id" align="center" prop="id" />
-      <el-table-column label="用户id" align="center" prop="mbId" />
-      <el-table-column label="用户账号" align="center" prop="mbAccount" />
-      <el-table-column label="游戏id" align="center" prop="gameId" />
-      <el-table-column label="牌局id" align="center" prop="roundId" />
-      <el-table-column label="游戏初始金额" align="center" prop="enterMoney" />
-      <el-table-column label="结算之后玩家身上的钱" align="center" prop="afterSettlementMoney" />
-      <el-table-column label="下注金额" align="center" prop="gameBet" />
-      <el-table-column label="派奖金额" align="center" prop="gameWin" />
-      <el-table-column label="传回游戏记录id" align="center" prop="recordId" />
-      <el-table-column label="盈利" align="center" prop="income" />
-      <el-table-column label="合营id" align="center" prop="hyId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['member:GameRecord:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['member:GameRecord:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
+      <el-table-column label="游戏记录id" align="center" prop="id" :fixed="true" width="150" />
+      <el-table-column label="用户id" align="center" prop="mbId" width="150" />
+      <el-table-column label="用户账号" align="center" prop="mbAccount" width="150" />
+      <el-table-column label="游戏id" align="center" prop="gameId" width="150"/>
+      <el-table-column label="牌局id" align="center" prop="roundId" width="150"/>
+      <el-table-column label="游戏初始金额" align="center" prop="enterMoney" width="150" />
+      <el-table-column label="结算之后玩家身上的钱" align="center" prop="afterSettlementMoney" width="150"  />
+      <el-table-column label="下注金额" align="center" prop="gameBet" width="150" />
+      <el-table-column label="派奖金额" align="center" prop="gameWin" width="150" />
+      <el-table-column label="传回游戏记录id" align="center" prop="recordId" width="150" />
+      <el-table-column label="盈利" align="center" prop="income" width="150" />
+      <el-table-column label="合营id" align="center" prop="hyId" width="150" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
+
     </el-table>
     
     <pagination

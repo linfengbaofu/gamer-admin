@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="用户id" prop="mbId">
         <el-input
           v-model="queryParams.mbId"
@@ -18,41 +18,15 @@
         />
       </el-form-item>
       <el-form-item label="币种" prop="coin">
-        <el-input
-          v-model="queryParams.coin"
-          placeholder="请输入币种"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.coin" placeholder="请选择币种">
+          <el-option v-for="dict in dict.type.record_coin_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+        </el-select>  
       </el-form-item>
-      <el-form-item label="差额" prop="subPoint">
-        <el-input
-          v-model="queryParams.subPoint"
-          placeholder="请输入差额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="${comment}" prop="oldPoint">
-        <el-input
-          v-model="queryParams.oldPoint"
-          placeholder="请输入${comment}"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="${comment}" prop="newPoint">
-        <el-input
-          v-model="queryParams.newPoint"
-          placeholder="请输入${comment}"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="${comment}" prop="hyId">
+
+      <el-form-item label="合营id" prop="hyId">
         <el-input
           v-model="queryParams.hyId"
-          placeholder="请输入${comment}"
+          placeholder="请输入合营id"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -65,10 +39,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="${comment}" prop="inMbId">
+      <el-form-item label="邀请人id" prop="inMbId">
         <el-input
           v-model="queryParams.inMbId"
-          placeholder="请输入${comment}"
+          placeholder="请输入邀请人id"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -81,10 +55,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="${comment}" prop="pumpBetMbId">
+      <el-form-item label="下注id" prop="pumpBetMbId">
         <el-input
           v-model="queryParams.pumpBetMbId"
-          placeholder="请输入${comment}"
+          placeholder="请输入下注id"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -97,30 +71,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="抽水比例" prop="pumpRate">
-        <el-input
-          v-model="queryParams.pumpRate"
-          placeholder="请输入抽水比例"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="下注积分" prop="pumpBetPoints">
-        <el-input
-          v-model="queryParams.pumpBetPoints"
-          placeholder="请输入下注积分"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="赠送积分" prop="givePoints">
-        <el-input
-          v-model="queryParams.givePoints"
-          placeholder="请输入赠送积分"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="游戏名称" prop="gameName">
         <el-input
           v-model="queryParams.gameName"
@@ -136,7 +87,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -145,8 +96,8 @@
           @click="handleAdd"
           v-hasPermi="['member:GameFundingRecord:add']"
         >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -156,8 +107,8 @@
           @click="handleUpdate"
           v-hasPermi="['member:GameFundingRecord:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -167,7 +118,7 @@
           @click="handleDelete"
           v-hasPermi="['member:GameFundingRecord:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -182,45 +133,32 @@
     </el-row>
 
     <el-table v-loading="loading" :data="GameFundingRecordList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="recordId" />
-      <el-table-column label="用户id" align="center" prop="mbId" />
-      <el-table-column label="用户账号" align="center" prop="mbAccount" />
-      <el-table-column label="币种" align="center" prop="coin" />
-      <el-table-column label="差额" align="center" prop="subPoint" />
-      <el-table-column label="${comment}" align="center" prop="oldPoint" />
-      <el-table-column label="${comment}" align="center" prop="newPoint" />
-      <el-table-column label="交易类型" align="center" prop="tradeType" />
-      <el-table-column label="资金类型" align="center" prop="fundingType" />
-      <el-table-column label="${comment}" align="center" prop="hyId" />
-      <el-table-column label="游戏id" align="center" prop="gameId" />
-      <el-table-column label="${comment}" align="center" prop="inMbId" />
-      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" />
-      <el-table-column label="${comment}" align="center" prop="pumpBetMbId" />
-      <el-table-column label="合营上级账号" align="center" prop="pumpBetMbAccount" />
-      <el-table-column label="抽水比例" align="center" prop="pumpRate" />
-      <el-table-column label="下注积分" align="center" prop="pumpBetPoints" />
-      <el-table-column label="赠送积分" align="center" prop="givePoints" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="游戏名称" align="center" prop="gameName" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column label="id" align="center" prop="recordId" :fixed="true" width="150" />
+      <el-table-column label="游戏名称" align="center" prop="gameName" width="150" />
+
+      <el-table-column label="用户id" align="center" prop="mbId" width="150" />
+      <el-table-column label="用户账号" align="center" prop="mbAccount" width="150" />
+      <el-table-column label="币种" align="center" prop="coin" width="150">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['member:GameFundingRecord:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['member:GameFundingRecord:remove']"
-          >删除</el-button>
+          <dict-tag :options="dict.type.record_coin_type" :value="scope.row.coin" />
         </template>
       </el-table-column>
+      <el-table-column label="差额" align="center" prop="subPoint" width="150" />
+      <el-table-column label="旧值" align="center" prop="oldPoint" width="150" />
+      <el-table-column label="新值" align="center" prop="newPoint" width="150" />
+      <el-table-column label="交易类型" align="center" prop="tradeType" width="150" />
+      <el-table-column label="资金类型" align="center" prop="fundingType" width="150" />
+      <el-table-column label="合营id" align="center" prop="hyId" width="150" />
+      <el-table-column label="游戏id" align="center" prop="gameId" width="150" />
+      <el-table-column label="邀请人id" align="center" prop="inMbId" width="150" />
+      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150" />
+      <el-table-column label="下注id" align="center" prop="pumpBetMbId" width="150" />
+      <el-table-column label="合营上级账号" align="center" prop="pumpBetMbAccount" width="150" />
+      <el-table-column label="抽水比例" align="center" prop="pumpRate" width="150" />
+      <el-table-column label="下注积分" align="center" prop="pumpBetPoints" width="150" />
+      <el-table-column label="赠送积分" align="center" prop="givePoints" width="150" />
+      <el-table-column label="备注" align="center" prop="remark" width="150" />
     </el-table>
     
     <pagination
@@ -231,66 +169,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改资金记录对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="mbId">
-          <el-input v-model="form.mbId" placeholder="请输入用户id" />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="form.mbAccount" placeholder="请输入用户账号" />
-        </el-form-item>
-        <el-form-item label="币种" prop="coin">
-          <el-input v-model="form.coin" placeholder="请输入币种" />
-        </el-form-item>
-        <el-form-item label="差额" prop="subPoint">
-          <el-input v-model="form.subPoint" placeholder="请输入差额" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="oldPoint">
-          <el-input v-model="form.oldPoint" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="newPoint">
-          <el-input v-model="form.newPoint" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="hyId">
-          <el-input v-model="form.hyId" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="游戏id" prop="gameId">
-          <el-input v-model="form.gameId" placeholder="请输入游戏id" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="inMbId">
-          <el-input v-model="form.inMbId" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="邀请人账号" prop="inMbAccount">
-          <el-input v-model="form.inMbAccount" placeholder="请输入邀请人账号" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="pumpBetMbId">
-          <el-input v-model="form.pumpBetMbId" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="合营上级账号" prop="pumpBetMbAccount">
-          <el-input v-model="form.pumpBetMbAccount" placeholder="请输入合营上级账号" />
-        </el-form-item>
-        <el-form-item label="抽水比例" prop="pumpRate">
-          <el-input v-model="form.pumpRate" placeholder="请输入抽水比例" />
-        </el-form-item>
-        <el-form-item label="下注积分" prop="pumpBetPoints">
-          <el-input v-model="form.pumpBetPoints" placeholder="请输入下注积分" />
-        </el-form-item>
-        <el-form-item label="赠送积分" prop="givePoints">
-          <el-input v-model="form.givePoints" placeholder="请输入赠送积分" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item label="游戏名称" prop="gameName">
-          <el-input v-model="form.gameName" placeholder="请输入游戏名称" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+
   </div>
 </template>
 
@@ -298,6 +177,7 @@
 import { listGameFundingRecord, getGameFundingRecord, delGameFundingRecord, addGameFundingRecord, updateGameFundingRecord } from "@/api/member/GameFundingRecord";
 
 export default {
+  dicts: ['record_coin_type'],
   name: "GameFundingRecord",
   data() {
     return {

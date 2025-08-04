@@ -33,7 +33,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="中文繁体名称" prop="twName">
+      <el-form-item label="繁体名称" prop="twName">
         <el-input
           v-model="queryParams.twName"
           placeholder="请输入中文繁体名称"
