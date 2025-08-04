@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="用户id" prop="mbId">
         <el-input
           v-model="queryParams.mbId"
@@ -17,42 +17,11 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="充值地址" prop="paymentAddr">
-        <el-input
-          v-model="queryParams.paymentAddr"
-          placeholder="请输入充值地址"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      
       <el-form-item label="充值渠道" prop="rechargeChannel">
         <el-input
           v-model="queryParams.rechargeChannel"
           placeholder="请输入充值渠道"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="充值金额" prop="rechargeAmount">
-        <el-input
-          v-model="queryParams.rechargeAmount"
-          placeholder="请输入充值金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="实际金额" prop="actualAmount">
-        <el-input
-          v-model="queryParams.actualAmount"
-          placeholder="请输入实际金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="赠送金额" prop="givePoints">
-        <el-input
-          v-model="queryParams.givePoints"
-          placeholder="请输入赠送金额"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -65,14 +34,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="审批时间" prop="approverTime">
-        <el-date-picker clearable
-          v-model="queryParams.approverTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择审批时间">
-        </el-date-picker>
-      </el-form-item>
       <el-form-item label="合营id" prop="hyId">
         <el-input
           v-model="queryParams.hyId"
@@ -81,7 +42,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="邀请人" prop="inMbId">
+      <el-form-item label="邀请人id" prop="inMbId">
         <el-input
           v-model="queryParams.inMbId"
           placeholder="请输入邀请人"
@@ -89,7 +50,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="邀请人" prop="inMbAccount">
+      <el-form-item label="邀请人账号" prop="inMbAccount">
         <el-input
           v-model="queryParams.inMbAccount"
           placeholder="请输入邀请人"
@@ -104,38 +65,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['member:GameRechargeRecord:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['member:GameRechargeRecord:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['member:GameRechargeRecord:remove']"
-        >删除</el-button>
-      </el-col>
+
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -150,16 +80,18 @@
     </el-row>
 
     <el-table v-loading="loading" :data="GameRechargeRecordList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="充值记录id" align="center" prop="id" />
-      <el-table-column label="用户id" align="center" prop="mbId" />
+      <el-table-column label="用户id" align="center" prop="mbId" :fixed="true"/>
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="充值地址" align="center" prop="paymentAddr" />
       <el-table-column label="充值渠道" align="center" prop="rechargeChannel" />
       <el-table-column label="充值金额" align="center" prop="rechargeAmount" />
       <el-table-column label="实际金额" align="center" prop="actualAmount" />
       <el-table-column label="赠送金额" align="center" prop="givePoints" />
-      <el-table-column label="审批状态" align="center" prop="approvalStatus" />
+      <el-table-column label="审批状态" align="center" prop="approvalStatus" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_recharge_status" :value="scope.row.approvalStatus" />
+        </template>
+      </el-table-column>
       <el-table-column label="审批人" align="center" prop="approverBy" />
       <el-table-column label="审批时间" align="center" prop="approverTime" width="180">
         <template slot-scope="scope">
@@ -170,22 +102,15 @@
       <el-table-column label="邀请人" align="center" prop="inMbId" />
       <el-table-column label="邀请人" align="center" prop="inMbAccount" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['member:GameRechargeRecord:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['member:GameRechargeRecord:remove']"
-          >删除</el-button>
+            icon="el-icon-check"
+            @click="handleAudit(scope.row)"
+            v-hasPermi="['member:GameRechargeRecord:audit']"
+          >审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -198,7 +123,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改充值记录对话框 -->
+    <!-- 审核弹窗 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户id" prop="mbId">
@@ -236,12 +161,7 @@
         <el-form-item label="合营id" prop="hyId">
           <el-input v-model="form.hyId" placeholder="请输入合营id" />
         </el-form-item>
-        <el-form-item label="邀请人" prop="inMbId">
-          <el-input v-model="form.inMbId" placeholder="请输入邀请人" />
-        </el-form-item>
-        <el-form-item label="邀请人" prop="inMbAccount">
-          <el-input v-model="form.inMbAccount" placeholder="请输入邀请人" />
-        </el-form-item>
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -251,6 +171,36 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 审核弹窗 -->
+    <el-dialog title="审核充值记录" :visible.sync="auditOpen" width="500px" append-to-body>
+      <el-form ref="auditForm" :model="auditForm" :rules="auditRules" label-width="100px">
+        <el-form-item label="用户账号" prop="mbAccount">
+          <el-input v-model="auditForm.mbAccount" disabled />
+        </el-form-item>
+        <el-form-item label="充值金额" prop="rechargeAmount">
+          <el-input v-model="auditForm.rechargeAmount" disabled />
+        </el-form-item>
+        <el-form-item label="实际金额" prop="actualAmount">
+          <el-input v-model="auditForm.actualAmount" disabled />
+        </el-form-item>
+        <el-form-item label="赠送金额" prop="givePoints">
+          <el-input v-model="auditForm.givePoints" disabled />
+        </el-form-item>
+        <el-form-item label="审核状态" prop="approvalStatus">
+          <el-select v-model="auditForm.approvalStatus" placeholder="请选择审核状态">
+            <el-option v-for="dict in dict.type.record_recharge_status" :key="dict.value" :label="dict.label" :value="dict.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="审核备注" prop="auditRemark">
+          <el-input v-model="auditForm.auditRemark" type="textarea" placeholder="请输入审核备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitAuditForm">确 定</el-button>
+        <el-button @click="cancelAudit">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -258,6 +208,7 @@
 import { listGameRechargeRecord, getGameRechargeRecord, delGameRechargeRecord, addGameRechargeRecord, updateGameRechargeRecord } from "@/api/member/GameRechargeRecord";
 
 export default {
+  dicts: ['record_recharge_status'],
   name: "GameRechargeRecord",
   data() {
     return {
@@ -301,6 +252,24 @@ export default {
       form: {},
       // 表单校验
       rules: {
+      },
+      // 审核弹窗显示状态
+      auditOpen: false,
+      // 审核表单数据
+      auditForm: {
+        id: null,
+        mbAccount: null,
+        rechargeAmount: null,
+        actualAmount: null,
+        givePoints: null,
+        approvalStatus: null,
+        auditRemark: null
+      },
+      // 审核表单校验
+      auditRules: {
+        approvalStatus: [
+          { required: true, message: "审核状态不能为空", trigger: "change" }
+        ]
       }
     };
   },
@@ -412,6 +381,49 @@ export default {
       this.download('member/GameRechargeRecord/export', {
         ...this.queryParams
       }, `GameRechargeRecord_${new Date().getTime()}.xlsx`)
+    },
+    /** 审核按钮操作 */
+    handleAudit(row) {
+      this.auditForm = {
+        id: row.id,
+        mbAccount: row.mbAccount,
+        rechargeAmount: row.rechargeAmount,
+        actualAmount: row.actualAmount,
+        givePoints: row.givePoints,
+        approvalStatus: row.approvalStatus,
+        auditRemark: row.auditRemark || null
+      };
+      this.auditOpen = true;
+    },
+    /** 取消审核 */
+    cancelAudit() {
+      this.auditOpen = false;
+      this.resetAuditForm();
+    },
+    /** 重置审核表单 */
+    resetAuditForm() {
+      this.auditForm = {
+        id: null,
+        mbAccount: null,
+        rechargeAmount: null,
+        actualAmount: null,
+        givePoints: null,
+        approvalStatus: null,
+        auditRemark: null
+      };
+      this.resetForm("auditForm");
+    },
+    /** 提交审核 */
+    submitAuditForm() {
+      this.$refs["auditForm"].validate(valid => {
+        if (valid) {
+          // TODO: 调用审核API
+          console.log('审核数据:', this.auditForm);
+          this.$modal.msgSuccess("审核成功");
+          this.auditOpen = false;
+          this.getList();
+        }
+      });
     }
   }
 };

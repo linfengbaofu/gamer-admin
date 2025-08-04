@@ -147,8 +147,16 @@
       <el-table-column label="差额" align="center" prop="subPoint" width="150" />
       <el-table-column label="旧值" align="center" prop="oldPoint" width="150" />
       <el-table-column label="新值" align="center" prop="newPoint" width="150" />
-      <el-table-column label="交易类型" align="center" prop="tradeType" width="150" />
-      <el-table-column label="资金类型" align="center" prop="fundingType" width="150" />
+      <el-table-column label="交易类型" align="center" prop="tradeType" width="150" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_trade_type" :value="scope.row.tradeType" />
+        </template>
+      </el-table-column>
+      <el-table-column label="资金类型" align="center" prop="fundingType" width="150" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_funding_type" :value="scope.row.fundingType" />
+        </template>
+      </el-table-column>
       <el-table-column label="合营id" align="center" prop="hyId" width="150" />
       <el-table-column label="游戏id" align="center" prop="gameId" width="150" />
       <el-table-column label="邀请人id" align="center" prop="inMbId" width="150" />
@@ -159,6 +167,7 @@
       <el-table-column label="下注积分" align="center" prop="pumpBetPoints" width="150" />
       <el-table-column label="赠送积分" align="center" prop="givePoints" width="150" />
       <el-table-column label="备注" align="center" prop="remark" width="150" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
     </el-table>
     
     <pagination
@@ -177,7 +186,7 @@
 import { listGameFundingRecord, getGameFundingRecord, delGameFundingRecord, addGameFundingRecord, updateGameFundingRecord } from "@/api/member/GameFundingRecord";
 
 export default {
-  dicts: ['record_coin_type'],
+  dicts: ['record_coin_type', 'record_funding_type', 'record_trade_type'],
   name: "GameFundingRecord",
   data() {
     return {
