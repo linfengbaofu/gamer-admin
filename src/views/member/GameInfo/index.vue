@@ -108,42 +108,42 @@
       <el-table-column label="中文繁体名称" align="center" prop="twName" width="150" />
       <el-table-column label="英文封面" align="center" prop="usImg" width="150" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.usImg" style="width: 100px; height: 100px;" />
+          <el-image v-if="scope.row.usImg" :src="scope.row.usImg" style="width: 100px; height: 100px;" />
         </template>
       </el-table-column>
       <el-table-column label="日语封面" align="center" prop="jpImg" width="150" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.jpImg" style="width: 100px; height: 100px;" />
+          <el-image v-if="scope.row.jpImg" :src="scope.row.jpImg" style="width: 100px; height: 100px;" />
         </template>
       </el-table-column>
       <el-table-column label="韩语封面" align="center" prop="krImg" width="150" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.krImg" style="width: 100px; height: 100px;" />
+          <el-image v-if="scope.row.krImg" :src="scope.row.krImg" style="width: 100px; height: 100px;" />
         </template>
       </el-table-column>
       <el-table-column label="中文繁体封面" align="center" prop="twImg" width="150" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.twImg" style="width: 100px; height: 100px;" />
+          <el-image v-if="scope.row.twImg" :src="scope.row.twImg" style="width: 100px; height: 100px;" />
         </template>
       </el-table-column>
       <el-table-column label="所属平台" align="center" prop="platform" width="150" >
         <template slot-scope="scope">
-          <el-tag v-for="dict in dict.type.record_game_platform" :key="dict.value" :type="dict.value === scope.row.platform ? 'success' : 'info'">{{ dict.label }}</el-tag>
+          <dict-tag :options="dict.type.record_game_platform" :value="scope.row.platform" />
           </template>
       </el-table-column>
       <el-table-column label="游戏类型" align="center" prop="gametype" width="150" >
         <template slot-scope="scope">
-          <el-tag v-for="dict in dict.type.record_game_type" :key="dict.value" :type="dict.value === scope.row.gametype ? 'success' : 'info'">{{ dict.label }}</el-tag>
+          <dict-tag :options="dict.type.record_game_type" :value="scope.row.gametype" />
         </template>
       </el-table-column>
       <el-table-column label="游戏状态" align="center" prop="status" width="150" >
         <template slot-scope="scope">
-          <el-tag v-for="dict in dict.type.record_game_status" :key="dict.value" :type="dict.value === scope.row.status ? 'success' : 'info'">{{ dict.label }}</el-tag>
+          <dict-tag :options="dict.type.record_game_status" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column label="是否启用" align="center" prop="isOpen" width="150" >
         <template slot-scope="scope">
-          <el-tag v-for="dict in dict.type.record_is_enable" :key="dict.value" :type="dict.value === scope.row.isOpen ? 'success' : 'info'">{{ dict.label }}</el-tag>
+          <dict-tag :options="dict.type.record_is_enable" :value="scope.row.isOpen" />
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
@@ -182,14 +182,9 @@
         <el-tab-pane label="基本设置" name="basic">
           <el-form ref="form" :model="form" :rules="rules" label-width="100px">
             <el-form-item label="游戏id" prop="gameid">
-              <el-input v-model="form.gameid" placeholder="请输入游戏id" />
+              <el-input v-model="form.gameid" placeholder="请输入游戏id" :disabled="form.id != null" />
             </el-form-item>
-            <el-form-item label="英文名称" prop="usName">
-              <el-input v-model="form.usName" placeholder="请输入英文名称" />
-            </el-form-item>
-            <el-form-item label="英文封面" prop="usImg">
-              <image-upload v-model="form.usImg" :limit="1" />
-            </el-form-item>
+
             <el-form-item label="所属平台" prop="platform">
               <el-select v-model="form.platform" placeholder="请选择所属平台">
                 <el-option v-for="dict in dict.type.record_game_platform" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -220,6 +215,28 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
+        <!-- 中文繁体设置 -->
+        <el-tab-pane label="中文繁体设置" name="traditional">
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+            <el-form-item label="中文繁体名称" prop="twName">
+              <el-input v-model="form.twName" placeholder="请输入中文繁体名称" />
+            </el-form-item>
+            <el-form-item label="中文繁体封面" prop="twImg">
+              <image-upload v-model="form.twImg" :limit="1" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <!-- 英文设置 -->
+        <el-tab-pane label="英文设置" name="english">
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+            <el-form-item label="英文名称" prop="usName">
+              <el-input v-model="form.usName" placeholder="请输入英文名称" />
+            </el-form-item>
+            <el-form-item label="英文封面" prop="usImg">
+              <image-upload v-model="form.usImg" :limit="1" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
 
         <!-- 日语设置 -->
         <el-tab-pane label="日语设置" name="japanese">
@@ -245,17 +262,8 @@
           </el-form>
         </el-tab-pane>
 
-        <!-- 中文繁体设置 -->
-        <el-tab-pane label="中文繁体设置" name="traditional">
-          <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-            <el-form-item label="中文繁体名称" prop="twName">
-              <el-input v-model="form.twName" placeholder="请输入中文繁体名称" />
-            </el-form-item>
-            <el-form-item label="中文繁体封面" prop="twImg">
-              <image-upload v-model="form.twImg" :limit="1" />
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
+
+
       </el-tabs>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
