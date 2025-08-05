@@ -65,8 +65,7 @@
       <el-table-column label="礼品码" align="center" prop="gameCode"  width="200"/>
       <el-table-column label="礼品码金额" align="center" prop="codeAmount"  width="150"/>
       <el-table-column label="会员id" align="center" prop="mbId"  width="150"/>
-      <el-table-column label="是否兑换完成" align="center" prop="isRedemption" >
-
+      <el-table-column label="是否兑换完成" align="center" prop="isRedemption" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.record_is_redemption" :value="scope.row.isRedemption" />
         </template>
@@ -105,8 +104,28 @@
         <el-form-item label="礼品码金额" prop="codeAmount">
           <el-input v-model="form.codeAmount" placeholder="请输入礼品码金额" />
         </el-form-item>
-        <el-form-item label="会员id" prop="mbId">
-          <el-input v-model="form.mbId" placeholder="请输入会员id" />
+        <el-form-item label="会员" prop="mbId">
+          <el-select
+            v-model="form.mbId"
+            placeholder="请选择会员"
+            filterable
+            remote
+            reserve-keyword
+            :remote-method="remoteSearchMember"
+            :loading="memberLoading"
+            style="width: 100%"
+            @change="handleMemberChange"
+          >
+            <el-option
+              v-for="item in memberOptions"
+              :key="item.mbId"
+              :label="`${item.mbAccount} (${item.nickName || '无昵称'})`"
+              :value="item.mbId"
+            >
+              <span style="float: left">{{ item.mbAccount }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.nickName || '无昵称' }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -123,6 +142,7 @@
 
 <script>
 import { listGameCodeRecord, getGameCodeRecord, delGameCodeRecord, addGameCodeRecord, updateGameCodeRecord } from "@/api/game/gameCodeRecord";
+import { listInfo } from "@/api/member/info";
 
 export default {
   dicts: ['record_is_redemption'],
@@ -158,6 +178,10 @@ export default {
       },
       // 表单参数
       form: {},
+      // 会员选项
+      memberOptions: [],
+      // 会员搜索loading
+      memberLoading: false,
       // 表单校验
       rules: {
         gameCode: [
@@ -167,7 +191,7 @@ export default {
           { required: true, message: "礼品码金额不能为空", trigger: "blur" }
         ],
         mbId: [
-          { required: true, message: "会员id不能为空", trigger: "blur" }
+          { required: true, message: "请选择会员", trigger: "change" }
         ],
       }
     };
@@ -204,6 +228,8 @@ export default {
         updateBy: null,
         isRedemption: null
       };
+      this.memberOptions = [];
+      this.memberLoading = false;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -273,6 +299,37 @@ export default {
       this.download('game/gameCodeRecord/export', {
         ...this.queryParams
       }, `gameCodeRecord_${new Date().getTime()}.xlsx`)
+    },
+    /** 远程搜索会员 */
+    remoteSearchMember(query) {
+      if (query !== '') {
+        this.memberLoading = true;
+        listInfo({
+          mbAccount: query,
+          pageSize: 20
+        }).then(response => {
+          this.memberOptions = response.rows || [];
+          this.memberLoading = false;
+        }).catch((error) => {
+          console.error('搜索会员失败:', error);
+          this.memberOptions = [];
+          this.memberLoading = false;
+        });
+      } else {
+        this.memberOptions = [];
+        this.memberLoading = false;
+      }
+    },
+    /** 会员选择改变事件 */
+    handleMemberChange(value) {
+      if (value) {
+        // 找到选中的会员信息
+        const selectedMember = this.memberOptions.find(item => item.mbId === value);
+        if (selectedMember) {
+          console.log('选择的会员:', selectedMember);
+          // 可以在这里添加选择会员后的其他逻辑
+        }
+      }
     }
   }
 };
