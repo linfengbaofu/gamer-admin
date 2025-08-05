@@ -133,7 +133,7 @@
       <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
       <el-table-column label="备注" align="center" prop="remark" width="150" />
 
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.isRedemption === 0"
