@@ -9,14 +9,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="礼品码金额" prop="codeAmount">
-        <el-input
-          v-model="queryParams.codeAmount"
-          placeholder="请输入礼品码金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="会员id" prop="mbId">
         <el-input
           v-model="queryParams.mbId"
@@ -25,13 +18,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否兑换完成(0-否；1-是)" prop="isRedemption">
-        <el-input
-          v-model="queryParams.isRedemption"
-          placeholder="请输入是否兑换完成(0-否；1-是)"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="是否兑换完成" prop="isRedemption">
+       <el-select v-model="queryParams.isRedemption" placeholder="">
+        <el-option
+        v-for="dict in dict.type.localtioan_type"
+        :key="dict.value"
+        :label="dict.label"
+        :value="dict.value"
+      />
+       </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -50,28 +45,7 @@
           v-hasPermi="['game:gameCodeRecord:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['game:gameCodeRecord:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['game:gameCodeRecord:remove']"
-        >删除</el-button>
-      </el-col>
+
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -85,24 +59,27 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="gameCodeRecordList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="gameCodeRecordList">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="recordId" />
-      <el-table-column label="礼品码" align="center" prop="gameCode" />
-      <el-table-column label="礼品码金额" align="center" prop="codeAmount" />
-      <el-table-column label="会员id" align="center" prop="mbId" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="是否兑换完成(0-否；1-是)" align="center" prop="isRedemption" />
+      <el-table-column label="主键ID" align="center" prop="recordId" :fixed="true" width="150"/>
+      <el-table-column label="礼品码" align="center" prop="gameCode"  width="200"/>
+      <el-table-column label="礼品码金额" align="center" prop="codeAmount"  width="150"/>
+      <el-table-column label="会员id" align="center" prop="mbId"  width="150"/>
+      <el-table-column label="是否兑换完成" align="center" prop="isRedemption" >
+
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_is_redemption" :value="scope.row.isRedemption" />
+        </template>
+      </el-table-column>
+      <el-table-column label="创建人" align="center" prop="createBy"  width="150"/>
+      <el-table-column label="创建时间" align="center" prop="createTime"  width="150"/>
+      <el-table-column label="备注" align="center" prop="remark"  width="150"/>
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['game:gameCodeRecord:edit']"
-          >修改</el-button>
-          <el-button
+            v-if="scope.row.isRedemption === 0"
             size="mini"
             type="text"
             icon="el-icon-delete"
@@ -124,9 +101,7 @@
     <!-- 添加或修改礼品码记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="礼品码" prop="gameCode">
-          <el-input v-model="form.gameCode" placeholder="请输入礼品码" />
-        </el-form-item>
+
         <el-form-item label="礼品码金额" prop="codeAmount">
           <el-input v-model="form.codeAmount" placeholder="请输入礼品码金额" />
         </el-form-item>
@@ -136,9 +111,7 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="是否兑换完成(0-否；1-是)" prop="isRedemption">
-          <el-input v-model="form.isRedemption" placeholder="请输入是否兑换完成(0-否；1-是)" />
-        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -152,6 +125,7 @@
 import { listGameCodeRecord, getGameCodeRecord, delGameCodeRecord, addGameCodeRecord, updateGameCodeRecord } from "@/api/game/gameCodeRecord";
 
 export default {
+  dicts: ['record_is_redemption'],
   name: "GameCodeRecord",
   data() {
     return {
