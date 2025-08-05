@@ -191,8 +191,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel" :disabled="submitLoading">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -252,6 +252,8 @@ export default {
       memberLoading: false,
       // 查询表单会员搜索loading
       queryMemberLoading: false,
+      // 提交按钮loading
+      submitLoading: false,
       // 表单校验
       rules: {
         gameCode: [{ required: true, message: "礼品码不能为空", trigger: "blur" }],
@@ -279,6 +281,9 @@ export default {
     },
     // 取消按钮
     cancel() {
+      if (this.submitLoading) {
+        return; // 提交中不允许取消
+      }
       this.open = false;
       this.reset();
     },
@@ -299,6 +304,7 @@ export default {
       };
       this.memberOptions = [];
       this.memberLoading = false;
+      this.submitLoading = false; // 重置提交loading状态
       this.resetForm("form");
       // 重置后加载初始会员数据
       this.loadInitialMembers();
@@ -347,17 +353,28 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          this.submitLoading = true;
           if (this.form.recordId != null) {
             updateGameCodeRecord(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch((error) => {
+              console.error("修改失败:", error);
+              this.$modal.msgError(error.msg || "修改失败，请重试");
+            }).finally(() => {
+              this.submitLoading = false;
             });
           } else {
             addGameCodeRecord(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch((error) => {
+              console.error("新增失败:", error);
+              this.$modal.msgError(error.msg || "新增失败，请重试");
+            }).finally(() => {
+              this.submitLoading = false;
             });
           }
         }
