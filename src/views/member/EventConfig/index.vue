@@ -25,61 +25,19 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="中文繁体名称" prop="twName">
+      <el-form-item label="繁体名称" prop="twName">
         <el-input
           v-model="queryParams.twName"
-          placeholder="请输入中文繁体名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="英文图片" prop="usImg">
-        <el-input
-          v-model="queryParams.usImg"
-          placeholder="请输入英文图片"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="日文图片" prop="jpImg">
-        <el-input
-          v-model="queryParams.jpImg"
-          placeholder="请输入日文图片"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="韩文图片" prop="krImg">
-        <el-input
-          v-model="queryParams.krImg"
-          placeholder="请输入韩文图片"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="中文繁体图片" prop="twImg">
-        <el-input
-          v-model="queryParams.twImg"
-          placeholder="请输入中文繁体图片"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="跳转链接" prop="turnUrl">
-        <el-input
-          v-model="queryParams.turnUrl"
-          placeholder="请输入跳转链接"
+          placeholder="请输入繁体名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
-        <el-input
-          v-model="queryParams.isOpen"
-          placeholder="请输入是否开启"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启">
+          <el-option label="是" :value="1"></el-option>
+          <el-option label="否" :value="0"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -140,10 +98,26 @@
       <el-table-column label="日文名称" align="center" prop="jpName" />
       <el-table-column label="韩文名称" align="center" prop="krName" />
       <el-table-column label="中文繁体名称" align="center" prop="twName" />
-      <el-table-column label="英文图片" align="center" prop="usImg" />
-      <el-table-column label="日文图片" align="center" prop="jpImg" />
-      <el-table-column label="韩文图片" align="center" prop="krImg" />
-      <el-table-column label="中文繁体图片" align="center" prop="twImg" />
+      <el-table-column label="英文图片" align="center" prop="usImg" >
+        <template slot-scope="scope">
+          <el-image v-if="scope.row.usImg" :src="scope.row.usImg" style="width: 50px; height: 50px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="日文图片" align="center" prop="jpImg"   >
+        <template slot-scope="scope">
+          <el-image v-if="scope.row.jpImg" :src="scope.row.jpImg" style="width: 50px; height: 50px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="韩文图片" align="center" prop="krImg" >
+        <template slot-scope="scope">
+          <el-image v-if="scope.row.krImg" :src="scope.row.krImg" style="width: 50px; height: 50px;" />
+        </template>
+      </el-table-column>
+      <el-table-column label="中文繁体图片" align="center" prop="twImg" >
+        <template slot-scope="scope">
+          <el-image v-if="scope.row.twImg" :src="scope.row.twImg" style="width: 50px; height: 50px;" />
+        </template>
+      </el-table-column>
       <el-table-column label="跳转链接" align="center" prop="turnUrl" />
       <el-table-column label="是否开启" align="center" prop="isOpen" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -190,22 +164,25 @@
           <el-input v-model="form.twName" placeholder="请输入中文繁体名称" />
         </el-form-item>
         <el-form-item label="英文图片" prop="usImg">
-          <el-input v-model="form.usImg" placeholder="请输入英文图片" />
+          <image-upload v-model="form.usImg" :limit="1" />
         </el-form-item>
         <el-form-item label="日文图片" prop="jpImg">
-          <el-input v-model="form.jpImg" placeholder="请输入日文图片" />
+          <image-upload v-model="form.jpImg" :limit="1" />
         </el-form-item>
         <el-form-item label="韩文图片" prop="krImg">
-          <el-input v-model="form.krImg" placeholder="请输入韩文图片" />
+          <image-upload v-model="form.krImg" :limit="1" />
         </el-form-item>
         <el-form-item label="中文繁体图片" prop="twImg">
-          <el-input v-model="form.twImg" placeholder="请输入中文繁体图片" />
+          <image-upload v-model="form.twImg" :limit="1" />
         </el-form-item>
         <el-form-item label="跳转链接" prop="turnUrl">
           <el-input v-model="form.turnUrl" placeholder="请输入跳转链接" />
         </el-form-item>
         <el-form-item label="是否开启" prop="isOpen">
-          <el-input v-model="form.isOpen" placeholder="请输入是否开启" />
+          <el-select v-model="form.isOpen" placeholder="请选择是否开启">
+            <el-option label="是" :value="1"></el-option>
+            <el-option label="否" :value="0"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -257,9 +234,12 @@ export default {
         isOpen: null
       },
       // 表单参数
-      form: {},
+      form: {
+        isOpen: 1
+      },
       // 表单校验
       rules: {
+        isOpen: [{ required: true, message: "请选择是否开启", trigger: "change" }]
       }
     };
   },
@@ -294,7 +274,7 @@ export default {
         krImg: null,
         twImg: null,
         turnUrl: null,
-        isOpen: null
+        isOpen: 1
       };
       this.resetForm("form");
     },
