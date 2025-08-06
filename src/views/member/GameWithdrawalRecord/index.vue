@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="80px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="用户id" prop="mbId">
         <el-input
           v-model="queryParams.mbId"
@@ -86,8 +86,9 @@
         </template>
       </el-table-column>
       <el-table-column label="合营id" align="center" prop="hyId" />
-      <el-table-column label="邀请人id" align="center" prop="inMbId" />
-      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" />
+      <el-table-column label="邀请人id" align="center" prop="inMbId" width="150"/>
+      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180"></el-table-column>
       <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
    

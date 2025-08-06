@@ -99,9 +99,10 @@
         </template>
       </el-table-column>
       <el-table-column label="合营id" align="center" prop="hyId" />
-      <el-table-column label="邀请人" align="center" prop="inMbId" />
-      <el-table-column label="邀请人" align="center" prop="inMbAccount" />
+      <el-table-column label="邀请人ID" align="center" prop="inMbId" width="150"/>
+      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150"/>
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180"></el-table-column>
       <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button

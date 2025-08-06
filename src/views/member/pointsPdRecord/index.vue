@@ -130,17 +130,33 @@
           <el-input v-model="form.pdName" placeholder="请输入商品名称" />
         </el-form-item>
         <el-form-item label="需要积分" prop="needPoints">
-          <el-input v-model="form.needPoints" placeholder="请输入需要积分" />
+          <el-input 
+            type="number" 
+            v-model="form.needPoints" 
+            placeholder="请输入需要积分" 
+            :min="0.01"
+            step="0.01"
+          />
         </el-form-item>
         <el-form-item label="商品排序" prop="pdSort">
-          <el-input v-model="form.pdSort" placeholder="请输入商品排序" />
+          <el-input 
+            type="number" 
+            v-model="form.pdSort" 
+            placeholder="请输入商品排序" 
+            :min="1"
+          />
         </el-form-item>
         <el-form-item label="商品图片地址" prop="pdImgUrl">
           <image-upload v-model="form.pdImgUrl" :limit="1" placeholder="请输入商品图片地址" />
         </el-form-item>
         
         <el-form-item label="排序" prop="sorted">
-          <el-input v-model="form.sorted" placeholder="请输入排序" />
+          <el-input 
+            type="number" 
+            v-model="form.sorted" 
+            placeholder="请输入排序" 
+            :min="1"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -219,16 +235,68 @@ export default {
           { required: true, message: "商品名称不能为空", trigger: "blur" }
         ],
         needPoints: [
-          { required: true, message: "需要积分不能为空", trigger: "blur" }
+          { required: true, message: "需要积分不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('需要积分不能为空'));
+              } else {
+                const num = parseFloat(value);
+                if (isNaN(num) || num <= 0) {
+                  callback(new Error('需要积分必须为正数'));
+                } else {
+                  // Check decimal places
+                  const numStr = value.toString();
+                  const decimalIndex = numStr.indexOf('.');
+                  if (decimalIndex !== -1 && numStr.length - decimalIndex - 1 > 2) {
+                    callback(new Error('积分最多保留2位小数'));
+                  } else {
+                    callback();
+                  }
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
         ],
         pdSort: [ 
-          { required: true, message: "商品排序不能为空", trigger: "blur" }
+          { required: true, message: "商品排序不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('商品排序不能为空'));
+              } else {
+                const num = parseInt(value);
+                if (isNaN(num) || num < 1 || num % 1 !== 0) {
+                  callback(new Error('商品排序必须为正整数'));
+                } else {
+                  callback();
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
         ],
         pdImgUrl: [
           { required: true, message: "商品图片地址不能为空", trigger: "blur" }
         ],
         sorted: [
-          { required: true, message: "排序不能为空", trigger: "blur" }
+          { required: true, message: "排序不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('排序不能为空'));
+              } else {
+                const num = parseInt(value);
+                if (isNaN(num) || num < 1 || num % 1 !== 0) {
+                  callback(new Error('排序必须为正整数'));
+                } else {
+                  callback();
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
         ]
       },
       // 提交表单时的loading状态

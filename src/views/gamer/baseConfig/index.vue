@@ -24,6 +24,22 @@
       <el-form-item label="三级佣金比例(%)" prop="threeLevelCommissionRate">
         <el-input v-model="form.threeLevelCommissionRate" placeholder="请输入三级佣金比例" />
       </el-form-item>
+      <el-form-item label="下属累计存款" prop="lowerLevelTotalDeposit">
+        <el-input
+          type="number"
+          v-model="form.lowerLevelTotalDeposit"
+          placeholder="请输入下属累计存款"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item label="下属累计投注" prop="lowerLevelTotalBet">
+        <el-input
+          type="number"
+          v-model="form.lowerLevelTotalBet"
+          placeholder="请输入下属累计投注"
+          clearable
+        />
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" :loading="updateLoading" @click="handleUpdate">确定</el-button>
@@ -54,7 +70,9 @@ export default {
         exchangeRate: null,
         firstLevelCommissionRate: null,
         secondLevelCommissionRate: null,
-        threeLevelCommissionRate: null
+        threeLevelCommissionRate: null,
+        lowerLevelTotalDeposit: null,
+        lowerLevelTotalBet: null
       }
     };
   },
@@ -73,7 +91,9 @@ export default {
             betCommissionRate: data.betCommissionRate ? Number((data.betCommissionRate * 100).toFixed(8)) : null,
             firstLevelCommissionRate: data.firstLevelCommissionRate ? Number((data.firstLevelCommissionRate * 100).toFixed(8)) : null,
             secondLevelCommissionRate: data.secondLevelCommissionRate ? Number((data.secondLevelCommissionRate * 100).toFixed(8)) : null,
-            threeLevelCommissionRate: data.threeLevelCommissionRate ? Number((data.threeLevelCommissionRate * 100).toFixed(8)) : null
+            threeLevelCommissionRate: data.threeLevelCommissionRate ? Number((data.threeLevelCommissionRate * 100).toFixed(8)) : null,
+            lowerLevelTotalDeposit: data.lowerLevelTotalDeposit || null,
+            lowerLevelTotalBet: data.lowerLevelTotalBet || null
           };
         }
       });
@@ -88,7 +108,9 @@ export default {
         betCommissionRate: this.form.betCommissionRate ? Number((this.form.betCommissionRate / 100).toFixed(8)) : null,
         firstLevelCommissionRate: this.form.firstLevelCommissionRate ? Number((this.form.firstLevelCommissionRate / 100).toFixed(8)) : null,
         secondLevelCommissionRate: this.form.secondLevelCommissionRate ? Number((this.form.secondLevelCommissionRate / 100).toFixed(8)) : null,
-        threeLevelCommissionRate: this.form.threeLevelCommissionRate ? Number((this.form.threeLevelCommissionRate / 100).toFixed(8)) : null
+        threeLevelCommissionRate: this.form.threeLevelCommissionRate ? Number((this.form.threeLevelCommissionRate / 100).toFixed(8)) : null,
+        lowerLevelTotalDeposit: this.form.lowerLevelTotalDeposit || null,
+        lowerLevelTotalBet: this.form.lowerLevelTotalBet || null
       };
       updateBaseConfig(submitData).then(response => {
         this.$modal.msgSuccess("更新成功");

@@ -71,13 +71,29 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="连续签到天数" prop="streakDays">
-          <el-input v-model="form.streakDays" placeholder="请输入连续签到天数" />
+          <el-input 
+            type="number" 
+            v-model="form.streakDays" 
+            placeholder="请输入连续签到天数" 
+            :min="1"
+          />
         </el-form-item>
         <el-form-item label="奖励积分" prop="rewardPoints">
-          <el-input v-model="form.rewardPoints" placeholder="请输入奖励积分" />
+          <el-input 
+            type="number" 
+            v-model="form.rewardPoints" 
+            placeholder="请输入奖励积分" 
+            :min="0.01"
+            step="0.01"
+          />
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
-          <el-input v-model="form.sortOrder" placeholder="请输入排序" />
+          <el-input 
+            type="number" 
+            v-model="form.sortOrder" 
+            placeholder="请输入排序" 
+            :min="1"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -128,11 +144,59 @@ export default {
       // 表单校验
       rules: {
         streakDays: [
-          { required: true, message: "连续签到天数不能为空", trigger: "blur" }
+          { required: true, message: "连续签到天数不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('连续签到天数不能为空'));
+              } else {
+                const num = parseInt(value);
+                if (isNaN(num) || num < 1 || num % 1 !== 0) {
+                  callback(new Error('连续签到天数必须为正整数'));
+                } else {
+                  callback();
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
         ],
         rewardPoints: [
-          { required: true, message: "奖励积分不能为空", trigger: "blur" }
+          { required: true, message: "奖励积分不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('奖励积分不能为空'));
+              } else {
+                const num = parseFloat(value);
+                if (isNaN(num) || num <= 0) {
+                  callback(new Error('奖励积分必须为正数'));
+                } else {
+                  callback();
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
         ],
+        sortOrder: [
+          { required: true, message: "排序不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('排序不能为空'));
+              } else {
+                const num = parseInt(value);
+                if (isNaN(num) || num < 1 || num % 1 !== 0) {
+                  callback(new Error('排序必须为正整数'));
+                } else {
+                  callback();
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
+        ]
       }
     };
   },
