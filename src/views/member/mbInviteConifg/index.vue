@@ -261,6 +261,8 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(error => {
+              this.$modal.msgError("修改失败");
             }).finally(() => {
               this.loading = false;
             });
@@ -269,6 +271,8 @@ export default {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(error => {
+              this.$modal.msgError("新增失败");
             }).finally(() => {
               this.loading = false;
             });
