@@ -233,10 +233,10 @@
       </el-descriptions>
       
       <div style="margin-top: 20px;">
-        <h4>身份证照片</h4>
+        <h4> <dict-tag :options="dict.type.id_type" :value="checkForm.idType"/></h4>
         <div style="display: flex; gap: 20px;">
           <div v-if="checkForm.idImage1">
-            <p>身份证正面照片：</p>
+            <p>正面照片：</p>
             <el-image 
               :src="checkForm.idImage1" 
               style="width: 200px; height: 120px; border: 1px solid #ddd;"
@@ -244,7 +244,7 @@
             />
           </div>
           <div v-if="checkForm.idImage2">
-            <p>身份证反面照片：</p>
+            <p>反面照片：</p>
             <el-image 
               :src="checkForm.idImage2" 
               style="width: 200px; height: 120px; border: 1px solid #ddd;"
@@ -267,7 +267,7 @@
       </el-form>
       
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitCheckForm">确 定</el-button>
+        <el-button type="primary" :loading="loading" @click="submitCheckForm">确 定</el-button>
         <el-button @click="cancelCheck">取 消</el-button>
       </div>
     </el-dialog>
@@ -555,6 +555,8 @@ export default {
             this.$modal.msgSuccess("审核成功");
             this.checkOpen = false;
             this.getList();
+          }).catch(error => {
+            this.$modal.msgError("审核失败");
           }).finally(() => {
             this.loading = false;
           });
