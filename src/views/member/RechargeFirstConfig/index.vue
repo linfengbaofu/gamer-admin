@@ -1,37 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="存款金额" prop="rechargeMoney">
-        <el-input
-          v-model="queryParams.rechargeMoney"
-          placeholder="请输入存款金额"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="币种" prop="rechargeCoin">
-        <el-input
-          v-model="queryParams.rechargeCoin"
-          placeholder="请输入币种"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="奖励" prop="income">
-        <el-input
-          v-model="queryParams.income"
-          placeholder="请输入奖励"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.rechargeCoin" placeholder="请选择币种">
+            <el-option v-for="item in dict.type.coin_type" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
-        <el-input
-          v-model="queryParams.isOpen"
-          placeholder="请输入是否开启"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启">
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>  
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -89,10 +70,28 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="存款金额" align="center" prop="rechargeMoney" />
-      <el-table-column label="币种" align="center" prop="rechargeCoin" />
-      <el-table-column label="类型" align="center" prop="type" />
+      <el-table-column label="币种" align="center" prop="rechargeCoin" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.coin_type" :value="scope.row.rechargeCoin"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型" align="center" prop="type" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.discount_type" :value="scope.row.type"/>
+        </template>
+      </el-table-column>
       <el-table-column label="奖励" align="center" prop="income" />
-      <el-table-column label="是否开启" align="center" prop="isOpen" />
+      <el-table-column label="是否开启" align="center" prop="isOpen" >
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.isOpen"
+            :disabled="true"
+            active-value="1"
+            inactive-value="0"
+            @change="handleIsOpenChange(scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -128,13 +127,25 @@
           <el-input v-model="form.rechargeMoney" placeholder="请输入存款金额" />
         </el-form-item>
         <el-form-item label="币种" prop="rechargeCoin">
-          <el-input v-model="form.rechargeCoin" placeholder="请输入币种" />
+          <el-select v-model="form.rechargeCoin" placeholder="请选择币种">
+            <el-option v-for="item in dict.type.coin_type" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="奖励" prop="income">
           <el-input v-model="form.income" placeholder="请输入奖励" />
         </el-form-item>
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择类型">
+            <el-option v-for="item in dict.type.discount_type" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="是否开启" prop="isOpen">
-          <el-input v-model="form.isOpen" placeholder="请输入是否开启" />
+          <el-select v-model="form.isOpen" placeholder="请选择是否开启">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>  
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -149,6 +160,7 @@
 import { listRechargeFirstConfig, getRechargeFirstConfig, delRechargeFirstConfig, addRechargeFirstConfig, updateRechargeFirstConfig } from "@/api/member/RechargeFirstConfig";
 
 export default {
+  dicts: ['coin_type','discount_type'],
   name: "RechargeFirstConfig",
   data() {
     return {
@@ -181,9 +193,16 @@ export default {
         isOpen: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        isOpen: 1
+      },
       // 表单校验
       rules: {
+        isOpen: [{ required: true, message: "请选择是否开启", trigger: "change" }],
+        income: [{ required: true, message: "请输入奖励", trigger: "blur" }],
+        rechargeMoney: [{ required: true, message: "请输入存款金额", trigger: "blur" }],
+        rechargeCoin: [{ required: true, message: "请选择币种", trigger: "change" }],
+        type: [{ required: true, message: "请选择类型", trigger: "change" }]
       }
     };
   },
@@ -213,7 +232,7 @@ export default {
         rechargeCoin: null,
         type: null,
         income: null,
-        isOpen: null,
+        isOpen: 1,
         createTime: null
       };
       this.resetForm("form");

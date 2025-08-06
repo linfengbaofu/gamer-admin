@@ -10,28 +10,16 @@
         />
       </el-form-item>
       <el-form-item label="充值币种" prop="rechargeCoin">
-        <el-input
-          v-model="queryParams.rechargeCoin"
-          placeholder="请输入充值币种"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="折扣" prop="discount">
-        <el-input
-          v-model="queryParams.discount"
-          placeholder="请输入折扣"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.rechargeCoin" placeholder="请选择充值币种">
+            <el-option v-for="item in dict.type.coin_type" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
-        <el-input
-          v-model="queryParams.isOpen"
-          placeholder="请输入是否开启"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启">
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>  
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -89,10 +77,28 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="最小充值" align="center" prop="minRecharge" />
-      <el-table-column label="充值币种" align="center" prop="rechargeCoin" />
-      <el-table-column label="类型" align="center" prop="type" />
+      <el-table-column label="充值币种" align="center" prop="rechargeCoin" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.coin_type" :value="scope.row.rechargeCoin"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型" align="center" prop="type" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.discount_type" :value="scope.row.type"/>
+        </template>
+      </el-table-column>
       <el-table-column label="折扣" align="center" prop="discount" />
-      <el-table-column label="是否开启" align="center" prop="isOpen" />
+      <el-table-column label="是否开启" align="center" prop="isOpen" >
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.isOpen"
+            :disabled="true"
+            active-value="1"
+            inactive-value="0"
+            @change="handleIsOpenChange(scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -128,13 +134,25 @@
           <el-input v-model="form.minRecharge" placeholder="请输入最小充值" />
         </el-form-item>
         <el-form-item label="充值币种" prop="rechargeCoin">
-          <el-input v-model="form.rechargeCoin" placeholder="请输入充值币种" />
+          <el-select v-model="form.rechargeCoin" placeholder="请选择充值币种">
+            <el-option v-for="item in dict.type.coin_type" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择类型">
+            <el-option v-for="item in dict.type.discount_type" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="折扣" prop="discount">
           <el-input v-model="form.discount" placeholder="请输入折扣" />
         </el-form-item>
         <el-form-item label="是否开启" prop="isOpen">
-          <el-input v-model="form.isOpen" placeholder="请输入是否开启" />
+          <el-select v-model="form.isOpen" placeholder="请选择是否开启">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -149,6 +167,7 @@
 import { listRechargeDiscountConfig, getRechargeDiscountConfig, delRechargeDiscountConfig, addRechargeDiscountConfig, updateRechargeDiscountConfig } from "@/api/member/RechargeDiscountConfig";
 
 export default {
+  dicts: ['coin_type','discount_type'],
   name: "RechargeDiscountConfig",
   data() {
     return {
@@ -184,6 +203,11 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        isOpen: [{ required: true, message: "请选择是否开启", trigger: "change" }],
+        discount: [{ required: true, message: "请输入折扣", trigger: "blur" }],
+        minRecharge: [{ required: true, message: "请输入最小充值", trigger: "blur" }],
+        rechargeCoin: [{ required: true, message: "请选择币种", trigger: "change" }],
+        type: [{ required: true, message: "请选择类型", trigger: "change" }]
       }
     };
   },

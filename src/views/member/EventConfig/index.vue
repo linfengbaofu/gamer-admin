@@ -35,8 +35,8 @@
       </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启">
-          <el-option label="是" :value="1"></el-option>
-          <el-option label="否" :value="0"></el-option>
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -93,11 +93,11 @@
 
     <el-table v-loading="loading" :data="EventConfigList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" :fixed="true" width="180" />
       <el-table-column label="英文名称" align="center" prop="usName" />
       <el-table-column label="日文名称" align="center" prop="jpName" />
       <el-table-column label="韩文名称" align="center" prop="krName" />
-      <el-table-column label="中文繁体名称" align="center" prop="twName" />
+      <el-table-column label="中文繁体名称" align="center" prop="twName" width="150"/>
       <el-table-column label="英文图片" align="center" prop="usImg" >
         <template slot-scope="scope">
           <el-image v-if="scope.row.usImg" :src="scope.row.usImg" style="width: 50px; height: 50px;" />
@@ -113,13 +113,23 @@
           <el-image v-if="scope.row.krImg" :src="scope.row.krImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
-      <el-table-column label="中文繁体图片" align="center" prop="twImg" >
+      <el-table-column label="中文繁体图片" align="center" prop="twImg" width="150">
         <template slot-scope="scope">
           <el-image v-if="scope.row.twImg" :src="scope.row.twImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
-      <el-table-column label="跳转链接" align="center" prop="turnUrl" />
-      <el-table-column label="是否开启" align="center" prop="isOpen" />
+      <el-table-column label="跳转链接" align="center" prop="turnUrl" show-overflow-tooltip=""/>
+      <el-table-column label="是否开启" align="center" prop="isOpen" >
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.isOpen"
+            :disabled="true"
+            active-value="1"
+            inactive-value="0"
+            @change="handleIsOpenChange(scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
