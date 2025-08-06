@@ -214,33 +214,47 @@
     </el-dialog>
 
     <!-- 审核KYC认证对话框 -->
-    <el-dialog title="审核KYC认证" :visible.sync="checkOpen" width="500px" append-to-body>
-      <el-form ref="checkForm" :model="checkForm" :rules="checkRules" label-width="100px">
-        <el-form-item label="用户id" prop="mbId">
-          <el-input v-model="checkForm.mbId" disabled />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="checkForm.mbAccount" disabled />
-        </el-form-item>
-        <el-form-item label="名字" prop="name">
-          <el-input v-model="checkForm.name" disabled />
-        </el-form-item>
-        <el-form-item label="身份证类型" prop="idType">
+    <el-dialog title="审核KYC认证" :visible.sync="checkOpen" width="600px" append-to-body>
+      <el-descriptions :column="2" border>
+        <el-descriptions-item label="ID">{{ checkForm.id }}</el-descriptions-item>
+        <el-descriptions-item label="用户ID">{{ checkForm.mbId }}</el-descriptions-item>
+        <el-descriptions-item label="用户账号">{{ checkForm.mbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="姓名">{{ checkForm.name }}</el-descriptions-item>
+        <el-descriptions-item label="国家/地区">{{ checkForm.country }}</el-descriptions-item>
+        <el-descriptions-item label="身份证类型">
           <dict-tag :options="dict.type.id_type" :value="checkForm.idType"/>
-        </el-form-item>
-        <el-form-item label="国家/地区" prop="country">
-          <el-input v-model="checkForm.country" disabled />
-        </el-form-item>
-        
-        <el-form-item label="身份证号" prop="idNumber">
-          <el-input v-model="checkForm.idNumber" disabled />
-        </el-form-item>
-        <el-form-item label="身份证照片1" prop="idImage1">
-          <el-image v-if="checkForm.idImage1" :src="checkForm.idImage1" style="width: 100px; height: 60px;" />
-        </el-form-item>
-        <el-form-item label="身份证照片2" prop="idImage2">
-          <el-image v-if="checkForm.idImage2" :src="checkForm.idImage2" style="width: 100px; height: 60px;" />
-        </el-form-item>
+        </el-descriptions-item>
+        <el-descriptions-item label="身份证号">{{ checkForm.idNumber }}</el-descriptions-item>
+        <el-descriptions-item label="当前状态">
+          <dict-tag :options="dict.type.kyc_status" :value="checkForm.status"/>
+        </el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ checkForm.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="备注">{{ checkForm.remark || '无' }}</el-descriptions-item>
+      </el-descriptions>
+      
+      <div style="margin-top: 20px;">
+        <h4>身份证照片</h4>
+        <div style="display: flex; gap: 20px;">
+          <div v-if="checkForm.idImage1">
+            <p>身份证正面照片：</p>
+            <el-image 
+              :src="checkForm.idImage1" 
+              style="width: 200px; height: 120px; border: 1px solid #ddd;"
+              :preview-src-list="[checkForm.idImage1]"
+            />
+          </div>
+          <div v-if="checkForm.idImage2">
+            <p>身份证反面照片：</p>
+            <el-image 
+              :src="checkForm.idImage2" 
+              style="width: 200px; height: 120px; border: 1px solid #ddd;"
+              :preview-src-list="[checkForm.idImage2]"
+            />
+          </div>
+        </div>
+      </div>
+
+      <el-form ref="checkForm" :model="checkForm" :rules="checkRules" style="margin-top: 20px;">
         <el-form-item label="审核结果" prop="status">
           <el-radio-group v-model="checkForm.status">
             <el-radio :label="1">审核通过</el-radio>
@@ -251,6 +265,7 @@
           <el-input v-model="checkForm.remark" type="textarea" placeholder="请输入审核备注" />
         </el-form-item>
       </el-form>
+      
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitCheckForm">确 定</el-button>
         <el-button @click="cancelCheck">取 消</el-button>
@@ -531,6 +546,7 @@ export default {
     submitCheckForm() {
       this.$refs["checkForm"].validate(valid => {
         if (valid) {
+          this.loading = true;
           checkMbKycCheck({
             id: this.checkForm.id,
             status: this.checkForm.status,
@@ -539,6 +555,8 @@ export default {
             this.$modal.msgSuccess("审核成功");
             this.checkOpen = false;
             this.getList();
+          }).finally(() => {
+            this.loading = false;
           });
         }
       });
