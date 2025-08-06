@@ -108,6 +108,12 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-view"
+            @click="handleView(scope.row)"
+          >查看</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-check"
             @click="handleAudit(scope.row)"
             v-hasPermi="['member:GameRechargeRecord:audit']"
@@ -174,32 +180,71 @@
     </el-dialog>
 
     <!-- 审核弹窗 -->
-    <el-dialog title="审核充值记录" :visible.sync="auditOpen" width="500px" append-to-body>
-      <el-form ref="auditForm" :model="auditForm" :rules="auditRules" label-width="100px">
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="auditForm.mbAccount" disabled />
-        </el-form-item>
-        <el-form-item label="充值金额" prop="rechargeAmount">
-          <el-input v-model="auditForm.rechargeAmount" disabled />
-        </el-form-item>
-        <el-form-item label="实际金额" prop="actualAmount">
-          <el-input v-model="auditForm.actualAmount" disabled />
-        </el-form-item>
-        <el-form-item label="赠送金额" prop="givePoints">
-          <el-input v-model="auditForm.givePoints" disabled />
-        </el-form-item>
-        <el-form-item label="审核状态" prop="approvalStatus">
-          <el-select v-model="auditForm.approvalStatus" placeholder="请选择审核状态">
-            <el-option v-for="dict in dict.type.record_recharge_status" :key="dict.value" :label="dict.label" :value="dict.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审核备注" prop="auditRemark">
-          <el-input v-model="auditForm.auditRemark" type="textarea" placeholder="请输入审核备注" />
+    <el-dialog title="审核充值" :visible.sync="auditOpen" width="800px" append-to-body>
+      <el-descriptions title="" :column="2" border>
+        <el-descriptions-item label="用户ID">{{ auditForm.mbId }}</el-descriptions-item>
+        <el-descriptions-item label="用户账号">{{ auditForm.mbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="充值地址">{{ auditForm.paymentAddr }}</el-descriptions-item>
+        <el-descriptions-item label="充值渠道">{{ auditForm.rechargeChannel }}</el-descriptions-item>
+        <el-descriptions-item label="充值金额">{{ auditForm.rechargeAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际金额">{{ auditForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="赠送金额">{{ auditForm.givePoints }}</el-descriptions-item>
+        <el-descriptions-item label="合营ID">{{ auditForm.hyId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人ID">{{ auditForm.inMbId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人账号">{{ auditForm.inMbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ auditForm.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="备注">{{ auditForm.remark }}</el-descriptions-item>
+      </el-descriptions>
+      
+      <el-form ref="auditForm" :model="auditForm" :rules="auditRules" label-width="120px" style="margin-top: 20px;">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="审核状态" prop="approvalStatus">
+              <el-select v-model="auditForm.approvalStatus" placeholder="请选择审核状态">
+                <el-option label="审核通过" :value="1" />
+                <el-option label="审核失败" :value="2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="审核人" prop="approverBy">
+              <el-input v-model="auditForm.approverBy" placeholder="请输入审核人" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="审核备注" prop="remark">
+          <el-input v-model="auditForm.remark" type="textarea" placeholder="请输入审核备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitAuditForm">确 定</el-button>
         <el-button @click="cancelAudit">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 查看详情弹窗 -->
+    <el-dialog title="查看充值详情" :visible.sync="viewOpen" width="800px" append-to-body>
+      <el-descriptions title="" :column="2" border>
+        <el-descriptions-item label="用户ID">{{ viewForm.mbId }}</el-descriptions-item>
+        <el-descriptions-item label="用户账号">{{ viewForm.mbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="充值地址">{{ viewForm.paymentAddr }}</el-descriptions-item>
+        <el-descriptions-item label="充值渠道">{{ viewForm.rechargeChannel }}</el-descriptions-item>
+        <el-descriptions-item label="充值金额">{{ viewForm.rechargeAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际金额">{{ viewForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="赠送金额">{{ viewForm.givePoints }}</el-descriptions-item>
+        <el-descriptions-item label="合营ID">{{ viewForm.hyId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人ID">{{ viewForm.inMbId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人账号">{{ viewForm.inMbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ viewForm.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="备注">{{ viewForm.remark }}</el-descriptions-item>
+        <el-descriptions-item label="审批状态">
+          <dict-tag :options="dict.type.record_recharge_status" :value="viewForm.approvalStatus" />
+        </el-descriptions-item>
+        <el-descriptions-item label="审批人">{{ viewForm.approverBy }}</el-descriptions-item>
+        <el-descriptions-item label="审批时间">{{ viewForm.approverTime }}</el-descriptions-item>
+      </el-descriptions>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="viewOpen = false">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -256,20 +301,53 @@ export default {
       },
       // 审核弹窗显示状态
       auditOpen: false,
+      // 查看详情弹窗显示状态
+      viewOpen: false,
       // 审核表单数据
       auditForm: {
         id: null,
+        mbId: null,
         mbAccount: null,
+        paymentAddr: null,
+        rechargeChannel: null,
         rechargeAmount: null,
         actualAmount: null,
         givePoints: null,
         approvalStatus: null,
-        auditRemark: null
+        approverBy: null,
+        hyId: null,
+        inMbId: null,
+        inMbAccount: null,
+        createTime: null,
+        remark: null,
+        remark: null
+      },
+      // 查看详情表单数据
+      viewForm: {
+        id: null,
+        mbId: null,
+        mbAccount: null,
+        paymentAddr: null,
+        rechargeChannel: null,
+        rechargeAmount: null,
+        actualAmount: null,
+        givePoints: null,
+        approvalStatus: null,
+        approverBy: null,
+        approverTime: null,
+        hyId: null,
+        inMbId: null,
+        inMbAccount: null,
+        createTime: null,
+        remark: null
       },
       // 审核表单校验
       auditRules: {
         approvalStatus: [
           { required: true, message: "审核状态不能为空", trigger: "change" }
+        ],
+        approverBy: [
+          { required: true, message: "审核人不能为空", trigger: "blur" }
         ]
       }
     };
@@ -387,12 +465,21 @@ export default {
     handleAudit(row) {
       this.auditForm = {
         id: row.id,
+        mbId: row.mbId,
         mbAccount: row.mbAccount,
+        paymentAddr: row.paymentAddr,
+        rechargeChannel: row.rechargeChannel,
         rechargeAmount: row.rechargeAmount,
         actualAmount: row.actualAmount,
         givePoints: row.givePoints,
         approvalStatus: row.approvalStatus,
-        auditRemark: row.auditRemark || null
+        approverBy: row.approverBy,
+        hyId: row.hyId,
+        inMbId: row.inMbId,
+        inMbAccount: row.inMbAccount,
+        createTime: row.createTime,
+        remark: row.remark,
+        remark: row.remark || null
       };
       this.auditOpen = true;
     },
@@ -405,12 +492,20 @@ export default {
     resetAuditForm() {
       this.auditForm = {
         id: null,
+        mbId: null,
         mbAccount: null,
+        paymentAddr: null,
+        rechargeChannel: null,
         rechargeAmount: null,
         actualAmount: null,
         givePoints: null,
         approvalStatus: null,
-        auditRemark: null
+        approverBy: null,
+        hyId: null,
+        inMbId: null,
+        inMbAccount: null,
+        createTime: null,
+        remark: null,
       };
       this.resetForm("auditForm");
     },
@@ -418,13 +513,35 @@ export default {
     submitAuditForm() {
       this.$refs["auditForm"].validate(valid => {
         if (valid) {
-          // TODO: 调用审核API
-          console.log('审核数据:', this.auditForm);
-          this.$modal.msgSuccess("审核成功");
-          this.auditOpen = false;
-          this.getList();
+          updateGameRechargeRecord(this.auditForm).then(response => {
+            this.$modal.msgSuccess("审核成功");
+            this.auditOpen = false;
+            this.getList();
+          });
         }
       });
+    },
+    /** 查看详情按钮操作 */
+    handleView(row) {
+      this.viewForm = {
+        id: row.id,
+        mbId: row.mbId,
+        mbAccount: row.mbAccount,
+        paymentAddr: row.paymentAddr,
+        rechargeChannel: row.rechargeChannel,
+        rechargeAmount: row.rechargeAmount,
+        actualAmount: row.actualAmount,
+        givePoints: row.givePoints,
+        approvalStatus: row.approvalStatus,
+        approverBy: row.approverBy,
+        approverTime: row.approverTime,
+        hyId: row.hyId,
+        inMbId: row.inMbId,
+        inMbAccount: row.inMbAccount,
+        createTime: row.createTime,
+        remark: row.remark
+      };
+      this.viewOpen = true;
     }
   }
 };

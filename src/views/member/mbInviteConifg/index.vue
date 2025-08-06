@@ -92,17 +92,17 @@
     <!-- 添加或修改邀请配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="配置ID" prop="configId">
+        <el-form-item v-if="form.id" label="配置ID" prop="configId">
           <el-input :disabled="form.id" v-model="form.configId" placeholder="请输入配置ID" />
         </el-form-item>
         <el-form-item label="人数" prop="mbCount">
-          <el-input v-model="form.mbCount" placeholder="请输入人数" />
+          <el-input v-model.number="form.mbCount" placeholder="请输入人数" type="number" min="1" />
         </el-form-item>
         <el-form-item label="奖励积分" prop="rewardPoints">
-          <el-input v-model="form.rewardPoints" placeholder="请输入奖励积分" />
+          <el-input v-model.number="form.rewardPoints" placeholder="请输入奖励积分" type="number" min="0.01" step="0.01" />
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
-          <el-input v-model="form.sortOrder" placeholder="请输入排序" />
+          <el-input v-model.number="form.sortOrder" placeholder="请输入排序" type="number" min="1" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -152,13 +152,37 @@ export default {
       // 表单校验
       rules: {
         mbCount: [
-          { required: true, message: "人数不能为空", trigger: "blur" }
+          { required: true, message: "人数不能为空", trigger: "blur" },
+          { type: "number", message: "人数必须为数字", trigger: "blur" },
+          { validator: (rule, value, callback) => {
+            if (value && (!Number.isInteger(Number(value)) || Number(value) <= 0)) {
+              callback(new Error("人数必须为正整数"));
+            } else {
+              callback();
+            }
+          }, trigger: "blur" }
         ],
         rewardPoints: [
-          { required: true, message: "奖励积分不能为空", trigger: "blur" }
+          { required: true, message: "奖励积分不能为空", trigger: "blur" },
+          { type: "number", message: "奖励积分必须为数字", trigger: "blur" },
+          { validator: (rule, value, callback) => {
+            if (value && Number(value) <= 0) {
+              callback(new Error("奖励积分必须为正数"));
+            } else {
+              callback();
+            }
+          }, trigger: "blur" }
         ],
-        configSort: [
-          { required: true, message: "奖励积分不能为空", trigger: "blur" }
+        sortOrder: [
+          { required: true, message: "排序不能为空", trigger: "blur" },
+          { type: "number", message: "排序必须为数字", trigger: "blur" },
+          { validator: (rule, value, callback) => {
+            if (value && (!Number.isInteger(Number(value)) || Number(value) <= 0)) {
+              callback(new Error("排序必须为正整数"));
+            } else {
+              callback();
+            }
+          }, trigger: "blur" }
         ],
       }
     };
@@ -231,17 +255,22 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.loading = true;
           if (this.form.configId != null) {
             updateMbInviteConifg(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.loading = false;
             });
           } else {
             addMbInviteConifg(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.loading = false;
             });
           }
         }

@@ -91,7 +91,12 @@
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"></el-table-column>
       <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-   
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleView(scope.row)"
+          >查看</el-button>
           <el-button
             size="mini"
             type="text"
@@ -163,29 +168,66 @@
     </el-dialog>
 
     <!-- 审核弹窗 -->
-    <el-dialog title="审核提现记录" :visible.sync="auditOpen" width="500px" append-to-body>
-      <el-form ref="auditForm" :model="auditForm" :rules="auditRules" label-width="100px">
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="auditForm.mbAccount" disabled />
-        </el-form-item>
-        <el-form-item label="提现金额" prop="withdrawalAmount">
-          <el-input v-model="auditForm.withdrawalAmount" disabled />
-        </el-form-item>
-        <el-form-item label="实际金额" prop="actualAmount">
-          <el-input v-model="auditForm.actualAmount" disabled />
-        </el-form-item>
-        <el-form-item label="审核状态" prop="approverStatus">
-          <el-select v-model="auditForm.approverStatus" placeholder="请选择审核状态">
-            <el-option v-for="dict in dict.type.record_withdrawal_status" :key="dict.value" :label="dict.label" :value="dict.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审核备注" prop="auditRemark">
-          <el-input v-model="auditForm.auditRemark" type="textarea" placeholder="请输入审核备注" />
+    <el-dialog title="审核提现" :visible.sync="auditOpen" width="800px" append-to-body>
+      <el-descriptions title="" :column="2" border>
+        <el-descriptions-item label="用户ID">{{ auditForm.mbId }}</el-descriptions-item>
+        <el-descriptions-item label="用户账号">{{ auditForm.mbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="提现通道">{{ auditForm.withdrawalChannel }}</el-descriptions-item>
+        <el-descriptions-item label="提现金额">{{ auditForm.withdrawalAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际金额">{{ auditForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="手续费率">{{ auditForm.freeRate }}</el-descriptions-item>
+        <el-descriptions-item label="手续费率">{{ auditForm.rates }}</el-descriptions-item>
+        <el-descriptions-item label="合营ID">{{ auditForm.hyId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人ID">{{ auditForm.inMbId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人账号">{{ auditForm.inMbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ auditForm.createTime }}</el-descriptions-item>
+      </el-descriptions>
+      
+      <el-form ref="auditForm" :model="auditForm" :rules="auditRules" label-width="120px" style="margin-top: 20px;">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="审核状态" prop="approverStatus">
+              <el-select v-model="auditForm.approverStatus" placeholder="请选择审核状态">
+                <el-option label="审核通过" :value="1" />
+                <el-option label="审核失败" :value="2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+        </el-row>
+        <el-form-item label="审核备注" prop="remark">
+          <el-input v-model="auditForm.remark" type="textarea" placeholder="请输入审核备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitAuditForm">确 定</el-button>
         <el-button @click="cancelAudit">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 查看详情弹窗 -->
+    <el-dialog title="查看提现详情" :visible.sync="viewOpen" width="800px" append-to-body>
+      <el-descriptions title="" :column="2" border>
+        <el-descriptions-item label="用户ID">{{ viewForm.mbId }}</el-descriptions-item>
+        <el-descriptions-item label="用户账号">{{ viewForm.mbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="提现通道">{{ viewForm.withdrawalChannel }}</el-descriptions-item>
+        <el-descriptions-item label="提现金额">{{ viewForm.withdrawalAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际金额">{{ viewForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="手续费率">{{ viewForm.freeRate }}</el-descriptions-item>
+        <el-descriptions-item label="手续费率">{{ viewForm.rates }}</el-descriptions-item>
+        <el-descriptions-item label="合营ID">{{ viewForm.hyId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人ID">{{ viewForm.inMbId }}</el-descriptions-item>
+        <el-descriptions-item label="邀请人账号">{{ viewForm.inMbAccount }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">{{ viewForm.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="审批人">{{ viewForm.approver }}</el-descriptions-item>
+        <el-descriptions-item label="审批状态">
+          <dict-tag :options="dict.type.record_withdrawal_status" :value="viewForm.approverStatus" />
+        </el-descriptions-item>
+        <el-descriptions-item label="审批时间">{{ viewForm.approverTime }}</el-descriptions-item>
+        <el-descriptions-item label="审批备注">{{ viewForm.remark }}</el-descriptions-item>
+      </el-descriptions>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="viewOpen = false">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -242,19 +284,52 @@ export default {
       },
       // 审核弹窗显示状态
       auditOpen: false,
+      // 查看详情弹窗显示状态
+      viewOpen: false,
       // 审核表单数据
       auditForm: {
         id: null,
+        mbId: null,
         mbAccount: null,
+        withdrawalChannel: null,
         withdrawalAmount: null,
         actualAmount: null,
+        freeRate: null,
+        rates: null,
+        approver: null,
+        approverTime: null,
         approverStatus: null,
-        auditRemark: null
+        hyId: null,
+        inMbId: null,
+        inMbAccount: null,
+        createTime: null,
+        remark: null
+      },
+      // 查看详情表单数据
+      viewForm: {
+        id: null,
+        mbId: null,
+        mbAccount: null,
+        withdrawalChannel: null,
+        withdrawalAmount: null,
+        actualAmount: null,
+        freeRate: null,
+        rates: null,
+        approver: null,
+        approverTime: null,
+        approverStatus: null,
+        hyId: null,
+        inMbId: null,
+        inMbAccount: null,
+        createTime: null
       },
       // 审核表单校验
       auditRules: {
         approverStatus: [
           { required: true, message: "审核状态不能为空", trigger: "change" }
+        ],
+        approverTime: [
+          { required: true, message: "审批时间不能为空", trigger: "change" }
         ]
       }
     };
@@ -369,11 +444,21 @@ export default {
     handleAudit(row) {
       this.auditForm = {
         id: row.id,
+        mbId: row.mbId,
         mbAccount: row.mbAccount,
+        withdrawalChannel: row.withdrawalChannel,
         withdrawalAmount: row.withdrawalAmount,
         actualAmount: row.actualAmount,
+        freeRate: row.freeRate,
+        rates: row.rates,
+        approver: row.approver,
+        approverTime: row.approverTime,
         approverStatus: row.approverStatus,
-        auditRemark: row.auditRemark || null
+        hyId: row.hyId,
+        inMbId: row.inMbId,
+        inMbAccount: row.inMbAccount,
+        createTime: row.createTime,
+        remark: row.remark || null
       };
       this.auditOpen = true;
     },
@@ -386,11 +471,21 @@ export default {
     resetAuditForm() {
       this.auditForm = {
         id: null,
+        mbId: null,
         mbAccount: null,
+        withdrawalChannel: null,
         withdrawalAmount: null,
         actualAmount: null,
+        freeRate: null,
+        rates: null,
+        approver: null,
+        approverTime: null,
         approverStatus: null,
-        auditRemark: null
+        hyId: null,
+        inMbId: null,
+        inMbAccount: null,
+        createTime: null,
+        remark: null
       };
       this.resetForm("auditForm");
     },
@@ -398,13 +493,34 @@ export default {
     submitAuditForm() {
       this.$refs["auditForm"].validate(valid => {
         if (valid) {
-          // TODO: 调用审核API
-          console.log('审核数据:', this.auditForm);
-          this.$modal.msgSuccess("审核成功");
-          this.auditOpen = false;
-          this.getList();
+          updateGameWithdrawalRecord(this.auditForm).then(response => {
+            this.$modal.msgSuccess("审核成功");
+            this.auditOpen = false;
+            this.getList();
+          });
         }
       });
+    },
+    /** 查看详情按钮操作 */
+    handleView(row) {
+      this.viewForm = {
+        id: row.id,
+        mbId: row.mbId,
+        mbAccount: row.mbAccount,
+        withdrawalChannel: row.withdrawalChannel,
+        withdrawalAmount: row.withdrawalAmount,
+        actualAmount: row.actualAmount,
+        freeRate: row.freeRate,
+        rates: row.rates,
+        approver: row.approver,
+        approverTime: row.approverTime,
+        approverStatus: row.approverStatus,
+        hyId: row.hyId,
+        inMbId: row.inMbId,
+        inMbAccount: row.inMbAccount,
+        createTime: row.createTime
+      };
+      this.viewOpen = true;
     }
   }
 };
