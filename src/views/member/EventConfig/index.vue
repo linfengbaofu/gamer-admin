@@ -130,7 +130,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="120" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -249,6 +249,14 @@ export default {
       },
       // 表单校验
       rules: {
+        usName: [{ required: true, message: "请输入英文名称", trigger: "blur" }],
+        jpName: [{ required: true, message: "请输入日文名称", trigger: "blur" }],
+        krName: [{ required: true, message: "请输入韩文名称", trigger: "blur" }],
+        twName: [{ required: true, message: "请输入中文繁体名称", trigger: "blur" }],
+        usImg: [{ required: true, message: "请上传英文图片", trigger: "change" }],
+        jpImg: [{ required: true, message: "请上传日文图片", trigger: "change" }],
+        krImg: [{ required: true, message: "请上传韩文图片", trigger: "change" }],
+        twImg: [{ required: true, message: "请上传中文繁体图片", trigger: "change" }],
         isOpen: [{ required: true, message: "请选择是否开启", trigger: "change" }]
       }
     };

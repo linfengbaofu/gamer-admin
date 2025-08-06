@@ -194,7 +194,7 @@ export default {
       },
       // 表单参数
       form: {
-        isOpen: 1
+        isOpen: '1'
       },
       // 表单校验
       rules: {
@@ -232,7 +232,7 @@ export default {
         rechargeCoin: null,
         type: null,
         income: null,
-        isOpen: 1,
+        isOpen: '1',
         createTime: null
       };
       this.resetForm("form");
@@ -263,27 +263,38 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
+      this.loading = true;
       getRechargeFirstConfig(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改首充奖励配置";
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.loading = true;
           if (this.form.id != null) {
             updateRechargeFirstConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+              this.loading = false;
+            }).catch(() => {
+              this.loading = false;
             });
           } else {
             addRechargeFirstConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.loading = false;
+            }).catch(() => {
+              this.loading = false;
             });
           }
         }
@@ -292,12 +303,16 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除首充奖励配置编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除首充奖励配置编号为"' + ids + '"的数据项？').then(() => {
+        this.loading = true;
         return delRechargeFirstConfig(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
