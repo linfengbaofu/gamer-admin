@@ -293,10 +293,12 @@
       </el-descriptions>
       
       <div style="margin-top: 20px;">
-        <h4>身份证照片</h4>
+        <h4>
+          <dict-tag :options="dict.type.id_type" :value="viewForm.idType"/>
+        </h4>
         <div style="display: flex; gap: 20px;">
           <div v-if="viewForm.idImage1">
-            <p>身份证正面照片：</p>
+            <p>正面照片：</p>
             <el-image 
               :src="viewForm.idImage1" 
               style="width: 200px; height: 120px; border: 1px solid #ddd;"
@@ -304,7 +306,7 @@
             />
           </div>
           <div v-if="viewForm.idImage2">
-            <p>身份证反面照片：</p>
+            <p>反面照片：</p>
             <el-image 
               :src="viewForm.idImage2" 
               style="width: 200px; height: 120px; border: 1px solid #ddd;"
