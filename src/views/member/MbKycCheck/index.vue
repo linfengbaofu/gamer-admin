@@ -261,9 +261,9 @@
             <el-radio :label="2">审核拒绝</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="审核备注" prop="remark">
+        <!-- <el-form-item label="审核备注" prop="remark">
           <el-input v-model="checkForm.remark" type="textarea" placeholder="请输入审核备注" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       
       <div slot="footer" class="dialog-footer">
@@ -550,7 +550,7 @@ export default {
           checkMbKycCheck({
             id: this.checkForm.id,
             status: this.checkForm.status,
-            remark: this.checkForm.remark
+            // remark: this.checkForm.remark
           }).then(response => {
             this.$modal.msgSuccess("审核成功");
             this.checkOpen = false;

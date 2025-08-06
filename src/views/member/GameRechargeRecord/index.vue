@@ -87,7 +87,7 @@
       <el-table-column label="充值金额" align="center" prop="rechargeAmount" />
       <el-table-column label="实际金额" align="center" prop="actualAmount" />
       <el-table-column label="赠送金额" align="center" prop="givePoints" />
-      <el-table-column label="审批状态" align="center" prop="approvalStatus" >
+      <el-table-column label="审批状态" align="center" prop="approvalStatus" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.record_recharge_status" :value="scope.row.approvalStatus" />
         </template>
@@ -103,7 +103,7 @@
       <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150"/>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"></el-table-column>
-      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" fixed="right" width="120" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -112,6 +112,7 @@
             @click="handleView(scope.row)"
           >查看</el-button>
           <el-button
+            v-if="scope.row.approvalStatus == '0'"
             size="mini"
             type="text"
             icon="el-icon-check"
@@ -204,11 +205,6 @@
                 <el-option label="审核通过" :value="1" />
                 <el-option label="审核失败" :value="2" />
               </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="审核人" prop="approverBy">
-              <el-input v-model="auditForm.approverBy" placeholder="请输入审核人" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -472,7 +468,7 @@ export default {
         rechargeAmount: row.rechargeAmount,
         actualAmount: row.actualAmount,
         givePoints: row.givePoints,
-        approvalStatus: row.approvalStatus,
+        approvalStatus: null,
         approverBy: row.approverBy,
         hyId: row.hyId,
         inMbId: row.inMbId,

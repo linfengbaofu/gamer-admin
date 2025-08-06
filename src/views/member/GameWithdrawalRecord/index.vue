@@ -80,7 +80,7 @@
       <el-table-column label="手续费率" align="center" prop="rates" />
       <el-table-column label="审批人" align="center" prop="approver" />
       <el-table-column label="审批时间" align="center" prop="approverTime" width="180"></el-table-column>
-      <el-table-column label="审批状态" align="center" prop="approverStatus" >
+      <el-table-column label="审批状态" align="center" prop="approverStatus" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.record_withdrawal_status" :value="scope.row.approverStatus" />
         </template>
@@ -89,7 +89,7 @@
       <el-table-column label="邀请人id" align="center" prop="inMbId" width="150"/>
       <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"></el-table-column>
-      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="120" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -98,6 +98,7 @@
             @click="handleView(scope.row)"
           >查看</el-button>
           <el-button
+            v-if="scope.row.approverStatus == '0'"
             size="mini"
             type="text"
             icon="el-icon-check"
@@ -453,7 +454,7 @@ export default {
         rates: row.rates,
         approver: row.approver,
         approverTime: row.approverTime,
-        approverStatus: row.approverStatus,
+        approverStatus: null,
         hyId: row.hyId,
         inMbId: row.inMbId,
         inMbAccount: row.inMbAccount,
