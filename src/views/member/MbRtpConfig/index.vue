@@ -136,6 +136,7 @@
             v-model="form.mbId"
             placeholder="请选择用户"
             @change="handleFormMemberChange"
+            style="width: 100%;"
           />
         </el-form-item>
         <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
@@ -149,7 +150,7 @@
           />
         </el-form-item>
         <el-form-item label="开关" prop="isOpen">
-          <el-select v-model="form.isOpen" placeholder="请选择开关">
+          <el-select v-model="form.isOpen" placeholder="请选择开关" style="width: 100%;">
             <el-option label="关" :value="1"></el-option>
             <el-option label="开" :value="2"></el-option>
           </el-select>
@@ -159,6 +160,8 @@
             v-model="form.gameId"
             placeholder="请选择游戏"
             @change="handleFormGameChange"
+            multiple
+            style="width: 100%;"
           />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -217,6 +220,7 @@ export default {
       // 表单参数
       form: {
         isOpen: 1,
+        gameId: [],
       },
       // 表单校验
       rules: {
@@ -269,7 +273,7 @@ export default {
         mbAccount: null,
         rtp: null,
         isOpen: 1,
-        gameId: null,
+        gameId: [],
         createTime: null,
         remark: null
       };
@@ -302,7 +306,10 @@ export default {
       this.reset();
       const id = row.id || this.ids
       getMbRtpConfig(id).then(response => {
-        this.form = response.data;
+        this.form = {
+          ...response.data,
+          gameId: response.data.gameId.split(',')
+        };
         this.open = true;
         this.title = "修改玩家rpt调控";
       });
@@ -316,15 +323,18 @@ export default {
             this.$message.error('RTP值必须在7000-10200之间');
             return;
           }
-          
+          const form = {
+            ...this.form,
+            gameId: this.form.gameId.join(',')
+          }
           if (this.form.id != null) {
-            updateMbRtpConfig(this.form).then(response => {
+            updateMbRtpConfig(form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addMbRtpConfig(this.form).then(response => {
+            addMbRtpConfig(form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

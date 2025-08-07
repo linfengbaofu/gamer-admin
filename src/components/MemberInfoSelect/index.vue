@@ -8,6 +8,8 @@
     :filterable="filterable"
     @change="handleChange"
     @clear="handleClear"
+    v-bind="$attrs"
+    v-on="$listeners"
   >
     <el-option
       v-for="item in memberInfoList"

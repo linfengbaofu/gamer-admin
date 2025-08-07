@@ -8,12 +8,14 @@
     :filterable="filterable"
     @change="handleChange"
     @clear="handleClear"
+    v-bind="$attrs"
+    v-on="$listeners" 
   >
     <el-option
       v-for="item in gameInfoList"
       :key="item.id"
-      :label="item.gameName || item.gameId"
-      :value="item.id"
+      :label="item.twName || item.usName"
+      :value="item.gameid"
     >
       <span style="float: left">{{ item.twName || item.usName }}</span>
     </el-option>
