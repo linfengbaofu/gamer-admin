@@ -99,13 +99,14 @@
       <el-table-column label="RTP" align="center" prop="rtp" />
       <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
       <!-- 70%-102% -->
-      <el-table-column label="开关 1 关 2开" align="center" prop="switch" >
+      <el-table-column label="开关" align="center" prop="switch" >
         <template slot-scope="scope">
           <span>{{ scope.row.switch == 1 ? '关' : '开' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="游戏id" align="center" prop="gameId" />
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -143,11 +144,15 @@
         <el-form-item label="用户账号" prop="mbAccount">
           <el-input v-model="form.mbAccount" placeholder="请输入用户账号" />
         </el-form-item>
-        <el-form-item label="rtp(7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%)" prop="rtp">
-          <el-input v-model="form.rtp" placeholder="请输入rtp(7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%)" />
+        <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
+        <el-form-item label="rtp" prop="rtp">
+          <el-input v-model="form.rtp" placeholder="请输入rtp" />
         </el-form-item>
-        <el-form-item label="开关 1 关 2开" prop="switch">
-          <el-input v-model="form.switch" placeholder="请输入开关 1 关 2开" />
+        <el-form-item label="开关" prop="switch">
+          <el-select v-model="form.switch" placeholder="请选择开关">
+            <el-option label="关" value="1"></el-option>
+            <el-option label="开" value="2"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="游戏id" prop="gameId">
           <el-input v-model="form.gameId" placeholder="请输入游戏id" />
