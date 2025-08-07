@@ -9,17 +9,17 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="erc链地址" prop="ERC20">
+      <el-form-item label="erc链地址" prop="erc20">
         <el-input
-          v-model="queryParams.ERC20"
+          v-model="queryParams.erc20"
           placeholder="请输入erc链地址"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="trc链地址" prop="TRC20">
+      <el-form-item label="trc链地址" prop="trc20">
         <el-input
-          v-model="queryParams.TRC20"
+          v-model="queryParams.trc20"
           placeholder="请输入trc链地址"
           clearable
           @keyup.enter.native="handleQuery"
@@ -81,8 +81,8 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="用户id" align="center" prop="mbId" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
-      <el-table-column label="erc链地址" align="center" prop="ERC20" />
-      <el-table-column label="trc链地址" align="center" prop="TRC20" />
+      <el-table-column label="erc链地址" align="center" prop="erc20" />
+      <el-table-column label="trc链地址" align="center" prop="trc20" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -117,11 +117,11 @@
         <el-form-item label="用户账号" prop="mbAccount">
           <el-input v-model="form.mbAccount" placeholder="请输入用户账号" />
         </el-form-item>
-        <el-form-item label="erc链地址" prop="ERC20">
-          <el-input v-model="form.ERC20" placeholder="请输入erc链地址" />
+        <el-form-item label="erc链地址" prop="r'p'c20">
+          <el-input v-model="form.erc20" placeholder="请输入erc链地址" />
         </el-form-item>
-        <el-form-item label="trc链地址" prop="TRC20">
-          <el-input v-model="form.TRC20" placeholder="请输入trc链地址" />
+        <el-form-item label="trc链地址" prop="trc20">
+          <el-input v-model="form.trc20" placeholder="请输入trc链地址" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -162,8 +162,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         mbAccount: null,
-        ERC20: null,
-        TRC20: null,
+        erc20: null,
+        trc20: null,
       },
       // 表单参数
       form: {},
@@ -195,8 +195,8 @@ export default {
       this.form = {
         mbId: null,
         mbAccount: null,
-        ERC20: null,
-        TRC20: null,
+        erc20: null,
+        trc20: null,
         createTime: null,
         updateTime: null
       };
