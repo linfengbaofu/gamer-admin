@@ -74,7 +74,7 @@ export default {
       try {
         const response = await listInfo({
           pageNum: 1,
-          pageSize: 1000 // 获取所有会员信息
+          pageSize: 9999 // 获取所有会员信息
         })
         this.memberInfoList = response.rows || []
       } catch (error) {

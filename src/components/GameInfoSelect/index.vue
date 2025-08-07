@@ -73,7 +73,7 @@ export default {
       try {
         const response = await listGameInfo({
           pageNum: 1,
-          pageSize: 1000 // 获取所有游戏信息
+          pageSize: 9999 // 获取所有游戏信息
         })
         this.gameInfoList = response.rows || []
       } catch (error) {

@@ -8,14 +8,17 @@
           @change="handleMemberChange"
         />
       </el-form-item>
-      <!-- <el-form-item label="rtp(7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%)" prop="rtp">
+      <el-form-item label="rtp" prop="rtp">
         <el-input
           v-model="queryParams.rtp"
-          placeholder="请输入rtp(7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%)"
+          placeholder="请输入rtp(7000-10200)"
+          type="number"
+          :min="7000"
+          :max="10200"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="开关" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择开关">
           <el-option label="关" value="1"></el-option>
@@ -137,12 +140,18 @@
         </el-form-item>
         <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
         <el-form-item label="rtp" prop="rtp">
-          <el-input v-model="form.rtp" placeholder="请输入rtp" />
+          <el-input 
+            v-model="form.rtp" 
+            placeholder="请输入rtp(7000-10200)" 
+            type="number"
+            :min="7000"
+            :max="10200"
+          />
         </el-form-item>
         <el-form-item label="开关" prop="isOpen">
           <el-select v-model="form.isOpen" placeholder="请选择开关">
-            <el-option label="关" value="1"></el-option>
-            <el-option label="开" value="2"></el-option>
+            <el-option label="关" :value="1"></el-option>
+            <el-option label="开" :value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="游戏" prop="gameId">
@@ -211,6 +220,26 @@ export default {
       },
       // 表单校验
       rules: {
+        rtp: [
+          { required: true, message: "RTP不能为空", trigger: "blur" },
+          { 
+            validator: (rule, value, callback) => {
+              if (value === null || value === undefined || value === '') {
+                callback(new Error('RTP不能为空'));
+              } else {
+                const numValue = Number(value);
+                if (isNaN(numValue)) {
+                  callback(new Error('RTP必须是数字'));
+                } else if (numValue < 7000 || numValue > 10200) {
+                  callback(new Error('RTP必须在7000-10200之间'));
+                } else {
+                  callback();
+                }
+              }
+            }, 
+            trigger: "blur" 
+          }
+        ]
       }
     };
   },
@@ -282,6 +311,12 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          // 额外验证RTP值
+          if (!this.validateRtpValue(this.form.rtp)) {
+            this.$message.error('RTP值必须在7000-10200之间');
+            return;
+          }
+          
           if (this.form.id != null) {
             updateMbRtpConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -297,6 +332,14 @@ export default {
           }
         }
       });
+    },
+    /** 验证RTP值 */
+    validateRtpValue(value) {
+      if (value === null || value === undefined || value === '') {
+        return false;
+      }
+      const numValue = Number(value);
+      return !isNaN(numValue) && numValue >= 7000 && numValue <= 10200;
     },
     /** 删除按钮操作 */
     handleDelete(row) {
