@@ -8,17 +8,7 @@
           @change="handleMemberChange"
         />
       </el-form-item>
-      <el-form-item label="rtp" prop="rtp">
-        <el-input
-          v-model="queryParams.rtp"
-          placeholder="请输入rtp(7000-10200)"
-          type="number"
-          :min="7000"
-          :max="10200"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="开关" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择开关">
           <el-option label="关" value="1"></el-option>
