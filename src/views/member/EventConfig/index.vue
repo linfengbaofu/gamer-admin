@@ -249,10 +249,10 @@ export default {
       },
       // 表单校验
       rules: {
-        usName: [{ required: true, message: "请输入英文名称", trigger: "blur" }],
-        jpName: [{ required: true, message: "请输入日文名称", trigger: "blur" }],
-        krName: [{ required: true, message: "请输入韩文名称", trigger: "blur" }],
-        twName: [{ required: true, message: "请输入中文繁体名称", trigger: "blur" }],
+        // usName: [{ required: true, message: "请输入英文名称", trigger: "blur" }],
+        // jpName: [{ required: true, message: "请输入日文名称", trigger: "blur" }],
+        // krName: [{ required: true, message: "请输入韩文名称", trigger: "blur" }],
+        // twName: [{ required: true, message: "请输入中文繁体名称", trigger: "blur" }],
         usImg: [{ required: true, message: "请上传英文图片", trigger: "change" }],
         jpImg: [{ required: true, message: "请上传日文图片", trigger: "change" }],
         krImg: [{ required: true, message: "请上传韩文图片", trigger: "change" }],

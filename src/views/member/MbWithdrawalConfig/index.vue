@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="90px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="用户账号" prop="mbAccount">
         <el-input
           v-model="queryParams.mbAccount"
@@ -9,18 +9,23 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="erc链地址" prop="erc20">
+      <el-form-item label="钱包名称" prop="walletName">
         <el-input
-          v-model="queryParams.erc20"
-          placeholder="请输入erc链地址"
+          v-model="queryParams.walletName"
+          placeholder="请输入钱包名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="trc链地址" prop="trc20">
+      <el-form-item label="币种" prop="coin">
+        <el-select v-model="queryParams.coin" placeholder="请选择币种">
+          <el-option v-for="item in dict.type.record_coin_type" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="钱包地址" prop="addr">
         <el-input
-          v-model="queryParams.trc20"
-          placeholder="请输入trc链地址"
+          v-model="queryParams.addr"
+          placeholder="请输入钱包地址"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -81,8 +86,18 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="用户id" align="center" prop="mbId" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
-      <el-table-column label="erc链地址" align="center" prop="erc20" />
-      <el-table-column label="trc链地址" align="center" prop="trc20" />
+      <el-table-column label="钱包名称" align="center" prop="walletName" />
+      <el-table-column label="币种" align="center" prop="coin" width="150">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_coin_type" :value="scope.row.coin" />
+        </template>
+      </el-table-column>
+      <el-table-column label="链" align="center" prop="chainType" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.chain_type" :value="scope.row.chainType" />
+        </template>
+      </el-table-column>
+      <el-table-column label="钱包地址" align="center" prop="addr" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -114,18 +129,29 @@
     <!-- 添加或修改用户提现配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="form.mbAccount" placeholder="请输入用户账号" />
+
+        <el-form-item label="用户" prop="mbId">
+          <member-info-select v-model="form.mbId" placeholder="请选择用户" @change="handleMemberChange" />
         </el-form-item>
-        <el-form-item label="erc链地址" prop="r'p'c20">
-          <el-input v-model="form.erc20" placeholder="请输入erc链地址" />
+        <el-form-item label="钱包名称" prop="walletName">
+          <el-input v-model="form.walletName" placeholder="请输入钱包名称" />
         </el-form-item>
-        <el-form-item label="trc链地址" prop="trc20">
-          <el-input v-model="form.trc20" placeholder="请输入trc链地址" />
+        <el-form-item label="币种" prop="coin">
+          <el-select v-model="form.coin" placeholder="请选择币种">
+            <el-option v-for="item in dict.type.record_coin_type" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="链" prop="chainType">
+          <el-select v-model="form.chainType" placeholder="请选择链">
+            <el-option v-for="item in dict.type.chain_type" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="钱包地址" prop="addr">
+          <el-input v-model="form.addr" placeholder="请输入钱包地址" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -134,9 +160,13 @@
 
 <script>
 import { listMbWithdrawalConfig, getMbWithdrawalConfig, delMbWithdrawalConfig, addMbWithdrawalConfig, updateMbWithdrawalConfig } from "@/api/member/MbWithdrawalConfig";
-
+import MemberInfoSelect from "@/components/MemberInfoSelect";
 export default {
+  dicts: ['chain_type', 'record_coin_type'],
   name: "MbWithdrawalConfig",
+  components: {
+    MemberInfoSelect
+  },
   data() {
     return {
       // 遮罩层
@@ -162,14 +192,42 @@ export default {
         pageNum: 1,
         pageSize: 10,
         mbAccount: null,
-        erc20: null,
-        trc20: null,
+        walletName: null,
+        coin: null,
+        chainType: null,
+        addr: null
       },
       // 表单参数
-      form: {},
+      form: {
+        mbId: null,
+        mbAccount: null,
+        createTime: null,
+        updateTime: null,
+        walletName: null,
+        coin: null,
+        chainType: null,
+        addr: null
+      },
       // 表单校验
       rules: {
-      }
+        mbId: [
+          { required: true, message: "用户不能为空", trigger: "blur" }
+        ],
+        walletName: [
+          { required: true, message: "钱包名称不能为空", trigger: "blur" }
+        ],
+        coin: [ 
+          { required: true, message: "币种不能为空", trigger: "blur" }
+        ],
+        chainType: [
+          { required: true, message: "链不能为空", trigger: "blur" }
+        ],
+        addr: [ 
+          { required: true, message: "钱包地址不能为空", trigger: "blur" }
+        ]
+      },
+      // 提交loading状态
+      submitLoading: false
     };
   },
   created() {
@@ -195,10 +253,12 @@ export default {
       this.form = {
         mbId: null,
         mbAccount: null,
-        erc20: null,
-        trc20: null,
         createTime: null,
-        updateTime: null
+        updateTime: null,
+        walletName: null,
+        coin: null,
+        chainType: null,
+        addr: null
       };
       this.resetForm("form");
     },
@@ -234,21 +294,32 @@ export default {
         this.title = "修改用户提现配置";
       });
     },
+
+    handleMemberChange(data) {
+      if (data.selectedItems) {
+        this.form.mbAccount = data.selectedItems.mbAccount
+      }
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.mbId != null) {
+          this.submitLoading = true;
+          if (this.form.id) {
             updateMbWithdrawalConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           } else {
             addMbWithdrawalConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           }
         }

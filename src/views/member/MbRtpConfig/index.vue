@@ -214,6 +214,15 @@ export default {
       },
       // 表单校验
       rules: {
+        mbId: [
+          { required: true, message: "用户不能为空", trigger: "blur" }
+        ],
+        isOpen: [
+          { required: true, message: "开关不能为空", trigger: "blur" }
+        ],
+        gameId: [
+          { required: true, message: "游戏不能为空", trigger: "blur" }
+        ],
         rtp: [
           { required: true, message: "RTP不能为空", trigger: "blur" },
           { 
