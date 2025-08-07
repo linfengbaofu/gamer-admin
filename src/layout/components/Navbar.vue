@@ -59,18 +59,22 @@
                 >
                   <div class="record-info">
                     <div class="record-row">
-                      <span class="label">订单号：</span>
-                      <span class="value">{{ record.recordNo }}</span>
+                      <span class="label">用户ID：</span>
+                      <span class="value">{{ record.mbId }}</span>
                     </div>
                     <div class="record-row">
-                      <span class="label">会员：</span>
+                      <span class="label">用户账号：</span>
                       <span class="value">{{ record.mbAccount }}</span>
                     </div>
                     <div class="record-row">
-                      <span class="label">金额：</span>
-                      <span class="amount">{{ record.rechargeAmout }}</span>
-                      <span class="label ml-2">积分：</span>
-                      <span class="points">{{ record.rechargePoints }}</span>
+                      <span class="label">充值金额：</span>
+                      <span class="amount">{{ record.rechargeAmount }}</span>
+                    </div>
+                    <div class="record-row">
+                      <span class="label">实际金额：</span>
+                      <span class="amount">{{ record.actualAmount }}</span>
+                      <span class="label ml-2">赠送金额：</span>
+                      <span class="points">{{ record.givePoints }}</span>
                     </div>
                   </div>
                 </div>
@@ -91,18 +95,22 @@
                 >
                   <div class="record-info">
                     <div class="record-row">
-                      <span class="label">订单号：</span>
-                      <span class="value">{{ record.recordNo }}</span>
+                      <span class="label">用户ID：</span>
+                      <span class="value">{{ record.mbId }}</span>
                     </div>
                     <div class="record-row">
-                      <span class="label">会员：</span>
+                      <span class="label">用户账号：</span>
                       <span class="value">{{ record.mbAccount }}</span>
                     </div>
                     <div class="record-row">
-                      <span class="label">金额：</span>
-                      <span class="amount">{{ record.withdrawalAmout }}</span>
-                      <span class="label ml-2">积分：</span>
-                      <span class="points">{{ record.withdrawalPoints }}</span>
+                      <span class="label">提现金额：</span>
+                      <span class="amount">{{ record.withdrawalAmount }}</span>
+                    </div>
+                    <div class="record-row">
+                      <span class="label">实际金额：</span>
+                      <span class="amount">{{ record.actualAmount }}</span>
+                      <span class="label ml-2">手续费率：</span>
+                      <span class="points">{{ record.freeRate }}</span>
                     </div>
                   </div>
                 </div>
@@ -138,9 +146,10 @@
 </template>
 
 <script>
+import { listGameRechargeRecord } from "@/api/member/GameRechargeRecord";
+import { listGameWithdrawalRecord } from "@/api/member/GameWithdrawalRecord";
+
 import { getInfo } from '@/api/login'
-import { listRechargeRecord } from '@/api/billard/rechargeRecord'
-import { listWithdrawalRecord } from '@/api/billard/withdrawalRecord'
 
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -366,9 +375,10 @@ export default {
       // 播放通知音效
       this.playNotificationSound();
       
-      const amount = rechargeRecord.rechargeAmout || 0;
-      const points = rechargeRecord.rechargePoints || 0;
-      const recordNo = rechargeRecord.recordNo || '';
+      const amount = rechargeRecord.rechargeAmount || 0;
+      const actualAmount = rechargeRecord.actualAmount || 0;
+      const givePoints = rechargeRecord.givePoints || 0;
+      const mbId = rechargeRecord.mbId || '';
       const mbAccount = rechargeRecord.mbAccount || '';
       
       // 根据支付类型显示
@@ -395,7 +405,7 @@ export default {
         
         this.$notify({
           title: '充值状态更新',
-          message: `订单号：${recordNo}<br/>充值金额：${amount}<br/>充值积分：${points}分<br/>支付方式：${payType}<br/>状态：${status}`,
+          message: `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>充值金额：${amount}<br/>实际金额：${actualAmount}<br/>赠送金额：${givePoints}<br/>支付方式：${payType}<br/>状态：${status}`,
           dangerouslyUseHTMLString: true,
           type: rechargeRecord.recordStatus === 1 ? 'success' : rechargeRecord.recordStatus === 2 ? 'error' : 'info',
           duration: 8000
@@ -412,7 +422,7 @@ export default {
         // 新充值申请通知
         this.$notify({
           title: '新充值申请',
-          message: `账号：${mbAccount}<br/>订单号：${recordNo}<br/>充值金额：${amount}<br/>充值积分：${points}分<br/>支付方式：${payType}`,
+          message: `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>充值金额：${amount}<br/>实际金额：${actualAmount}<br/>赠送金额：${givePoints}<br/>支付方式：${payType}`,
           dangerouslyUseHTMLString: true,
           type: 'info',
           duration: 8000
@@ -429,11 +439,12 @@ export default {
       // 播放通知音效
       this.playNotificationSound();
       
-      const amount = withdrawalRecord.withdrawalAmout || 0;
-      const points = withdrawalRecord.withdrawalPoints || 0;
-      const recordNo = withdrawalRecord.recordNo || '';
+      const amount = withdrawalRecord.withdrawalAmount || 0;
+      const actualAmount = withdrawalRecord.actualAmount || 0;
+      const freeRate = withdrawalRecord.freeRate || 0;
+      const rates = withdrawalRecord.rates || 0;
+      const mbId = withdrawalRecord.mbId || '';
       const mbAccount = withdrawalRecord.mbAccount || '';
-      const pumpAmount = withdrawalRecord.pumpAmount || 0;
       
       // 根据支付类型显示
       const payTypeMap = {
@@ -457,9 +468,9 @@ export default {
         
         const status = statusMap[withdrawalRecord.recordStatus] || "未知状态";
         
-        let message = `订单号：${recordNo}<br/>提现金额：${amount}<br/>提现积分：${points}分<br/>支付方式：${payType}`;
-        if (pumpAmount > 0) {
-          message += `<br/>手续费：${pumpAmount}`;
+        let message = `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>提现金额：${amount}<br/>实际金额：${actualAmount}<br/>手续费率：${freeRate}<br/>支付方式：${payType}`;
+        if (rates > 0) {
+          message += `<br/>手续费率：${rates}`;
         }
         message += `<br/>状态：${status}`;
         
@@ -480,9 +491,9 @@ export default {
         this.getRecentRecords();
       } else {
         // 新提现申请通知
-        let message = `账号：${mbAccount}<br/>订单号：${recordNo}<br/>提现金额：${amount}<br/>提现积分：${points}分<br/>支付方式：${payType}`;
-        if (pumpAmount > 0) {
-          message += `<br/>手续费：${pumpAmount}`;
+        let message = `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>提现金额：${amount}<br/>实际金额：${actualAmount}<br/>手续费率：${freeRate}<br/>支付方式：${payType}`;
+        if (rates > 0) {
+          message += `<br/>手续费率：${rates}`;
         }
         
         this.$notify({
@@ -498,36 +509,36 @@ export default {
       }
     },
     async getRecentRecords() {
-      // try {
-      //   // 获取最近5条待审核充值记录
-      //   const rechargeParams = {
-      //     pageNum: 1,
-      //     pageSize: 5,
-      //     recordStatus: 0  // 只查询待审核状态
-      //   }
-      //   const rechargeResponse = await listRechargeRecord(rechargeParams)
-      //   if (rechargeResponse.code === 200) {
-      //     this.recentRechargeRecords = rechargeResponse.rows || []
-      //     this.recentRechargeRecordstotal = rechargeResponse.total || 0
-      //   }
+      try {
+        // 获取最近5条待审核充值记录
+        const rechargeParams = {
+          pageNum: 1,
+          pageSize: 5,
+          approvalStatus: 0  // 只查询待审核状态
+        }
+        const rechargeResponse = await listGameRechargeRecord(rechargeParams)
+        if (rechargeResponse.code === 200) {
+          this.recentRechargeRecords = rechargeResponse.rows || []
+          this.recentRechargeRecordstotal = rechargeResponse.total || 0
+        }
 
-      //   // 获取最近5条待审核提现记录
-      //   const withdrawalParams = {
-      //     pageNum: 1,
-      //     pageSize: 5,
-      //     recordStatus: 0  // 只查询待审核状态
-      //   }
-      //   const withdrawalResponse = await listWithdrawalRecord(withdrawalParams)
-      //   if (withdrawalResponse.code === 200) {
-      //     this.recentWithdrawalRecords = withdrawalResponse.rows || []
-      //     this.recentWithdrawalRecordstotal = withdrawalResponse.total || 0
-      //   }
+        // 获取最近5条待审核提现记录
+        const withdrawalParams = {
+          pageNum: 1,
+          pageSize: 5,
+          approverStatus: 0  // 只查询待审核状态
+        }
+        const withdrawalResponse = await listGameWithdrawalRecord(withdrawalParams)
+        if (withdrawalResponse.code === 200) {
+          this.recentWithdrawalRecords = withdrawalResponse.rows || []
+          this.recentWithdrawalRecordstotal = withdrawalResponse.total || 0
+        }
 
-      //   // 计算未读数量（所有待审核记录）
-      //   this.updateUnreadCount()
-      // } catch (error) {
-      //   console.error('获取最近记录失败:', error)
-      // }
+        // 计算未读数量（所有待审核记录）
+        this.updateUnreadCount()
+      } catch (error) {
+        console.error('获取最近记录失败:', error)
+      }
     },
     updateUnreadCount() {
       // 由于已经只查询待审核状态，所以未读数量就是记录总数
@@ -537,12 +548,12 @@ export default {
       switch (command) {
         case 'recharge-more':
           this.$router.push({
-            name: 'RechargeRecord',
+            name: 'GameRechargeRecord',
           })
           break
         case 'withdrawal-more':
           this.$router.push({
-            name: 'WithdrawalRecord', 
+            name: 'GameWithdrawalRecord', 
           })
           break
       }
