@@ -86,7 +86,7 @@
     </el-row>
     <el-table v-loading="loading" :data="MbRtpConfigList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" :fixed="true"/>
       <el-table-column label="用户id" align="center" prop="mbId" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="RTP" align="center" prop="rtp" />
@@ -100,7 +100,7 @@
       <el-table-column label="游戏id" align="center" prop="gameId" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="创建时间" align="center" prop="createTime" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="120" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -219,7 +219,7 @@ export default {
       },
       // 表单参数
       form: {
-        isOpen: 1,
+        isOpen: 2,
         gameId: [],
       },
       // 表单校验
@@ -272,7 +272,7 @@ export default {
         mbId: null,
         mbAccount: null,
         rtp: null,
-        isOpen: 1,
+        isOpen: 2,
         gameId: [],
         createTime: null,
         remark: null
@@ -327,17 +327,34 @@ export default {
             ...this.form,
             gameId: this.form.gameId.join(',')
           }
+          
+          // 显示loading状态
+          const loading = this.$loading({
+            lock: true,
+            text: '正在提交...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+          
           if (this.form.id != null) {
             updateMbRtpConfig(form).then(response => {
+              loading.close();
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(error => {
+              loading.close();
+              console.error('修改失败:', error);
             });
           } else {
             addMbRtpConfig(form).then(response => {
+              loading.close();
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(error => {
+              loading.close();
+              console.error('新增失败:', error);
             });
           }
         }

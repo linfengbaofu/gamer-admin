@@ -280,8 +280,9 @@ export default {
         this.getList();
         this.$modal.msgSuccess("审批成功");
         this.open = false;
-        this.loading = false;
       }).catch(() => {
+        // 处理错误
+      }).finally(() => {
         this.loading = false;
       });
     },
@@ -299,10 +300,15 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.loading = true;
           auditRechargeRecord(this.form).then(response => {
             this.$modal.msgSuccess("审核成功");
             this.open = false;
             this.getList();
+          }).catch(() => {
+            // 处理错误
+          }).finally(() => {
+            this.loading = false;
           });
         }
       });
@@ -310,18 +316,25 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const recordIds = row.recordId || this.ids;
-      this.$modal.confirm('是否确认删除充值记录编号为"' + recordIds + '"的数据项？').then(function() {
+      this.$modal.confirmWithLoading('是否确认删除充值记录编号为"' + recordIds + '"的数据项？', '删除中...').then(() => {
         return delRechargeRecord(recordIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+        // 用户取消操作或操作失败
+      }).finally(() => {
+        this.$modal.closeLoading();
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
+      this.loading = true;
       this.download('billard/rechargeRecord/export', {
         ...this.handleParams()
-      }, `rechargeRecord_${new Date().getTime()}.xlsx`)
+      }, `rechargeRecord_${new Date().getTime()}.xlsx`).finally(() => {
+        this.loading = false;
+      });
     }
   }
 };
