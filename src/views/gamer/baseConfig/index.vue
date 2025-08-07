@@ -43,13 +43,15 @@
               clearable
             />
           </el-form-item>
-          <el-form-item label="充值播报" prop="rechargeBroadcast">
-            <el-input
-              type="number"
-              v-model="form.rechargeBroadcast"
-              placeholder="请输入充值播报金额"
-              clearable
-            />
+          <el-form-item label="充值播报金额" prop="rechargeBroadcast">
+            <el-tooltip content="充值多少U以上播报" placement="top">
+              <el-input
+                type="number"
+                v-model="form.rechargeBroadcast"
+                placeholder="请输入充值播报金额"
+                clearable
+              />
+            </el-tooltip>
           </el-form-item>
         </el-form>
       </el-tab-pane>

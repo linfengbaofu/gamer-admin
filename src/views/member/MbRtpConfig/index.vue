@@ -1,20 +1,11 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="用户id" prop="mbId">
-        <el-input
+      <el-form-item label="用户" prop="mbId">
+        <member-info-select
           v-model="queryParams.mbId"
-          placeholder="请输入用户id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户账号" prop="mbAccount">
-        <el-input
-          v-model="queryParams.mbAccount"
-          placeholder="请输入用户账号"
-          clearable
-          @keyup.enter.native="handleQuery"
+          placeholder="请选择用户"
+          @change="handleMemberChange"
         />
       </el-form-item>
       <!-- <el-form-item label="rtp(7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%)" prop="rtp">
@@ -25,19 +16,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="开关" prop="switch">
-        <el-select v-model="queryParams.switch" placeholder="请选择开关">
+      <el-form-item label="开关" prop="isOpen">
+        <el-select v-model="queryParams.isOpen" placeholder="请选择开关">
           <el-option label="关" value="1"></el-option>
           <el-option label="开" value="2"></el-option>
         </el-select>
 
       </el-form-item>
-      <el-form-item label="游戏id" prop="gameId">
-        <el-input
+      <el-form-item label="游戏" prop="gameId">
+        <game-info-select
           v-model="queryParams.gameId"
-          placeholder="请输入游戏id"
-          clearable
-          @keyup.enter.native="handleQuery"
+          placeholder="请选择游戏"
+          @change="handleGameChange"
         />
       </el-form-item>
       <el-form-item>
@@ -99,9 +89,9 @@
       <el-table-column label="RTP" align="center" prop="rtp" />
       <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
       <!-- 70%-102% -->
-      <el-table-column label="开关" align="center" prop="switch" >
+      <el-table-column label="开关" align="center" prop="isOpen" >
         <template slot-scope="scope">
-          <span>{{ scope.row.switch == 1 ? '关' : '开' }}</span>
+          <span>{{ scope.row.isOpen == '1' ? '关' : '开' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="游戏id" align="center" prop="gameId" />
@@ -138,24 +128,29 @@
     <!-- 添加或修改玩家rpt调控对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="mbId">
-          <el-input v-model="form.mbId" placeholder="请输入用户id" />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="form.mbAccount" placeholder="请输入用户账号" />
+        <el-form-item label="用户" prop="mbId">
+          <member-info-select
+            v-model="form.mbId"
+            placeholder="请选择用户"
+            @change="handleFormMemberChange"
+          />
         </el-form-item>
         <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
         <el-form-item label="rtp" prop="rtp">
           <el-input v-model="form.rtp" placeholder="请输入rtp" />
         </el-form-item>
-        <el-form-item label="开关" prop="switch">
-          <el-select v-model="form.switch" placeholder="请选择开关">
+        <el-form-item label="开关" prop="isOpen">
+          <el-select v-model="form.isOpen" placeholder="请选择开关">
             <el-option label="关" value="1"></el-option>
             <el-option label="开" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="游戏id" prop="gameId">
-          <el-input v-model="form.gameId" placeholder="请输入游戏id" />
+        <el-form-item label="游戏" prop="gameId">
+          <game-info-select
+            v-model="form.gameId"
+            placeholder="请选择游戏"
+            @change="handleFormGameChange"
+          />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -171,9 +166,15 @@
 
 <script>
 import { listMbRtpConfig, getMbRtpConfig, delMbRtpConfig, addMbRtpConfig, updateMbRtpConfig } from "@/api/member/MbRtpConfig";
+import GameInfoSelect from "@/components/GameInfoSelect";
+import MemberInfoSelect from "@/components/MemberInfoSelect";
 
 export default {
   name: "MbRtpConfig",
+  components: {
+    GameInfoSelect,
+    MemberInfoSelect
+  },
   data() {
     return {
       // 遮罩层
@@ -201,11 +202,13 @@ export default {
         mbId: null,
         mbAccount: null,
         rtp: null,
-        switch: null,
+        isOpen: null,
         gameId: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        isOpen: 1,
+      },
       // 表单校验
       rules: {
       }
@@ -236,7 +239,7 @@ export default {
         mbId: null,
         mbAccount: null,
         rtp: null,
-        switch: null,
+        isOpen: 1,
         gameId: null,
         createTime: null,
         remark: null
@@ -310,6 +313,26 @@ export default {
       this.download('member/MbRtpConfig/export', {
         ...this.queryParams
       }, `MbRtpConfig_${new Date().getTime()}.xlsx`)
+    },
+    /** 查询表单用户选择变化 */
+    handleMemberChange(data) {
+      if (data.selectedItems) {
+        this.queryParams.mbAccount = data.selectedItems.mbAccount
+      }
+    },
+    /** 查询表单游戏选择变化 */
+    handleGameChange(data) {
+      // 可以在这里处理游戏选择变化
+    },
+    /** 编辑表单用户选择变化 */
+    handleFormMemberChange(data) {
+      if (data.selectedItems) {
+        this.form.mbAccount = data.selectedItems.mbAccount
+      }
+    },
+    /** 编辑表单游戏选择变化 */
+    handleFormGameChange(data) {
+      // 可以在这里处理游戏选择变化
     }
   }
 };
