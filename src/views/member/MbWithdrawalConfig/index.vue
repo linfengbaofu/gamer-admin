@@ -131,23 +131,23 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 
         <el-form-item label="用户" prop="mbId">
-          <member-info-select v-model="form.mbId" placeholder="请选择用户" @change="handleMemberChange" />
+          <member-info-select style="width: 100%" v-model="form.mbId" placeholder="请选择用户" @change="handleMemberChange" />
         </el-form-item>
         <el-form-item label="钱包名称" prop="walletName">
-          <el-input v-model="form.walletName" placeholder="请输入钱包名称" />
+          <el-input style="width: 100%" v-model="form.walletName" placeholder="请输入钱包名称" />
         </el-form-item>
         <el-form-item label="币种" prop="coin">
-          <el-select v-model="form.coin" placeholder="请选择币种">
+          <el-select style="width: 100%" v-model="form.coin" placeholder="请选择币种">
             <el-option v-for="item in dict.type.record_coin_type" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="链" prop="chainType">
-          <el-select v-model="form.chainType" placeholder="请选择链">
+          <el-select style="width: 100%" v-model="form.chainType" placeholder="请选择链">
             <el-option v-for="item in dict.type.chain_type" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="钱包地址" prop="addr">
-          <el-input v-model="form.addr" placeholder="请输入钱包地址" />
+          <el-input style="width: 100%" v-model="form.addr" placeholder="请输入钱包地址" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
