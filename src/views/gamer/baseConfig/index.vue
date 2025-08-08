@@ -129,28 +129,28 @@ export default {
         activeTab: "basic",
         // 配置表单数据
         form: {
-          createBy: null,
-          createTime: null,
-          updateBy: null,
-          updateTime: null,
-          remark: null,
-          configId: null,
-          inviteCommissionRate: null,
-          betCommissionRate: null,
-          exchangeRate: null,
-          firstLevelCommissionRate: null,
-          secondLevelCommissionRate: null,
-          threeLevelCommissionRate: null,
-          lowerLevelTotalDeposit: null,
-          lowerLevelTotalBet: null,
-          minRecharge: null,
-          maxRecharge: null,
-          trcAddr: null,
-          ercAddr: null,
-          minWithdrawal: null,
-          maxWithdrawal: null,
-          withdrawalCommissionRate: null,
-          rechargeBroadcast: null
+          createBy: null, // 创建人
+          createTime: null, // 创建时间
+          updateBy: null, // 更新人
+          updateTime: null, // 更新时间
+          remark: null, // 备注
+          configId: null, // 配置ID
+          inviteCommissionRate: null, // 邀请抽水比例
+          betCommissionRate: null, // 下注反水比例
+          exchangeRate: null, // USDT兑换比率
+          firstLevelCommissionRate: null, // 一级佣金比例
+          secondLevelCommissionRate: null, // 二级佣金比例
+          threeLevelCommissionRate: null, // 三级佣金比例
+          lowerLevelTotalDeposit: null, // 下属累计存款
+          lowerLevelTotalBet: null, // 下属累计投注
+          minRecharge: null, // 最小充值金额
+          maxRecharge: null, // 最大充值金额
+          trcAddr: null, // 充值TRC20地址
+          ercAddr: null, // 充值ERC20地址
+          minWithdrawal: null, // 最小提现金额
+          maxWithdrawal: null, // 最大提现金额
+          withdrawalCommissionRate: null, // 提现手续费比例
+          rechargeBroadcast: null // 充值播报金额
         }
       };
   },
