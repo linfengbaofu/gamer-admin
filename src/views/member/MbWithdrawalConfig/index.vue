@@ -199,6 +199,7 @@ export default {
       },
       // 表单参数
       form: {
+        id: null,
         mbId: null,
         mbAccount: null,
         createTime: null,
@@ -251,6 +252,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        id: null,
         mbId: null,
         mbAccount: null,
         createTime: null,
@@ -287,8 +289,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const mbId = row.mbId || this.ids
-      getMbWithdrawalConfig(mbId).then(response => {
+      const id = row.id || this.ids
+      getMbWithdrawalConfig(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改用户提现配置";
