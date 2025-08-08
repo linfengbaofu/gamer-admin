@@ -353,14 +353,14 @@ export default {
         switch (message.wsType) {
           case 1:
             // 充值通知
-            if (message.bRechargeRecord) {
-              this.handleRechargeNotification(message.bRechargeRecord);
+            if (message.gameRechargeRecord) {
+              this.handleRechargeNotification(message.gameRechargeRecord);
             }
             break;
           case 2:
             // 提现通知
-            if (message.bwithdrawalRecord) {
-              this.handleWithdrawalNotification(message.bwithdrawalRecord);
+            if (message.gameWithdrawalRecord) {
+              this.handleWithdrawalNotification(message.gameWithdrawalRecord);
             }
             break;
           default:
@@ -381,17 +381,8 @@ export default {
       const mbId = rechargeRecord.mbId || '';
       const mbAccount = rechargeRecord.mbAccount || '';
       
-      // 根据支付类型显示
-      const payTypeMap = {
-        1: "支付宝",
-        2: "微信", 
-        3: "银行卡",
-        4: "TRC-20 USDT",
-        5: "ERC-20 USDT",
-        6: "云闪付",
 
-      };
-      const payType = payTypeMap[rechargeRecord.payType] || "其他";
+      const payType = rechargeRecord.rechargeChannel || rechargeRecord.withdrawalChannel || "其他";
       
       // 如果有recordStatus字段，根据状态显示不同通知
       if (rechargeRecord.recordStatus !== undefined) {
@@ -405,7 +396,8 @@ export default {
         
         this.$notify({
           title: '充值状态更新',
-          message: `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>充值金额：${amount}<br/>实际金额：${actualAmount}<br/>赠送金额：${givePoints}<br/>支付方式：${payType}<br/>状态：${status}`,
+          message: `
+          用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>充值金额：${amount}<br/>实际金额：${actualAmount}<br/>赠送金额：${givePoints}<br/>支付方式：${payType}<br/>状态：${status}<br/> 申请时间:${rechargeRecord.createTime}`,
           dangerouslyUseHTMLString: true,
           type: rechargeRecord.recordStatus === 1 ? 'success' : rechargeRecord.recordStatus === 2 ? 'error' : 'info',
           duration: 8000

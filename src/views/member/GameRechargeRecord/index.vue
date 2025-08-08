@@ -80,9 +80,9 @@
     </el-row>
 
     <el-table v-loading="loading" :data="GameRechargeRecordList" @selection-change="handleSelectionChange">
-      <el-table-column label="用户id" align="center" prop="mbId" :fixed="true"/>
-      <el-table-column label="用户账号" align="center" prop="mbAccount" />
-      <el-table-column label="充值地址" align="center" prop="paymentAddr" />
+      <el-table-column label="用户id" align="center" prop="mbId" :fixed="true" width="150"/>
+      <el-table-column label="用户账号" align="center" prop="mbAccount" width="150"/>
+      <el-table-column label="充值地址" align="center" prop="paymentAddr" width="350"/>
       <el-table-column label="充值渠道" align="center" prop="rechargeChannel" />
       <el-table-column label="充值金额" align="center" prop="rechargeAmount" />
       <el-table-column label="实际金额" align="center" prop="actualAmount" />
@@ -94,9 +94,6 @@
       </el-table-column>
       <el-table-column label="审批人" align="center" prop="approverBy" />
       <el-table-column label="审批时间" align="center" prop="approverTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.approverTime, '{y}-{m}-{d}') }}</span>
-        </template>
       </el-table-column>
       <el-table-column label="合营id" align="center" prop="hyId" />
       <el-table-column label="邀请人ID" align="center" prop="inMbId" width="150"/>
@@ -175,7 +172,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -194,7 +191,7 @@
         <el-descriptions-item label="邀请人ID">{{ auditForm.inMbId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人账号">{{ auditForm.inMbAccount }}</el-descriptions-item>
         <el-descriptions-item label="创建时间">{{ auditForm.createTime }}</el-descriptions-item>
-        <el-descriptions-item label="备注">{{ auditForm.remark }}</el-descriptions-item>
+        <!-- <el-descriptions-item label="备注">{{ auditForm.remark }}</el-descriptions-item> -->
       </el-descriptions>
       
       <el-form ref="auditForm" :model="auditForm" :rules="auditRules" label-width="120px" style="margin-top: 20px;">
@@ -203,7 +200,7 @@
             <el-form-item label="审核状态" prop="approvalStatus">
               <el-select v-model="auditForm.approvalStatus" placeholder="请选择审核状态">
                 <el-option label="审核通过" :value="1" />
-                <el-option label="审核失败" :value="2" />
+                <el-option label="审核不通过" :value="2" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -213,7 +210,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitAuditForm">确 定</el-button>
+        <el-button type="primary" :loading="auditSubmitLoading" @click="submitAuditForm">确 定</el-button>
         <el-button @click="cancelAudit">取 消</el-button>
       </div>
     </el-dialog>
@@ -256,6 +253,10 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 提交按钮loading状态
+      submitLoading: false,
+      // 审核提交按钮loading状态
+      auditSubmitLoading: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -425,17 +426,22 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.submitLoading = true;
           if (this.form.id != null) {
             updateGameRechargeRecord(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           } else {
             addGameRechargeRecord(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           }
         }
@@ -509,10 +515,13 @@ export default {
     submitAuditForm() {
       this.$refs["auditForm"].validate(valid => {
         if (valid) {
+          this.auditSubmitLoading = true;
           updateGameRechargeRecord(this.auditForm).then(response => {
             this.$modal.msgSuccess("审核成功");
             this.auditOpen = false;
             this.getList();
+          }).finally(() => {
+            this.auditSubmitLoading = false;
           });
         }
       });

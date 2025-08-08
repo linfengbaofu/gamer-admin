@@ -135,6 +135,7 @@
     <el-table v-loading="loading" :data="GameFundingRecordList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="id" align="center" prop="recordId" :fixed="true" width="150" />
+      <el-table-column label="游戏id" align="center" prop="gameId" width="150" />
       <el-table-column label="游戏名称" align="center" prop="gameName" width="150" />
 
       <el-table-column label="用户id" align="center" prop="mbId" width="150" />
@@ -158,7 +159,6 @@
         </template>
       </el-table-column>
       <el-table-column label="合营id" align="center" prop="hyId" width="150" />
-      <el-table-column label="游戏id" align="center" prop="gameId" width="150" />
       <el-table-column label="邀请人id" align="center" prop="inMbId" width="150" />
       <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150" />
       <el-table-column label="下注id" align="center" prop="pumpBetMbId" width="150" />
@@ -167,7 +167,7 @@
       <el-table-column label="下注积分" align="center" prop="pumpBetPoints" width="150" />
       <el-table-column label="赠送积分" align="center" prop="givePoints" width="150" />
       <el-table-column label="备注" align="center" prop="remark" width="150" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="150"  fixed="right"/>
     </el-table>
     
     <pagination

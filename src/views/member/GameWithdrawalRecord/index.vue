@@ -67,17 +67,14 @@
     </el-row>
 
     <el-table v-loading="loading" :data="GameWithdrawalRecordList" @selection-change="handleSelectionChange">
-      <el-table-column label="用户id" align="center" prop="mbId" :fixed="true"/>
-      <el-table-column label="用户账号" align="center" prop="mbAccount" />
+      <el-table-column label="用户id" align="center" prop="mbId" :fixed="true" width="150"/>
+      <el-table-column label="用户账号" align="center" prop="mbAccount" width="150"/>
       <el-table-column label="提现通道" align="center" prop="withdrawalChannel" >
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.record_withdrawal_channel" :value="scope.row.withdrawalChannel" />
-        </template>
+        {{ scope.row.withdrawalChannel }}
       </el-table-column>
       <el-table-column label="提现金额" align="center" prop="withdrawalAmount" />
       <el-table-column label="实际金额" align="center" prop="actualAmount" />
       <el-table-column label="手续费率" align="center" prop="freeRate" />
-      <el-table-column label="手续费率" align="center" prop="rates" />
       <el-table-column label="审批人" align="center" prop="approver" />
       <el-table-column label="审批时间" align="center" prop="approverTime" width="180"></el-table-column>
       <el-table-column label="审批状态" align="center" prop="approverStatus" width="150">
@@ -138,9 +135,6 @@
         <el-form-item label="手续费率" prop="freeRate">
           <el-input v-model="form.freeRate" placeholder="请输入手续费率" />
         </el-form-item>
-        <el-form-item label="手续费率" prop="rates">
-          <el-input v-model="form.rates" placeholder="请输入手续费率" />
-        </el-form-item>
         <el-form-item label="审批人" prop="approver">
           <el-input v-model="form.approver" placeholder="请输入审批人" />
         </el-form-item>
@@ -177,7 +171,6 @@
         <el-descriptions-item label="提现金额">{{ auditForm.withdrawalAmount }}</el-descriptions-item>
         <el-descriptions-item label="实际金额">{{ auditForm.actualAmount }}</el-descriptions-item>
         <el-descriptions-item label="手续费率">{{ auditForm.freeRate }}</el-descriptions-item>
-        <el-descriptions-item label="手续费率">{{ auditForm.rates }}</el-descriptions-item>
         <el-descriptions-item label="合营ID">{{ auditForm.hyId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人ID">{{ auditForm.inMbId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人账号">{{ auditForm.inMbAccount }}</el-descriptions-item>
@@ -215,7 +208,6 @@
         <el-descriptions-item label="提现金额">{{ viewForm.withdrawalAmount }}</el-descriptions-item>
         <el-descriptions-item label="实际金额">{{ viewForm.actualAmount }}</el-descriptions-item>
         <el-descriptions-item label="手续费率">{{ viewForm.freeRate }}</el-descriptions-item>
-        <el-descriptions-item label="手续费率">{{ viewForm.rates }}</el-descriptions-item>
         <el-descriptions-item label="合营ID">{{ viewForm.hyId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人ID">{{ viewForm.inMbId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人账号">{{ viewForm.inMbAccount }}</el-descriptions-item>
@@ -270,7 +262,6 @@ export default {
         withdrawalAmount: null,
         actualAmount: null,
         freeRate: null,
-        rates: null,
         approver: null,
         approverTime: null,
         approverStatus: null,
@@ -296,7 +287,6 @@ export default {
         withdrawalAmount: null,
         actualAmount: null,
         freeRate: null,
-        rates: null,
         approver: null,
         approverTime: null,
         approverStatus: null,
@@ -315,7 +305,6 @@ export default {
         withdrawalAmount: null,
         actualAmount: null,
         freeRate: null,
-        rates: null,
         approver: null,
         approverTime: null,
         approverStatus: null,
@@ -363,7 +352,6 @@ export default {
         withdrawalAmount: null,
         actualAmount: null,
         freeRate: null,
-        rates: null,
         approver: null,
         approverTime: null,
         approverStatus: null,
@@ -451,7 +439,6 @@ export default {
         withdrawalAmount: row.withdrawalAmount,
         actualAmount: row.actualAmount,
         freeRate: row.freeRate,
-        rates: row.rates,
         approver: row.approver,
         approverTime: row.approverTime,
         approverStatus: null,
@@ -478,7 +465,6 @@ export default {
         withdrawalAmount: null,
         actualAmount: null,
         freeRate: null,
-        rates: null,
         approver: null,
         approverTime: null,
         approverStatus: null,
@@ -512,7 +498,6 @@ export default {
         withdrawalAmount: row.withdrawalAmount,
         actualAmount: row.actualAmount,
         freeRate: row.freeRate,
-        rates: row.rates,
         approver: row.approver,
         approverTime: row.approverTime,
         approverStatus: row.approverStatus,
