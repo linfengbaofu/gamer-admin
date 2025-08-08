@@ -114,7 +114,7 @@
             type="text"
             icon="el-icon-check"
             @click="handleAudit(scope.row)"
-            v-hasPermi="['member:GameRechargeRecord:audit']"
+            v-hasPermi="['member:GameRechargeRecord:edit']"
           >审核</el-button>
         </template>
       </el-table-column>

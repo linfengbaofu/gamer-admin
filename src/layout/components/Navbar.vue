@@ -110,7 +110,7 @@
                       <span class="label">实际金额：</span>
                       <span class="amount">{{ record.actualAmount }}</span>
                       <span class="label ml-2">手续费率：</span>
-                      <span class="points">{{ record.freeRate }}</span>
+                      <span class="points">{{ record.rates }}</span>
                     </div>
                   </div>
                 </div>
@@ -433,7 +433,6 @@ export default {
       
       const amount = withdrawalRecord.withdrawalAmount || 0;
       const actualAmount = withdrawalRecord.actualAmount || 0;
-      const freeRate = withdrawalRecord.freeRate || 0;
       const rates = withdrawalRecord.rates || 0;
       const mbId = withdrawalRecord.mbId || '';
       const mbAccount = withdrawalRecord.mbAccount || '';
@@ -460,7 +459,7 @@ export default {
         
         const status = statusMap[withdrawalRecord.recordStatus] || "未知状态";
         
-        let message = `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>提现金额：${amount}<br/>实际金额：${actualAmount}<br/>手续费率：${freeRate}<br/>支付方式：${payType}`;
+        let message = `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>提现金额：${amount}<br/>实际金额：${actualAmount}<br/>手续费率：${rates}<br/>支付方式：${payType}`;
         if (rates > 0) {
           message += `<br/>手续费率：${rates}`;
         }
@@ -483,7 +482,7 @@ export default {
         this.getRecentRecords();
       } else {
         // 新提现申请通知
-        let message = `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>提现金额：${amount}<br/>实际金额：${actualAmount}<br/>手续费率：${freeRate}<br/>支付方式：${payType}`;
+        let message = `用户ID：${mbId}<br/>用户账号：${mbAccount}<br/>提现金额：${amount}<br/>实际金额：${actualAmount}<br/>手续费率：${rates}<br/>支付方式：${payType}`;
         if (rates > 0) {
           message += `<br/>手续费率：${rates}`;
         }
