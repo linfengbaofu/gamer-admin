@@ -53,6 +53,12 @@
               />
             </el-tooltip>
           </el-form-item>
+          <el-form-item label="是否开启检验邮箱验证码" prop="isCheckCode">
+            <el-radio-group v-model="form.isCheckCode">
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
+            </el-radio-group>
+          </el-form-item>
         </el-form>
       </el-tab-pane>
 
@@ -129,6 +135,7 @@ export default {
         activeTab: "basic",
         // 配置表单数据
         form: {
+          id: null, // 配置ID
           createBy: null, // 创建人
           createTime: null, // 创建时间
           updateBy: null, // 更新人
@@ -150,7 +157,8 @@ export default {
           minWithdrawal: null, // 最小提现金额
           maxWithdrawal: null, // 最大提现金额
           withdrawalCommissionRate: null, // 提现手续费比例
-          rechargeBroadcast: null // 充值播报金额
+          rechargeBroadcast: null, // 充值播报金额
+          isCheckCode: 0 // 是否开启检验邮箱验证码(0-否;1-是)
         }
       };
   },
@@ -173,7 +181,8 @@ export default {
             ercAddr: data.ercAddr || null,
             minWithdrawal: data.minWithdrawal || null,
             maxWithdrawal: data.maxWithdrawal || null,
-            rechargeBroadcast: data.rechargeBroadcast || null
+            rechargeBroadcast: data.rechargeBroadcast || null,
+            isCheckCode: data.isCheckCode !== undefined ? data.isCheckCode : 0
           };
         }
       });
@@ -192,7 +201,8 @@ export default {
         ercAddr: this.form.ercAddr || null,
         minWithdrawal: this.form.minWithdrawal || null,
         maxWithdrawal: this.form.maxWithdrawal || null,
-        rechargeBroadcast: this.form.rechargeBroadcast || null
+        rechargeBroadcast: this.form.rechargeBroadcast || null,
+        isCheckCode: this.form.isCheckCode !== undefined ? this.form.isCheckCode : 0
       };
       updateBaseConfig(submitData).then(response => {
         this.$modal.msgSuccess("更新成功");

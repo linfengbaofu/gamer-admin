@@ -72,6 +72,13 @@ export const constantRoutes = [
         name: 'Index',
         meta: { title: '首页', icon: 'dashboard', affix: true }
       },
+      {
+        path: 'user-hierarchy',
+        hidden: true,
+        component: () => import('@/views/system/user/hierarchy'),
+        name: 'UserHierarchy',
+        meta: { title: '用户上下级关系', activeMenu: '/user-hierarchy' } 
+      }
       
     ]
   },
@@ -107,6 +114,7 @@ export const dynamicRoutes = [
       }
     ]
   },
+
   {
     path: '/system/role-auth',
     component: Layout,
