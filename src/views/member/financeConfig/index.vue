@@ -31,38 +31,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="最小充值" prop="minRecharge">
-        <el-input
-          v-model="queryParams.minRecharge"
-          placeholder="请输入最小充值"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="最小提现" prop="minWithdrawal">
-        <el-input
-          v-model="queryParams.minWithdrawal"
-          placeholder="请输入最小提现"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="精度" prop="accuracy">
-        <el-input
-          v-model="queryParams.accuracy"
-          placeholder="请输入精度"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="充值提现费率" prop="rates">
-        <el-input
-          v-model="queryParams.rates"
-          placeholder="请输入充值提现费率"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item>
         <el-button
           type="primary"
@@ -94,16 +63,17 @@
 
     <el-table v-loading="loading" :data="financeConfigList">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column label="配置id" align="center" prop="assetsId" :fixed="true"/>
+
       <el-table-column label="封面" align="center" prop="assetsImg">
         <template slot-scope="scope">
-          <image-preview :src="scope.row.assetsImg" style="width: 100px; height: 100px" />
+          <image-preview :src="scope.row.assetsImg" style="width: 50px; height: 50px" />
         </template>
       </el-table-column>
-      <el-table-column label="配置id" align="center" prop="assetsId" />
       <el-table-column label="链" align="center" prop="assetsChain" />
       <el-table-column label="币种" align="center" prop="coin" />
-      <el-table-column label="合约地址" align="center" prop="contractAddr" />
-      <el-table-column label="充值地址" align="center" prop="payAddr" />
+      <el-table-column label="合约地址" align="center" prop="contractAddr" width="350"/>
+      <el-table-column label="充值地址" align="center" prop="payAddr" width="350"/>
       <el-table-column label="充值类型" align="center" prop="rechargeType">
         <template slot-scope="scope">
           <dict-tag
@@ -112,24 +82,27 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="提现类型" align="center" prop="withdrawalType">
+      <!-- <el-table-column label="提现类型" align="center" prop="withdrawalType">
         <template slot-scope="scope">
           <dict-tag
             :options="dict.type.withdrawal_type"
             :value="scope.row.withdrawalType"
           />
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="最小充值" align="center" prop="minRecharge" />
-      <el-table-column label="最小提现" align="center" prop="minWithdrawal" />
-      <el-table-column label="精度" align="center" prop="accuracy" />
+      <!-- <el-table-column label="最小提现" align="center" prop="minWithdrawal" /> -->
+      <!-- <el-table-column label="精度" align="center" prop="accuracy" /> -->
 
-      <el-table-column label="充值提现费率" align="center" prop="rates" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="充值提现费率" align="center" prop="rates" show-overflow-tooltip="" width="150"/>
+      <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
+      <el-table-column label="创建时间" align="center" prop="createTime" width="150"/>
       <el-table-column
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
+        width="150"
+        fixed="right"
       >
         <template slot-scope="scope">
           <el-button

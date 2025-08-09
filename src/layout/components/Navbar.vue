@@ -7,9 +7,9 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <div v-if="userInfo.agentType === 1" class="right-menu-item" style="color: #409EFF;font-size: 12px;">
+        <!-- <div v-if="userInfo.agentType === 1" class="right-menu-item" style="color: #409EFF;font-size: 12px;">
           积分：{{ userInfo.mbPoint }}
-        </div>
+        </div> -->
         <search id="header-search" class="right-menu-item" />
 
         <!-- <el-tooltip content="源码地址" effect="dark" placement="bottom">
@@ -221,13 +221,14 @@ export default {
     this.initNotificationAudio()
     
     // 组件挂载时立即获取用户信息
-    this.getUserInfo().then(() => {
-      this.join()
-      this.getRecentRecords()
-    })
+    // this.getUserInfo().then(() => {
+    //   this.join()
+    //   this.getRecentRecords()
+    // })
+    this.getRecentRecords()
     // 设置定时器，每10秒调用一次
     this.timer = setInterval(() => {
-      this.getUserInfo()
+      // this.getUserInfo()
       this.getRecentRecords()
     }, 10000)
   },
@@ -405,7 +406,7 @@ export default {
         
         // 如果充值成功，刷新用户信息
         if (rechargeRecord.recordStatus === 1) {
-          this.getUserInfo();
+          // this.getUserInfo();
         }
         
         // 更新记录列表
@@ -475,7 +476,7 @@ export default {
         
         // 如果提现成功，刷新用户信息
         if (withdrawalRecord.recordStatus === 1) {
-          this.getUserInfo();
+          // this.getUserInfo();
         }
         
         // 更新记录列表

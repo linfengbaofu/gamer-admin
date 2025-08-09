@@ -84,8 +84,8 @@
                 <template slot-scope="scope" v-if="scope.row.userId !== '1'">
                   <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
                   <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']">删除</el-button>
-                  <el-button size="mini" type="text" icon="el-icon-coin" @click="handleAddPoints(scope.row)" v-hasPermi="['member:transferPoints']">手动充值</el-button>
-                  <el-button size="mini" type="text" icon="el-icon-remove" @click="handleDeductPoints(scope.row)" v-hasPermi="['member:transferPoints']">手动退分</el-button>
+                  <!-- <el-button size="mini" type="text" icon="el-icon-coin" @click="handleAddPoints(scope.row)" v-hasPermi="['member:transferPoints']">手动充值</el-button>
+                  <el-button size="mini" type="text" icon="el-icon-remove" @click="handleDeductPoints(scope.row)" v-hasPermi="['member:transferPoints']">手动退分</el-button> -->
 
                   <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
                     <el-button size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-button>
