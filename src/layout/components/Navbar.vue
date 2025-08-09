@@ -447,7 +447,7 @@ export default {
         6: "云闪付",
 
       };
-      const payType = payTypeMap[withdrawalRecord.payType] || "其他";
+      const payType = withdrawalRecord.withdrawalChannel || "其他";
       
       // 如果有recordStatus字段，根据状态显示不同通知
       if (withdrawalRecord.recordStatus !== undefined) {

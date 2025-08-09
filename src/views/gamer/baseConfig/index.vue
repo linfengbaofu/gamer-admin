@@ -75,12 +75,12 @@
               clearable
             />
           </el-form-item>
-          <el-form-item label="充值TRC20地址" prop="trcAddr">
+          <!-- <el-form-item label="充值TRC20地址" prop="trcAddr">
             <el-input v-model="form.trcAddr" placeholder="请输入TRC20地址" clearable />
           </el-form-item>
           <el-form-item label="充值ERC20地址" prop="ercAddr">
             <el-input v-model="form.ercAddr" placeholder="请输入ERC20地址" clearable />
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </el-tab-pane>
 

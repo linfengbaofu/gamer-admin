@@ -106,6 +106,12 @@
             @click="handleAudit(scope.row)"
             v-hasPermi="['billard:cooperationAgentRecord:edit']"
           >审核</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleDelete(scope.row)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
