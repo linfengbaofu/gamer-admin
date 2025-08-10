@@ -144,13 +144,13 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['member:info:edit']"
           >修改</el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-edit-outline"
             @click="handleAddPoint(scope.row)"
             v-hasPermi="['member:info:edit']"
-          >手动上下分</el-button>
+          >手动上下分</el-button> -->
           <el-button
             size="mini"
             type="text"

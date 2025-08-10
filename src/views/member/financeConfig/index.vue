@@ -96,7 +96,7 @@
 
       <el-table-column label="充值提现费率" align="center" prop="rates" show-overflow-tooltip="" width="150"/>
       <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
-      <el-table-column label="创建时间" align="center" prop="createTime" width="150"/>
+      <!-- <el-table-column label="创建时间" align="center" prop="createTime" width="150"/> -->
       <el-table-column
         label="操作"
         align="center"
@@ -255,11 +255,18 @@ export default {
         withdrawalType: null,
         minRecharge: null,
         minWithdrawal: null,
-        accuracy: null,
         rates: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        rechargeType: 1,
+        withdrawalType: 0,
+        // minRecharge: 0,
+        // minWithdrawal: 0,
+        accuracy: 6,
+        // rates: 0,
+        // remark: null,
+      },
       // 表单校验
       rules: {
         assetsChain: [
@@ -271,7 +278,7 @@ export default {
         payAddr: [{ required: true, message: "充值地址不能为空", trigger: "blur" }],
         minRecharge: [{ required: true, message: "最小充值不能为空", trigger: "blur" }],
         minWithdrawal: [{ required: true, message: "最小提现不能为空", trigger: "blur" }],
-        accuracy: [{ required: true, message: "精度不能为空", trigger: "blur" }],
+        // accuracy: [{ required: true, message: "精度不能为空", trigger: "blur" }],
         rates: [{ required: true, message: "充值提现费率不能为空", trigger: "blur" }],
         rechargeType: [
           { required: true, message: "充值类型不能为空", trigger: "blur" },
@@ -321,11 +328,11 @@ export default {
         assetsImg: null,
         contractAddr: null,
         payAddr: null,
-        rechargeType: [],
-        withdrawalType: [],
+        rechargeType: 1,
+        withdrawalType: 0,
         minRecharge: null,
         minWithdrawal: null,
-        accuracy: null,
+        accuracy: 6,
         rates: null,
         remark: null,
       };
