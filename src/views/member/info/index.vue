@@ -93,7 +93,7 @@
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
       
       <el-table-column label="会员ID" align="center" prop="mbId" show-overflow-tooltip width="150" :fixed="true"/>
-      <el-table-column label="平台积分" align="center" prop="mbPoint" show-overflow-tooltip />
+      <el-table-column label="平台余额" align="center" prop="mbPoint" show-overflow-tooltip />
 
       <el-table-column label="账号" align="center" prop="mbAccount" show-overflow-tooltip width="150"/>
       <el-table-column label="合营id" align="center" prop="hyId" show-overflow-tooltip width="150"/>

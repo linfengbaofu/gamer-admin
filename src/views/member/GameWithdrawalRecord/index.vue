@@ -71,9 +71,10 @@
       <el-table-column label="用户账号" align="center" prop="mbAccount" width="150"/>
       <el-table-column label="提现通道" align="center" prop="withdrawalChannel" >
       </el-table-column>
-      <el-table-column label="提现地址" align="center" prop="withdrawalAddr" />
-      <el-table-column label="提现金额" align="center" prop="withdrawalAmount" />
-      <el-table-column label="实际金额" align="center" prop="actualAmount" />
+      <el-table-column label="提现地址" align="center" prop="withdrawalAddr" width="400"/>
+      <el-table-column label="提现点数" align="center" prop="withdrawalAmount" />
+      <el-table-column label="实际到账币种金额" align="center" prop="actualAmount" />
+      <el-table-column label="汇率" align="center" prop="freeRate" />
       <el-table-column label="手续费率" align="center" prop="rates" />
       <el-table-column label="审批人" align="center" prop="approver" />
       <el-table-column label="审批时间" align="center" prop="approverTime" width="180"></el-table-column>
@@ -168,8 +169,9 @@
         <el-descriptions-item label="用户ID">{{ auditForm.mbId }}</el-descriptions-item>
         <el-descriptions-item label="用户账号">{{ auditForm.mbAccount }}</el-descriptions-item>
         <el-descriptions-item label="提现通道">{{ auditForm.withdrawalChannel }}</el-descriptions-item>
-        <el-descriptions-item label="提现金额">{{ auditForm.withdrawalAmount }}</el-descriptions-item>
-        <el-descriptions-item label="实际金额">{{ auditForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="提现点数">{{ auditForm.withdrawalAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际到账币种金额">{{ auditForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="汇率">{{ auditForm.freeRate }}</el-descriptions-item>
         <el-descriptions-item label="手续费率">{{ auditForm.rates }}</el-descriptions-item>
         <el-descriptions-item label="合营ID">{{ auditForm.hyId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人ID">{{ auditForm.inMbId }}</el-descriptions-item>
@@ -205,8 +207,9 @@
         <el-descriptions-item label="用户ID">{{ viewForm.mbId }}</el-descriptions-item>
         <el-descriptions-item label="用户账号">{{ viewForm.mbAccount }}</el-descriptions-item>
         <el-descriptions-item label="提现通道">{{ viewForm.withdrawalChannel }}</el-descriptions-item>
-        <el-descriptions-item label="提现金额">{{ viewForm.withdrawalAmount }}</el-descriptions-item>
-        <el-descriptions-item label="实际金额">{{ viewForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="提现点数">{{ viewForm.withdrawalAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际到账币种金额">{{ viewForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="汇率">{{ viewForm.freeRate }}</el-descriptions-item>
         <el-descriptions-item label="手续费率">{{ viewForm.rates }}</el-descriptions-item>
         <el-descriptions-item label="合营ID">{{ viewForm.hyId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人ID">{{ viewForm.inMbId }}</el-descriptions-item>

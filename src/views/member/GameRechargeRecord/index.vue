@@ -84,8 +84,9 @@
       <el-table-column label="用户账号" align="center" prop="mbAccount" width="150"/>
       <el-table-column label="充值地址" align="center" prop="paymentAddr" width="350"/>
       <el-table-column label="充值渠道" align="center" prop="rechargeChannel" />
-      <el-table-column label="充值金额" align="center" prop="rechargeAmount" />
-      <el-table-column label="实际金额" align="center" prop="actualAmount" />
+      <el-table-column label="充值金额U" align="center" prop="rechargeAmount" width="150"/>
+      <el-table-column label="实际到账币种金额" align="center" prop="actualAmount" width="200"/>
+      <el-table-column label="汇率" align="center" prop="freeRate" />
       <el-table-column label="赠送金额" align="center" prop="givePoints" />
       <el-table-column label="审批状态" align="center" prop="approvalStatus" width="150">
         <template slot-scope="scope">
@@ -184,8 +185,9 @@
         <el-descriptions-item label="用户账号">{{ auditForm.mbAccount }}</el-descriptions-item>
         <el-descriptions-item label="充值地址">{{ auditForm.paymentAddr }}</el-descriptions-item>
         <el-descriptions-item label="充值渠道">{{ auditForm.rechargeChannel }}</el-descriptions-item>
-        <el-descriptions-item label="充值金额">{{ auditForm.rechargeAmount }}</el-descriptions-item>
-        <el-descriptions-item label="实际金额">{{ auditForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="充值金额U">{{ auditForm.rechargeAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际到账币种金额">{{ auditForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="汇率">{{ auditForm.freeRate }}</el-descriptions-item>
         <el-descriptions-item label="赠送金额">{{ auditForm.givePoints }}</el-descriptions-item>
         <el-descriptions-item label="合营ID">{{ auditForm.hyId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人ID">{{ auditForm.inMbId }}</el-descriptions-item>
@@ -222,8 +224,9 @@
         <el-descriptions-item label="用户账号">{{ viewForm.mbAccount }}</el-descriptions-item>
         <el-descriptions-item label="充值地址">{{ viewForm.paymentAddr }}</el-descriptions-item>
         <el-descriptions-item label="充值渠道">{{ viewForm.rechargeChannel }}</el-descriptions-item>
-        <el-descriptions-item label="充值金额">{{ viewForm.rechargeAmount }}</el-descriptions-item>
-        <el-descriptions-item label="实际金额">{{ viewForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="充值金额U">{{ viewForm.rechargeAmount }}</el-descriptions-item>
+        <el-descriptions-item label="实际到账币种金额">{{ viewForm.actualAmount }}</el-descriptions-item>
+        <el-descriptions-item label="汇率">{{ viewForm.freeRate }}</el-descriptions-item>
         <el-descriptions-item label="赠送金额">{{ viewForm.givePoints }}</el-descriptions-item>
         <el-descriptions-item label="合营ID">{{ viewForm.hyId }}</el-descriptions-item>
         <el-descriptions-item label="邀请人ID">{{ viewForm.inMbId }}</el-descriptions-item>
