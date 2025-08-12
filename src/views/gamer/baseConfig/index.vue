@@ -59,6 +59,12 @@
               <el-radio :label="1">是</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="是否开启KYC" prop="isKyc">
+            <el-radio-group v-model="form.isKyc">
+              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">是</el-radio>
+            </el-radio-group>
+          </el-form-item>
         </el-form>
       </el-tab-pane>
 
@@ -78,6 +84,14 @@
               type="number"
               v-model="form.maxRecharge"
               placeholder="请输入最大充值金额"
+              clearable
+            />
+          </el-form-item>
+          <el-form-item label="币种对USDT的充值率" prop="coinUsdtRechargeRate">
+            <el-input
+              type="number"
+              v-model="form.coinUsdtRechargeRate"
+              placeholder="请输入币种对USDT的充值率"
               clearable
             />
           </el-form-item>
@@ -111,6 +125,14 @@
           </el-form-item>
           <el-form-item label="提现手续费" prop="withdrawalCommissionRate">
             <el-input v-model="form.withdrawalCommissionRate" placeholder="请输入提现手续费比例" />
+          </el-form-item>
+          <el-form-item label="币种对USDT的提现率" prop="coinUsdtWithdrawalRate">
+            <el-input
+              type="number"
+              v-model="form.coinUsdtWithdrawalRate"
+              placeholder="请输入币种对USDT的提现率"
+              clearable
+            />
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -158,7 +180,10 @@ export default {
           maxWithdrawal: null, // 最大提现金额
           withdrawalCommissionRate: null, // 提现手续费比例
           rechargeBroadcast: null, // 充值播报金额
-          isCheckCode: 0 // 是否开启检验邮箱验证码(0-否;1-是)
+          isCheckCode: 0, // 是否开启检验邮箱验证码(0-否;1-是)
+          isKyc: 0, // 是否开启KYC(0-否;1-是)
+          coinUsdtRechargeRate: null, // 币种对USDT的充值率
+          coinUsdtWithdrawalRate: null // 币种对USDT的提现率
         }
       };
   },
@@ -182,7 +207,10 @@ export default {
             minWithdrawal: data.minWithdrawal || null,
             maxWithdrawal: data.maxWithdrawal || null,
             rechargeBroadcast: data.rechargeBroadcast || null,
-            isCheckCode: data.isCheckCode !== undefined ? data.isCheckCode : 0
+            isCheckCode: data.isCheckCode !== undefined ? data.isCheckCode : 0,
+            isKyc: data.isKyc !== undefined ? data.isKyc : 0,
+            coinUsdtRechargeRate: data.coinUsdtRechargeRate || null,
+            coinUsdtWithdrawalRate: data.coinUsdtWithdrawalRate || null
           };
         }
       });
@@ -202,7 +230,10 @@ export default {
         minWithdrawal: this.form.minWithdrawal || null,
         maxWithdrawal: this.form.maxWithdrawal || null,
         rechargeBroadcast: this.form.rechargeBroadcast || null,
-        isCheckCode: this.form.isCheckCode !== undefined ? this.form.isCheckCode : 0
+        isCheckCode: this.form.isCheckCode !== undefined ? this.form.isCheckCode : 0,
+        isKyc: this.form.isKyc !== undefined ? this.form.isKyc : 0,
+        coinUsdtRechargeRate: this.form.coinUsdtRechargeRate || null,
+        coinUsdtWithdrawalRate: this.form.coinUsdtWithdrawalRate || null
       };
       updateBaseConfig(submitData).then(response => {
         this.$modal.msgSuccess("更新成功");

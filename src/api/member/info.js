@@ -61,3 +61,12 @@ export function transferPoints(data) {
     data: data
   })
 }
+
+// 修改kyc密码
+export function changeKycPw(data) {
+  return request({
+    url: '/member/info/changeKycPw',
+    method: 'post',
+    data: data
+  })
+}

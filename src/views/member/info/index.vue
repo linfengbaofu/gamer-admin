@@ -157,6 +157,13 @@
             icon="el-icon-user"
             @click="handleMySubList(scope.row)"
           >我的下级列表</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-key"
+            @click="handleChangeKycPw(scope.row)"
+            v-hasPermi="['member:info:edit']"
+          >修改KYC密码</el-button>
           <!-- <el-button
             size="mini"
             type="text"
@@ -381,11 +388,50 @@
         <el-button @click="openSubList = false">关 闭</el-button>
       </div>
     </el-dialog>
+
+    <!-- 修改KYC密码对话框 -->
+    <el-dialog 
+      title="修改KYC密码" 
+      :visible.sync="openChangeKycPw" 
+      width="500px" 
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @close="cancelChangeKycPw"
+    >
+      <el-form ref="changeKycPwForm" :model="changeKycPwForm" :rules="changeKycPwRules" label-width="100px">
+        <el-form-item label="会员ID" prop="mbId">
+          <el-input v-model="changeKycPwForm.mbId" placeholder="会员ID" disabled />
+        </el-form-item>
+        <el-form-item label="KYC密码" prop="kycPassword">
+          <el-input 
+            v-model="changeKycPwForm.kycPassword" 
+            type="password" 
+            placeholder="请输入新的KYC密码" 
+            show-password
+            clearable
+          />
+        </el-form-item>
+
+        <el-form-item>
+          <el-alert
+            title="密码要求：长度6-20位，不能包含特殊字符"
+            type="info"
+            :closable="false"
+            show-icon
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelChangeKycPw">取 消</el-button>
+        <el-button type="primary" :loading="submitChangeKycPwLoading" @click="submitChangeKycPw">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listInfo, getInfo, delInfo, addInfo, updateInfo, addPoint, transferPoints } from "@/api/member/info";
+import { listInfo, getInfo, delInfo, addInfo, updateInfo, addPoint, transferPoints, changeKycPw } from "@/api/member/info";
 import { listInviteRecord } from "@/api/member/inviteRecord";
 import { listPointsRecord, listPointsRecordCount } from "@/api/member/pointsRecord";
 
@@ -421,6 +467,8 @@ export default {
       openDetail: false,
       // 是否显示下级列表弹出层
       openSubList: false,
+      // 是否显示修改KYC密码弹出层
+      openChangeKycPw: false,
       // 详情加载状态
       detailLoading: false,
       // 编辑表单加载状态
@@ -433,6 +481,8 @@ export default {
       submitAddPointLoading: false,
       // 提交合营上分操作loading状态
       submitTransferPointsLoading: false,
+      // 提交修改KYC密码操作loading状态
+      submitChangeKycPwLoading: false,
       // 下级列表数据
       subList: [],
       // 下级列表总数
@@ -483,6 +533,11 @@ export default {
       transferPointsForm: {
         userId: null,
         points: null
+      },
+      // 修改KYC密码表单参数
+      changeKycPwForm: {
+        mbId: null,
+        kycPassword: null
       },
       // 详情数据
       detailData: {},
@@ -538,6 +593,14 @@ export default {
             }, 
             trigger: "blur" 
           }
+        ]
+      },
+      // 修改KYC密码表单校验
+      changeKycPwRules: {
+        kycPassword: [
+          { required: true, message: "KYC密码不能为空", trigger: "blur" },
+          { min: 6, max: 20, message: "密码长度在 6 到 20 个字符", trigger: "blur" },
+          { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }
         ]
       }
     };
@@ -811,6 +874,51 @@ export default {
       this.subListQueryParams.pageNum = 1;
       this.openSubList = true;
       this.getSubList();
+    },
+    /** 修改KYC密码按钮操作 */
+    handleChangeKycPw(row) {
+      this.resetChangeKycPwForm();
+      this.changeKycPwForm.mbId = row.mbId;
+      this.openChangeKycPw = true;
+    },
+    // 重置修改KYC密码表单
+    resetChangeKycPwForm() {
+      this.changeKycPwForm = {
+        mbId: null,
+        kycPassword: null
+      };
+      this.resetForm("changeKycPwForm");
+    },
+    // 取消修改KYC密码
+    cancelChangeKycPw() {
+      this.openChangeKycPw = false;
+      this.resetChangeKycPwForm();
+    },
+    /** 提交修改KYC密码 */
+    submitChangeKycPw() {
+      this.$refs["changeKycPwForm"].validate(valid => {
+        if (valid) {
+          this.$confirm('确定要修改该会员的KYC密码吗？', '确认操作', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.submitChangeKycPwLoading = true;
+            changeKycPw(this.changeKycPwForm).then(response => {
+              this.$modal.msgSuccess("KYC密码修改成功");
+              this.openChangeKycPw = false;
+              this.resetChangeKycPwForm();
+            }).catch((error) => {
+              console.error('修改失败:', error);
+              this.$modal.msgError(error.msg || '修改失败，请重试');
+            }).finally(() => {
+              this.submitChangeKycPwLoading = false;
+            });
+          }).catch(() => {
+            // 用户取消操作
+          });
+        }
+      });
     }
   }
 };
