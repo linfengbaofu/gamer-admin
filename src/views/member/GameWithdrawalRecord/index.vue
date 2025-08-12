@@ -71,6 +71,7 @@
       <el-table-column label="用户账号" align="center" prop="mbAccount" width="150"/>
       <el-table-column label="提现通道" align="center" prop="withdrawalChannel" >
       </el-table-column>
+      <el-table-column label="提现地址" align="center" prop="withdrawalAddr" />
       <el-table-column label="提现金额" align="center" prop="withdrawalAmount" />
       <el-table-column label="实际金额" align="center" prop="actualAmount" />
       <el-table-column label="手续费率" align="center" prop="rates" />
