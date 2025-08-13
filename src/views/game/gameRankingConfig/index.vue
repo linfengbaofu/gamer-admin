@@ -207,17 +207,17 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="英文封面" prop="usImg">
-              <image-upload v-model="form.usImg" limit="1" />
+              <image-upload v-model="form.usImg" :limit="1" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="日语封面" prop="jpImg">
-              <image-upload v-model="form.jpImg" limit="1" />
+              <image-upload v-model="form.jpImg" :limit="1" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="韩语封面" prop="krImg">
-              <image-upload v-model="form.krImg" limit="1" />
+              <image-upload v-model="form.krImg" :limit="1" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -225,7 +225,7 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="中文繁体封面" prop="twImg">
-              <image-upload v-model="form.twImg" limit="1" />
+              <image-upload v-model="form.twImg" :limit="1" />
             </el-form-item>
           </el-col>
         </el-row>
