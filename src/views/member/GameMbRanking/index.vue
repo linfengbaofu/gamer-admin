@@ -18,7 +18,29 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item>
+             <el-form-item label="排名时间" prop="rankingDate">
+         <el-date-picker
+           v-model="queryParams.rankingDate"
+           type="date"
+           value-format="yyyy-MM-dd"
+           placeholder="请选择排名时间"
+           clearable
+           style="width: 200px;"
+         />
+       </el-form-item>
+       <el-form-item label="是否显示" prop="isShow">
+         <el-select v-model="queryParams.isShow" placeholder="请选择是否显示" clearable style="width: 120px;">
+           <el-option label="显示" value="1" />
+           <el-option label="隐藏" value="0" />
+         </el-select>
+       </el-form-item>
+               <el-form-item label="是否为真实用户" prop="isTrue">
+          <el-select v-model="queryParams.isTrue" placeholder="请选择是否为真实用户" clearable style="width: 120px;">
+            <el-option label="是" value="1" />
+            <el-option label="否" value="0" />
+          </el-select>
+        </el-form-item>
+       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -45,8 +67,22 @@
       <el-table-column label="用户id" align="center" prop="mbId" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="下注金额" align="center" prop="gameBet" />
-      <el-table-column label="排名时间" align="center" prop="rankingDate" />
-      <el-table-column label="创建时间" align="center" prop="createDate" width="180">
+             <el-table-column label="排名时间" align="center" prop="rankingDate" />
+       <el-table-column label="是否显示" align="center" prop="isShow" width="100">
+         <template slot-scope="scope">
+           <el-tag :type="scope.row.isShow === '1' ? 'success' : 'info'">
+             {{ scope.row.isShow === '1' ? '显示' : '隐藏' }}
+           </el-tag>
+         </template>
+       </el-table-column>
+               <el-table-column label="是否为真实用户" align="center" prop="isTrue" width="120">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.isTrue === '1' ? 'success' : 'danger'">
+              {{ scope.row.isTrue === '1' ? '是' : '否' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+       <el-table-column label="创建时间" align="center" prop="createDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createDate, '{y}-{m}-{d}') }}</span>
         </template>
@@ -58,7 +94,11 @@
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="创建时间" fixed="right" align="center" prop="createDate" width="180">
-
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" align="center" width="180">
+        <template slot-scope="scope">
+          <el-button type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
+        </template>
       </el-table-column>
 
     </el-table>
@@ -71,49 +111,51 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改玩家下注排行对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="排名" prop="ranking">
-          <el-input v-model="form.ranking" placeholder="请输入排名" />
-        </el-form-item>
-        <el-form-item label="用户id" prop="mbId">
-          <el-input v-model="form.mbId" placeholder="请输入用户id" />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="mbAccount">
-          <el-input v-model="form.mbAccount" placeholder="请输入用户账号" />
-        </el-form-item>
-        <el-form-item label="下注金额" prop="gameBet">
-          <el-input v-model="form.gameBet" placeholder="请输入下注金额" />
-        </el-form-item>
-        <el-form-item label="排名时间" prop="rankingDate">
-          <el-input v-model="form.rankingDate" placeholder="请输入排名时间" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createDate">
-          <el-date-picker clearable
-            v-model="form.createDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择创建时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="修改时间" prop="updateDate">
-          <el-date-picker clearable
-            v-model="form.updateDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择修改时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+         <!-- 查看或修改玩家下注排行对话框 -->
+     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+         <el-form-item label="排名" prop="ranking">
+           <el-input v-model="form.ranking" placeholder="排名" readonly />
+         </el-form-item>
+         <el-form-item label="用户id" prop="mbId">
+           <el-input v-model="form.mbId" placeholder="用户id" readonly />
+         </el-form-item>
+         <el-form-item label="用户账号" prop="mbAccount">
+           <el-input v-model="form.mbAccount" placeholder="用户账号" readonly />
+         </el-form-item>
+         <el-form-item label="下注金额" prop="gameBet">
+           <el-input v-model="form.gameBet" placeholder="请输入下注金额" />
+         </el-form-item>
+         <el-form-item label="是否显示" prop="isShow">
+           <el-select v-model="form.isShow" placeholder="请选择是否显示" style="width: 100%;">
+             <el-option label="显示" value="1" />
+             <el-option label="隐藏" value="0" />
+           </el-select>
+         </el-form-item>
+                   <el-form-item label="是否为真实用户" prop="isTrue">
+            <el-select v-model="form.isTrue" placeholder="请选择是否为真实用户" style="width: 100%;">
+              <el-option label="是" value="1" />
+              <el-option label="否" value="0" />
+            </el-select>
+          </el-form-item>
+         <!-- <el-form-item label="排名时间" prop="rankingDate">
+           <el-input v-model="form.rankingDate" placeholder="排名时间" readonly />
+         </el-form-item> -->
+         <!-- <el-form-item label="创建时间" prop="createDate">
+           <el-input v-model="form.createDate" placeholder="创建时间" readonly />
+         </el-form-item>
+         <el-form-item label="修改时间" prop="updateDate">
+           <el-input v-model="form.updateDate" placeholder="修改时间" readonly />
+         </el-form-item>
+         <el-form-item label="备注" prop="remark">
+           <el-input v-model="form.remark" placeholder="备注" readonly />
+         </el-form-item> -->
+       </el-form>
+       <div slot="footer" class="dialog-footer">
+         <el-button type="primary" @click="submitForm">确 定</el-button>
+         <el-button @click="cancel">取 消</el-button>
+       </div>
+     </el-dialog>
   </div>
 </template>
 
@@ -142,18 +184,20 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        ranking: null,
-        mbId: null,
-        mbAccount: null,
-        gameBet: null,
-        rankingDate: null,
-        createDate: null,
-        updateDate: null,
-      },
+             // 查询参数
+       queryParams: {
+         pageNum: 1,
+         pageSize: 10,
+         ranking: null,
+         mbId: null,
+         mbAccount: null,
+         gameBet: null,
+         rankingDate: null,
+         isShow: null,
+         isTrue: null,
+         createDate: null,
+         updateDate: null,
+       },
       // 表单参数
       form: {},
       // 表单校验
@@ -162,9 +206,20 @@ export default {
     };
   },
   created() {
+    // 设置排名时间默认为昨天
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    this.queryParams.rankingDate = this.formatDate(yesterday);
     this.getList();
   },
   methods: {
+    /** 格式化日期为yyyy-MM-dd格式 */
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
     /** 查询玩家下注排行列表 */
     getList() {
       this.loading = true;
@@ -179,23 +234,25 @@ export default {
       this.open = false;
       this.reset();
     },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        ranking: null,
-        mbId: null,
-        mbAccount: null,
-        gameBet: null,
-        rankingDate: null,
-        createDate: null,
-        createBy: null,
-        updateDate: null,
-        updateBy: null,
-        remark: null
-      };
-      this.resetForm("form");
-    },
+         // 表单重置
+     reset() {
+       this.form = {
+         id: null,
+         ranking: null,
+         mbId: null,
+         mbAccount: null,
+         gameBet: null,
+         rankingDate: null,
+         isShow: '1',
+         isTrue: '1',
+         createDate: null,
+         createBy: null,
+         updateDate: null,
+         updateBy: null,
+         remark: null
+       };
+       this.resetForm("form");
+     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -233,7 +290,16 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateGameMbRanking(this.form).then(response => {
+                         updateGameMbRanking({
+               id: this.form.id,
+               // ranking: this.form.ranking,
+               mbId: this.form.mbId,
+               mbAccount: this.form.mbAccount,
+               gameBet: this.form.gameBet,
+               rankingDate: this.form.rankingDate,
+               isShow: this.form.isShow,
+               isTrue: this.form.isTrue,
+             }).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
