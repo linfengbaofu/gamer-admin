@@ -86,13 +86,19 @@ export default {
     handleChange(value) {
       this.selectedValue = value
       const selectedItems = this.multiple 
-        ? this.gameInfoList.filter(item => value.includes(item.id))
-        : this.gameInfoList.find(item => item.id === value)
+        ? this.gameInfoList.filter(item => value.includes(item.gameid))
+        : this.gameInfoList.find(item => item.gameid === value)
       
+      this.$emit('input', value)
       this.$emit('change', {
         value,
         selectedItems
       })
+      
+      // 触发游戏选择事件，传递选中的游戏信息
+      if (!this.multiple && selectedItems) {
+        this.$emit('game-selected', selectedItems)
+      }
     },
     handleClear() {
       this.selectedValue = this.multiple ? [] : null
