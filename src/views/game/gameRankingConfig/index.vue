@@ -103,22 +103,22 @@
       <el-table-column label="中文繁体名称" align="center" prop="twName" />
       <el-table-column label="英文封面" align="center" prop="usImg" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.usImg" style="width: 50px; height: 50px;" />
+          <el-image v-if="scope.row.usImg" :src="scope.row.usImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
       <el-table-column label="日语封面" align="center" prop="jpImg" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.jpImg" style="width: 50px; height: 50px;" />
+          <el-image v-if="scope.row.jpImg" :src="scope.row.jpImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
       <el-table-column label="韩语封面" align="center" prop="krImg" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.krImg" style="width: 50px; height: 50px;" />
+          <el-image v-if="scope.row.krImg" :src="scope.row.krImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
       <el-table-column label="中文繁体封面" align="center" prop="twImg" >
         <template slot-scope="scope">
-          <el-image :src="scope.row.twImg" style="width: 50px; height: 50px;" />
+          <el-image v-if="scope.row.twImg" :src="scope.row.twImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
       <el-table-column label="最小金额" align="center" prop="minAmount" />
@@ -298,6 +298,9 @@ export default {
       },
       // 表单校验
       rules: {
+        gameid: [
+          { required: true, message: "游戏ID不能为空", trigger: "change" }
+        ],
         minAmount: [
           { required: true, message: "最小金额不能为空", trigger: "blur" }
         ],
