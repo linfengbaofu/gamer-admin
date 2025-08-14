@@ -421,7 +421,6 @@ export default {
     },
     /** 游戏选择事件 */
     handleGameSelected(gameInfo) {
-      this.form.gameid = gameInfo.id;
       this.form.usName = gameInfo.usName;
       this.form.jpName = gameInfo.jpName;
       this.form.krName = gameInfo.krName;
