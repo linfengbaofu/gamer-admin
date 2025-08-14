@@ -94,13 +94,13 @@
     </el-row>
 
     <el-table v-loading="loading" :data="gameRankingConfigList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center" :fixed="true" />
       <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="游戏id" align="center" prop="gameid" />
+      <el-table-column label="游戏id" align="center" prop="gameid"  />
       <el-table-column label="英文名称" align="center" prop="usName" />
       <el-table-column label="日语名称" align="center" prop="jpName" />
       <el-table-column label="韩语名称" align="center" prop="krName" />
-      <el-table-column label="中文繁体名称" align="center" prop="twName" />
+      <el-table-column label="繁体名称" align="center" prop="twName" />
       <el-table-column label="英文封面" align="center" prop="usImg" >
         <template slot-scope="scope">
           <el-image v-if="scope.row.usImg" :src="scope.row.usImg" style="width: 50px; height: 50px;" />
@@ -116,7 +116,7 @@
           <el-image v-if="scope.row.krImg" :src="scope.row.krImg" style="width: 50px; height: 50px;" />
         </template>
       </el-table-column>
-      <el-table-column label="中文繁体封面" align="center" prop="twImg" >
+      <el-table-column label="繁体封面" align="center" prop="twImg" >
         <template slot-scope="scope">
           <el-image v-if="scope.row.twImg" :src="scope.row.twImg" style="width: 50px; height: 50px;" />
         </template>
@@ -124,7 +124,7 @@
       <el-table-column label="最小金额" align="center" prop="minAmount" />
       <el-table-column label="最大金额" align="center" prop="maxAmount" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"
