@@ -107,24 +107,10 @@
         </template>
       </el-table-column>
       <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
-        <template>
-          <div slot="header">
-            <span>倍率列表</span>
-            <el-tooltip content="请输入倍率列表，格式为：1,2,3" placement="top">
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-          </div>
-        </template>
+ 
       </el-table-column>
       <el-table-column label="下注次数" align="center" prop="betCount" width="100">
-        <template>
-          <div slot="header">
-            <span>下注次数</span>
-            <el-tooltip content="最大支持100次" placement="top">
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-          </div>
-        </template>
+
       </el-table-column>
       <el-table-column label="要赢的金额" align="center" prop="winAmount" width="100" />
       <el-table-column label="误差率" align="center" prop="allowRate" />
