@@ -131,7 +131,12 @@
           <dict-tag :options="dict.type.record_game_platform" :value="scope.row.platform" />
           </template>
       </el-table-column>
-      <el-table-column label="游戏类型" align="center" prop="gametype" width="150" >
+      <el-table-column label="游戏类型" align="center" prop="formType" width="150" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_form_type" :value="scope.row.formType" />
+        </template>
+      </el-table-column>
+      <el-table-column label="PG游戏类型" align="center" prop="gametype" width="150" >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.record_game_type" :value="scope.row.gametype" />
         </template>
@@ -190,7 +195,12 @@
                 <el-option v-for="dict in dict.type.record_game_platform" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="游戏类型" prop="gametype">
+            <el-form-item label="游戏类型" prop="formType">
+              <el-select v-model="form.formType" placeholder="请选择游戏类型">
+                <el-option v-for="dict in dict.type.record_form_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="PG游戏类型" prop="gametype">
               <el-select v-model="form.gametype" placeholder="请选择游戏类型">
                 <el-option v-for="dict in dict.type.record_game_type" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
@@ -266,7 +276,7 @@
 
       </el-tabs>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -278,11 +288,13 @@ import { listGameInfo, getGameInfo, delGameInfo, addGameInfo, updateGameInfo } f
 
 export default {
   name: "GameInfo",
-  dicts: ['record_is_enable', 'record_is_hot', 'record_game_status', 'record_game_type', 'record_game_platform'],
+  dicts: ['record_is_enable', 'record_is_hot', 'record_game_status', 'record_game_type', 'record_game_platform', 'record_form_type'],
   data() {
     return {
       // 遮罩层
       loading: true,
+      // 提交按钮loading状态
+      submitLoading: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -405,17 +417,22 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.submitLoading = true;
           if (this.form.id != null) {
             updateGameInfo(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           } else {
             addGameInfo(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           }
         }
