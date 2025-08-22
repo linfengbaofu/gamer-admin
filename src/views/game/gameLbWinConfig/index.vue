@@ -238,7 +238,7 @@
             
             <!-- 总赢金额显示 -->
             <el-form-item label="总赢金额" prop="totalWinAmount">
-              <el-input v-model="form.totalWinAmount" placeholder="总赢金额" :readonly="isEdit" />
+              <el-input v-model="form.totalWinAmount" placeholder="总赢金额" readonly  />
             </el-form-item>
             
             <el-form-item label="倍率列表" prop="betRateList">
@@ -248,7 +248,7 @@
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-input v-model="form.betRateList" type="textarea" placeholder="请输入内容" :readonly="isEdit" />
+              <el-input v-model="form.betRateList" type="textarea" placeholder="请输入内容" readonly />
             </el-form-item>
             
             <!-- 随机生成按钮 -->
@@ -333,6 +333,8 @@ export default {
       isEdit: false,
       // 提交按钮loading状态
       submitLoading: false,
+      // 随机生成参数loading状态
+      randomParamsLoading: false,
       // 下注金额选项列表
       betAmountOptions: [],
       // 表单校验
@@ -547,9 +549,7 @@ export default {
                                  this.form.winAmount && 
                                  this.form.betCount && 
                                  this.form.allowRate && 
-                                 this.form.gameid &&
-                                 this.form.totalWinAmount &&
-                                 this.form.betRateList);
+                                 this.form.gameid);
     },
     
     /** 处理游戏选择变化 */
