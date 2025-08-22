@@ -96,14 +96,37 @@
       <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="会员id" align="center" prop="mbId" />
       <el-table-column label="游戏id" align="center" prop="gameid" />
-      <el-table-column label="匹配金额,金额匹配成功开始控制" align="center" prop="amountLimit" />
-      <el-table-column label="倍率列表" align="center" prop="betRateList" />
-      <el-table-column label="下注次数" align="center" prop="betCount" >
-        <template slot-scope="scope">
-          <span>{{ scope.row.betCount }}次</span>
+      <el-table-column label="匹配金额" align="center" prop="amountLimit" width="100">
+        <template>
+          <div slot="header">
+            <span>匹配金额</span>
+            <el-tooltip content="金额匹配成功开始控制" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="要赢的金额" align="center" prop="winAmount" />
+      <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
+        <template>
+          <div slot="header">
+            <span>倍率列表</span>
+            <el-tooltip content="请输入倍率列表，格式为：1,2,3" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="下注次数" align="center" prop="betCount" width="100">
+        <template>
+          <div slot="header">
+            <span>下注次数</span>
+            <el-tooltip content="最大支持100次" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="要赢的金额" align="center" prop="winAmount" width="100" />
       <el-table-column label="误差率" align="center" prop="allowRate" />
       <el-table-column label="是否开启" align="center" prop="isOpen" />
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180">
@@ -155,7 +178,7 @@
               <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery"  style="width: 100%;"/>
             </el-form-item>
             <el-form-item label="游戏id" prop="gameid">
-              <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="checkShowRandomButton"/>
+              <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="checkCanClickRandomButton"/>
             </el-form-item>
             <el-form-item label="匹配金额" prop="amountLimit">
               <span slot="label">
@@ -164,11 +187,10 @@
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-input v-model="form.amountLimit" placeholder="请输入匹配金额" @input="checkShowRandomButton" />
+              <el-input v-model="form.amountLimit" placeholder="请输入匹配金额" @input="checkCanClickRandomButton" />
             </el-form-item>
             <el-form-item label="要赢的金额" prop="winAmount">
-              <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkShowRandomButton" />
-            </el-form-item>
+              <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" />
             </el-form-item>
             <el-form-item label="下注次数" prop="betCount">
               <span slot="label">
@@ -177,10 +199,10 @@
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="checkShowRandomButton" />
+              <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="checkCanClickRandomButton" />
             </el-form-item>
             <el-form-item label="误差率" prop="allowRate">
-              <el-input v-model="form.allowRate" placeholder="请输入误差率" @input="checkShowRandomButton" />
+              <el-input v-model="form.allowRate" placeholder="请输入误差率" @input="checkCanClickRandomButton" />
             </el-form-item>
             
             <!-- 随机生成按钮 -->
@@ -308,7 +330,7 @@ export default {
         ],
         betCount: [
           { required: true, message: "下注次数不能为空", trigger: "blur" },
-          { type: 'number', min: 1, max: 100, message: "下注次数必须在1-100之间", trigger: "blur" }
+          // { type: 'number', min: 1, max: 100, message: "下注次数必须在1-100之间", trigger: "blur" }
         ],
         allowRate: [
           { required: true, message: "误差率不能为空", trigger: "blur" }
@@ -395,7 +417,7 @@ export default {
         this.open = true;
         this.title = "修改游戏输赢控制";
         // 检查是否显示随机生成按钮
-        this.checkShowRandomButton();
+        this.checkCanClickRandomButton();
       });
     },
     /** 提交按钮 */
@@ -457,22 +479,30 @@ export default {
     /** 随机生成参数 */
     generateRandomParams() {
       // 生成随机参数
+      // const randomParams = {
+      //   amountLimit: (Math.random() * 1000 + 100).toFixed(2),
+      //   winAmount: (Math.random() * 500 + 50).toFixed(2),
+      //   betCount: Math.floor(Math.random() * 100) + 1,
+      //   allowRate: (Math.random() * 0.5 + 0.1).toFixed(3),
+      //   gameid: this.form.gameid
+      // };
+      
+      // // 更新表单
+      // this.form.amountLimit = randomParams.amountLimit;
+      // this.form.winAmount = randomParams.winAmount;
+      // this.form.betCount = randomParams.betCount;
+      // this.form.allowRate = randomParams.allowRate;
       const randomParams = {
-        amountLimit: (Math.random() * 1000 + 100).toFixed(2),
-        winAmount: (Math.random() * 500 + 50).toFixed(2),
-        betCount: Math.floor(Math.random() * 100) + 1,
-        allowRate: (Math.random() * 0.5 + 0.1).toFixed(3),
+        amountLimit: this.form.amountLimit,
+        winAmount: this.form.winAmount,
+        betCount: this.form.betCount,
+        allowRate: this.form.allowRate,
         gameid: this.form.gameid
       };
-      
-      // 更新表单
-      this.form.amountLimit = randomParams.amountLimit;
-      this.form.winAmount = randomParams.winAmount;
-      this.form.betCount = randomParams.betCount;
-      this.form.allowRate = randomParams.allowRate;
-      
       // 调用gameLbWinConfig接口进行参数验证
       gameLbWinConfig(randomParams).then(response => {
+
+      }).then(response => {
         this.$modal.msgSuccess("随机参数生成成功，验证通过！");
       }).catch(error => {
         this.$modal.msgError("随机参数验证失败：" + (error.message || "未知错误"));
@@ -480,7 +510,7 @@ export default {
     },
     
     /** 检查是否显示随机生成按钮 */
-    checkShowRandomButton() {
+    checkCanClickRandomButton() {
       // 检查必填字段是否都已填写
       this.canClickRandomButton = !!(this.form.amountLimit && 
                                 this.form.winAmount && 
