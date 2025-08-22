@@ -207,6 +207,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="零率" prop="zeroRate">
+              <span slot="label">
+                <span>零率</span>
+                <el-tooltip content="范围为0-1，赔率为0的概率" placement="top">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
               <el-input v-model="form.zeroRate" placeholder="零率"  :readonly="isEdit" />
             </el-form-item>
             <el-form-item label="要赢的金额" prop="winAmount">
