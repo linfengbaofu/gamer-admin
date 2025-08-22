@@ -169,7 +169,7 @@
                 <el-option label="否" :value="0"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="控制时间" prop="beginTime">
+            <el-form-item label="控制时间" prop="createTime">
               <el-date-picker clearable
                 v-model="form.createTime"
                 type="datetimerange"
@@ -206,6 +206,9 @@
                 />
               </el-select>
             </el-form-item>
+            <el-form-item label="零率" prop="zeroRate">
+              <el-input v-model="form.zeroRate" placeholder="零率"  :readonly="isEdit" />
+            </el-form-item>
             <el-form-item label="要赢的金额" prop="winAmount">
               <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" :readonly="isEdit" />
             </el-form-item>
@@ -221,6 +224,7 @@
             <el-form-item label="误差率" prop="allowRate">
               <el-input v-model="form.allowRate" placeholder="请输入误差率" @input="checkCanClickRandomButton" :readonly="isEdit" />
             </el-form-item>
+            
             
             <!-- 总赢金额显示 -->
             <el-form-item label="总赢金额" prop="totalWinAmount">
@@ -308,6 +312,7 @@ export default {
       },
       // 表单参数
       form: {
+        zeroRate: null,
         createTime: [],
         winAmount: null,
         allowRate: null,  
@@ -353,6 +358,12 @@ export default {
         ],
         betRateList: [
           { required: true, message: "倍率列表不能为空", trigger: "blur" }
+        ],
+        zeroRate: [
+          { required: true, message: "零率不能为空", trigger: "blur" }
+        ],
+        createTime: [
+          { required: true, message: "控制时间不能为空", trigger: "blur" }
         ]
       }
     };
@@ -513,7 +524,8 @@ export default {
         winAmount: this.form.winAmount,
         betCount: this.form.betCount,
         allowRate: this.form.allowRate,
-        gameid: this.form.gameid
+        gameid: this.form.gameid,
+        zeroRate: this.form.zeroRate
       };
       
       // 调用gameLbWinConfig接口进行参数验证
