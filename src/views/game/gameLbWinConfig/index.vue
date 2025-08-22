@@ -94,7 +94,7 @@
 
     <el-table v-loading="loading" :data="gameLbWinConfigList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="configId" />
+      <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="会员id" align="center" prop="mbId" />
       <el-table-column label="游戏id" align="center" prop="gameid" />
       <el-table-column label="匹配金额,金额匹配成功开始控制" align="center" prop="amountLimit" />
@@ -112,7 +112,7 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"

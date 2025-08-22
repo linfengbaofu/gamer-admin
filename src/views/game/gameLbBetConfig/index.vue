@@ -58,11 +58,11 @@
 
     <el-table v-loading="loading" :data="gameLbBetConfigList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="configId" />
+      <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="游戏id" align="center" prop="gameid" />
       <el-table-column label="倍率列表" align="center" prop="betRate" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -97,6 +97,12 @@
           <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="倍率列表" prop="betRate">
+          <span slot="label">
+            <span>倍率列表</span>
+            <el-tooltip content="请输入倍率列表，格式为：1.0,2.0,3.0" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </span>
           <el-input v-model="form.betRate" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
