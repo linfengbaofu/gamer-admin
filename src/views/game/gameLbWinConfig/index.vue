@@ -257,9 +257,10 @@
                 type="warning" 
                 icon="el-icon-refresh" 
                 @click="generateRandomParams"
-                :disabled="!canClickRandomButton"
+                :loading="randomParamsLoading"
+                :disabled="!canClickRandomButton || randomParamsLoading"
                 style="width: 100%;">
-                随机生成参数
+                {{ randomParamsLoading ? '生成中...' : '随机生成参数' }}
               </el-button>
             </el-form-item>
           </el-col>
@@ -517,6 +518,9 @@ export default {
     
     /** 随机生成参数 */
     generateRandomParams() {
+      // 设置loading状态
+      this.randomParamsLoading = true;
+      
       // 调用gameLbWinConfig接口进行参数验证和获取回显数据
       const randomParams = {
         amountLimit: this.form.amountLimit,
@@ -539,6 +543,9 @@ export default {
         this.$modal.msgSuccess("参数验证成功，数据已回显！");
       }).catch(error => {
         this.$modal.msgError("参数验证失败：" + (error.message || "未知错误"));
+      }).finally(() => {
+        // 无论成功还是失败，都要重置loading状态
+        this.randomParamsLoading = false;
       });
     },
     
