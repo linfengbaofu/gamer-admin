@@ -99,7 +99,7 @@
         <el-form-item label="倍率列表" prop="betRate">
           <span slot="label">
             <span>倍率列表</span>
-            <el-tooltip content="请输入倍率列表，格式为：1.0,2.0,3.0" placement="top">
+            <el-tooltip content="请输入倍率列表，格式为：0,0.5,1,2,3,5,10,20" placement="top">
               <i class="el-icon-question"></i>
             </el-tooltip>
           </span>
@@ -110,7 +110,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -163,7 +163,9 @@ export default {
         betRate: [
           { required: true, message: "倍率列表不能为空", trigger: "change" }
         ]
-      }
+      },
+      // 提交loading状态
+      submitLoading: false
     };
   },
   created() {
@@ -234,17 +236,22 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.submitLoading = true;
           if (this.form.configId != null) {
             updateGameLbBetConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           } else {
             addGameLbBetConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).finally(() => {
+              this.submitLoading = false;
             });
           }
         }

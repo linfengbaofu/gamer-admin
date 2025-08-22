@@ -26,7 +26,7 @@
       <el-form-item label="控制时间" prop="createTime">
         <el-date-picker clearable
           v-model="queryParams.createTime"
-          type="daterange"
+          type="datetimerange"
           value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择控制时间">
         </el-date-picker>
@@ -186,7 +186,7 @@
             <el-form-item label="控制时间" prop="beginTime">
               <el-date-picker clearable
                 v-model="form.createTime"
-                type="daterange"
+                type="datetimerange"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="请选择控制时间"
                 style="width: 100%;">
@@ -433,13 +433,15 @@ export default {
       this.canClickRandomButton = false;
       this.isEdit = true;
       const configId = row.configId || this.ids
-      if (row.beginTime && row.endTime) {
-        this.form.createTime = [row.beginTime, row.endTime]
-      } else {
-        this.form.createTime = []
-      }
+   
       getGameLbWinConfig(configId).then(response => {
-        this.form = response.data;
+        const formData = response.data;
+        if (formData.beginTime && formData.endTime) {
+          formData.createTime = [formData.beginTime, formData.endTime]
+        } else {
+          formData.createTime = []
+        }
+        this.form = formData;
         this.open = true;
         this.title = "修改游戏输赢控制";
         // 检查是否显示随机生成按钮
