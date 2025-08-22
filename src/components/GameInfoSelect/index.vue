@@ -18,6 +18,7 @@
       :value="item.gameid"
     >
       <span style="float: left">{{ item.twName || item.usName }}</span>
+      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.gameid }}</span>
     </el-option>
   </el-select>
 </template>

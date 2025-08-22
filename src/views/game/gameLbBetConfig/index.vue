@@ -4,6 +4,9 @@
       <el-form-item label="游戏id" prop="gameid">
           <GameInfoSelect v-model="queryParams.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
+      <el-form-item label="下注金额" prop="betAmount">
+        <el-input v-model="queryParams.betAmount" placeholder="请输入下注金额" clearable size="small" @keyup.enter.native="handleQuery" />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -60,6 +63,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="游戏id" align="center" prop="gameid" />
+      <el-table-column label="下注金额" align="center" prop="betAmount" />
       <el-table-column label="倍率列表" align="center" prop="betRate" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
@@ -91,10 +95,13 @@
     />
 
     <!-- 添加或修改游戏倍率对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="游戏id" prop="gameid">
-          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
+          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;"/>
+        </el-form-item>
+        <el-form-item label="下注金额" prop="betAmount">
+          <el-input v-model="form.betAmount" placeholder="请输入下注金额" />
         </el-form-item>
         <el-form-item label="倍率列表" prop="betRate">
           <span slot="label">
@@ -151,6 +158,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         gameid: null,
+        betAmount: null,
         betRate: null,
       },
       // 表单参数
@@ -159,6 +167,9 @@ export default {
       rules: {
         gameid: [
           { required: true, message: "游戏id不能为空", trigger: "change" }
+        ],
+        betAmount: [
+          { required: true, message: "下注金额不能为空", trigger: "blur" }
         ],
         betRate: [
           { required: true, message: "倍率列表不能为空", trigger: "change" }
@@ -191,6 +202,7 @@ export default {
       this.form = {
         configId: null,
         gameid: null,
+        betAmount: null,
         betRate: null,
         remark: null,
         createTime: null,
