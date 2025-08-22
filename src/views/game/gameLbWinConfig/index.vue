@@ -175,7 +175,7 @@
               <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery"  style="width: 100%;" :disabled="isEdit"/>
             </el-form-item>
             <el-form-item label="游戏id" prop="gameid">
-              <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="checkCanClickRandomButton" :disabled="isEdit"/>
+              <BetGameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="checkCanClickRandomButton" :disabled="isEdit"/>
             </el-form-item>
             <el-form-item label="是否开启" prop="isOpen">
               <el-select v-model="form.isOpen" placeholder="请选择是否开启" style="width: 100%;"> 
@@ -267,14 +267,15 @@
 </template>
 
 <script>
+
 import { listGameLbWinConfig, getGameLbWinConfig, delGameLbWinConfig, addGameLbWinConfig, updateGameLbWinConfig, gameLbWinConfig } from "@/api/game/gameLbWinConfig";
-import GameInfoSelect from '@/components/GameInfoSelect'
+import BetGameInfoSelect from './BetGameInfoSelect/index.vue'
 import MemberInfoSelect from '@/components/MemberInfoSelect'
 
 export default {
   name: "GameLbWinConfig",
   components: {
-    GameInfoSelect,
+    BetGameInfoSelect,
     MemberInfoSelect
   },
   data() {

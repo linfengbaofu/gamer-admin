@@ -17,14 +17,14 @@
       :label="item.twName || item.usName"
       :value="item.gameid"
     >
-      <span style="float: left">{{ item.twName || item.usName }}</span>
+      <span style="float: left">{{ item.twName || item.usName || item.gameid }}</span>
       <span style="float: right; color: #8492a6; font-size: 13px">{{ item.gameid }}</span>
     </el-option>
   </el-select>
 </template>
 
 <script>
-import { listGameInfo } from '@/api/member/GameInfo'
+import { listGameLbBetConfig } from "@/api/game/gameLbBetConfig";
 
 export default {
   name: 'GameInfoSelect',
@@ -52,10 +52,6 @@ export default {
     filterable: {
       type: Boolean,
       default: true
-    },
-    params: {
-      type: Object,
-      default: () => ({})
     }
   },
   data() {
@@ -78,10 +74,9 @@ export default {
   methods: {
     async loadGameInfoList() {
       try {
-        const response = await listGameInfo({
+        const response = await listGameLbBetConfig({
           pageNum: 1,
-          pageSize: 9999,
-          ...this.params
+          pageSize: 9999 // 获取所有游戏信息
         })
         this.gameInfoList = response.rows || []
       } catch (error) {

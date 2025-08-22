@@ -98,7 +98,7 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="游戏id" prop="gameid">
-          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;"/>
+          <GameInfoSelect :params="{formType: '1'}" v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;"/>
         </el-form-item>
         <el-form-item label="下注金额" prop="betAmount">
           <el-input v-model="form.betAmount" placeholder="请输入下注金额" />
