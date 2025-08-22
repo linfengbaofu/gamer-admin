@@ -19,8 +19,8 @@
       </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启"> 
-          <el-option label="是" value="1"></el-option>
-          <el-option label="否" value="0"></el-option>
+          <el-option label="是" :value="1"></el-option>
+          <el-option label="否" :value="0"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="控制时间" prop="createTime">
@@ -128,7 +128,11 @@
       </el-table-column>
       <el-table-column label="要赢的金额" align="center" prop="winAmount" width="100" />
       <el-table-column label="误差率" align="center" prop="allowRate" />
-      <el-table-column label="是否开启" align="center" prop="isOpen" />
+      <el-table-column label="是否开启" align="center" prop="isOpen" >
+        <template slot-scope="scope">
+          <span>{{ scope.row.isOpen === 1 ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.beginTime, '{y}-{m}-{d}') }}</span>
@@ -140,7 +144,7 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+      <el-table-column label="操作" width="180" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -236,8 +240,8 @@
             </el-form-item>
             <el-form-item label="是否开启" prop="isOpen">
               <el-select v-model="form.isOpen" placeholder="请选择是否开启" style="width: 100%;"> 
-                <el-option label="是" value="1"></el-option>
-                <el-option label="否" value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+                <el-option label="否" :value="0"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="控制时间" prop="beginTime">
@@ -310,7 +314,10 @@ export default {
       },
       // 表单参数
       form: {
-        createTime: [], 
+        createTime: [],
+        winAmount: null,
+        allowRate: null,  
+        isOpen: 1,
       },
       // 是否显示随机生成按钮
       canClickRandomButton: false,
@@ -412,7 +419,7 @@ export default {
       } else {
         this.form.createTime = []
       }
-      getGameLbWinConfig(configId).then(response => {
+      getGameLbWinConfig(params).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改游戏输赢控制";
@@ -429,6 +436,7 @@ export default {
             beginTime: this.form.createTime[0],
             endTime: this.form.createTime[1]
           }
+          delete params.createTime;
           if (this.form.configId != null) {
             updateGameLbWinConfig(params).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -436,24 +444,10 @@ export default {
               this.getList();
             });
           } else {
-            // 新增时先调用gameLbWinConfig接口进行参数验证
-            const validateParams = {
-              amountLimit: this.form.amountLimit,
-              winAmount: this.form.winAmount,
-              betCount: this.form.betCount,
-              allowRate: this.form.allowRate,
-              gameid: this.form.gameid
-            };
-            
-            gameLbWinConfig(validateParams).then(response => {
-              // 验证成功后，调用新增接口
-              addGameLbWinConfig(params).then(response => {
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
-            }).catch(error => {
-              this.$modal.msgError("参数验证失败：" + (error.message || "未知错误"));
+            addGameLbWinConfig(params).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
             });
           }
         }
@@ -501,8 +495,9 @@ export default {
       };
       // 调用gameLbWinConfig接口进行参数验证
       gameLbWinConfig(randomParams).then(response => {
-
-      }).then(response => {
+        const formData = response.data;
+        this.form.betRateList = formData.betRateList;
+        this.form.totalWinAmount = formData.totalWinAmount;
         this.$modal.msgSuccess("随机参数生成成功，验证通过！");
       }).catch(error => {
         this.$modal.msgError("随机参数验证失败：" + (error.message || "未知错误"));
