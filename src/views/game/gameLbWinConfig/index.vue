@@ -96,17 +96,20 @@
       <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="会员id" align="center" prop="mbId" />
       <el-table-column label="游戏id" align="center" prop="gameid" />
-      <el-table-column label="匹配金额" align="center" prop="amountLimit" width="100">
+      <el-table-column align="center" prop="amountLimit" width="120">
         <template>
           <div slot="header">
-            <span>匹配金额</span>
+            <span>匹配下注金额</span>
             <el-tooltip content="金额匹配成功开始控制" placement="top">
               <i class="el-icon-question"></i>
             </el-tooltip>
           </div>
         </template>
       </el-table-column>
+   
       <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
+      </el-table-column>
+      <el-table-column label="倍率金额列表" align="center" prop="betAmountMatch" width="100">
       </el-table-column>
       <!-- <el-table-column label="零率" align="center" prop="zeroRate" width="100"></el-table-column> -->
       <el-table-column label="下注次数" align="center" prop="betCount" width="100">
@@ -190,14 +193,14 @@
           
           <!-- 右列 -->
           <el-col :span="11">
-            <el-form-item label="匹配金额" prop="amountLimit">
+            <el-form-item label="匹配下注金额" prop="amountLimit">
               <span slot="label">
-                <span>匹配金额</span>
+                <span>匹配下注金额</span>
                 <el-tooltip content="金额匹配成功开始控制" placement="top">
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-select v-model="form.amountLimit" placeholder="请选择匹配金额" @change="checkCanClickRandomButton" :disabled="isEdit" style="width: 100%;">
+              <el-select v-model="form.amountLimit" placeholder="请选择匹配下注金额" @change="checkCanClickRandomButton" :disabled="isEdit" style="width: 100%;">
                 <el-option
                   v-for="amount in betAmountOptions"
                   :key="amount"
@@ -347,7 +350,7 @@ export default {
           { required: true, message: "是否开启不能为空", trigger: "change" }
         ],
         amountLimit: [
-          { required: true, message: "匹配金额不能为空", trigger: "blur" }
+          { required: true, message: "匹配下注金额不能为空", trigger: "blur" }
         ],
         winAmount: [
           { required: true, message: "要赢的金额不能为空", trigger: "blur" }
@@ -382,6 +385,19 @@ export default {
     getList() {
       this.loading = true;
       listGameLbWinConfig(this.queryParams).then(response => {
+        const tableData = response.rows;
+        tableData.forEach(item => {
+          const amountLimit = Number(item.amountLimit || 0);
+          const betRateList = item.betRateList ? item.betRateList.split(',') : [];
+          const templateArr = [];
+          if (betRateList.length > 0) {
+            betRateList.forEach(rate => {
+              templateArr.push(Number(amountLimit * Number(rate).toFixed(6)));
+            });
+          }
+          item.betAmountMatch = templateArr.join(',');
+          // item.betRateList = item.betRateList.join(',');
+        });
         this.gameLbWinConfigList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -418,7 +434,7 @@ export default {
       this.isEdit = false;
       this.resetForm("form");
       this.canClickRandomButton = false; // 重置随机生成按钮状态
-      this.betAmountOptions = []; // 重置匹配金额选项
+      this.betAmountOptions = []; // 重置匹配下注金额选项
     },
     /** 搜索按钮操作 */
     handleQuery() {
