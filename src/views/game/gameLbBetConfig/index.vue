@@ -63,6 +63,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="游戏id" align="center" prop="gameid" />
+      <el-table-column label="游戏名称" align="center" prop="gameName" />
       <el-table-column label="下注金额" align="center" prop="betAmount" />
       <el-table-column label="倍率列表" align="center" prop="betRate" />
       <el-table-column label="备注" align="center" prop="remark" />
@@ -98,7 +99,7 @@
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="游戏id" prop="gameid">
-          <GameInfoSelect :params="{formType: '1'}" v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;"/>
+          <GameInfoSelect :params="{formType: '1'}" v-model="form.gameid" placeholder="请选择游戏" clearable @change="handleGameChange" @keyup.enter.native="handleQuery" style="width: 100%;"/>
         </el-form-item>
         <el-form-item label="下注金额" prop="betAmount">
           <el-input v-model="form.betAmount" placeholder="请输入下注金额" />
@@ -162,7 +163,9 @@ export default {
         betRate: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        twName: null,
+      },
       // 表单校验
       rules: {
         gameid: [
@@ -208,7 +211,8 @@ export default {
         createTime: null,
         createBy: null,
         updateTime: null,
-        updateBy: null
+        updateBy: null,
+        twName: null,
       };
       this.resetForm("form");
     },
@@ -284,6 +288,11 @@ export default {
       this.download('game/gameLbBetConfig/export', {
         ...this.queryParams
       }, `gameLbBetConfig_${new Date().getTime()}.xlsx`)
+    },
+    handleGameChange(data) {
+      if (data && data.selectedItems && !this.isEdit) {
+        this.form.twName = data.selectedItems.twName || data.selectedItems.usName || data.selectedItems.gameid;
+      }
     }
   }
 };
