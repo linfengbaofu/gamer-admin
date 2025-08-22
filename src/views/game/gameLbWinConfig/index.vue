@@ -17,51 +17,29 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="匹配金额,金额匹配成功开始控制" prop="amountLimit">
-        <el-input
-          v-model="queryParams.amountLimit"
-          placeholder="请输入匹配金额,金额匹配成功开始控制"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="下注次数，最大支持100次" prop="betCount">
-        <el-input
-          v-model="queryParams.betCount"
-          placeholder="请输入下注次数，最大支持100次"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item> -->
+>
       <el-form-item label="是否开启" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启"> 
           <el-option label="是" value="1"></el-option>
           <el-option label="否" value="0"></el-option>
-          <!-- <el-option v-for="dict in dict.type.record_is_enable" :key="dict.value" :label="dict.label" :value="dict.value" /> -->
         </el-select>
-        <!-- <el-input
-          v-model="queryParams.isOpen"
-          placeholder="请输入是否开启(0-否;1-是)"
-          clearable
-          @keyup.enter.native="handleQuery"
-        /> -->
       </el-form-item>
       <el-form-item label="控制开始时间" prop="beginTime">
         <el-date-picker clearable
-          v-model="queryParams.beginTime"
-          type="date"
-          value-format="yyyy-MM-dd"
+          v-model="queryParams.createTime"
+          type="daterange"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择控制开始时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="控制结束时间" prop="endTime">
+      <!-- <el-form-item label="控制结束时间" prop="endTime">
         <el-date-picker clearable
           v-model="queryParams.endTime"
-          type="date"
+          type="daterange"
           value-format="yyyy-MM-dd"
           placeholder="请选择控制结束时间">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -166,39 +144,47 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="会员id" prop="mbId">
-          <el-input v-model="form.mbId" placeholder="请输入会员id" />
+          <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="游戏id" prop="gameid">
-          <el-input v-model="form.gameid" placeholder="请输入游戏id" />
+          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="匹配金额,金额匹配成功开始控制" prop="amountLimit">
-          <el-input v-model="form.amountLimit" placeholder="请输入匹配金额,金额匹配成功开始控制" />
+        <el-form-item label="匹配金额" prop="amountLimit">
+          <span slot="label">
+            <span>匹配金额</span>
+            <el-tooltip content="金额匹配成功开始控制" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </span>
+          <el-input v-model="form.amountLimit" placeholder="请输入匹配金额" />
         </el-form-item>
         <el-form-item label="倍率列表" prop="betRateList">
+          <span slot="label">
+            <span>倍率列表</span>
+            <el-tooltip content="请输入倍率列表，格式为：1.0,2.0,3.0" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </span>
           <el-input v-model="form.betRateList" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="下注次数，最大支持100次" prop="betCount">
           <el-input v-model="form.betCount" placeholder="请输入下注次数，最大支持100次" />
         </el-form-item>
-        <el-form-item label="是否开启(0-否;1-是)" prop="isOpen">
-          <el-input v-model="form.isOpen" placeholder="请输入是否开启(0-否;1-是)" />
+        <el-form-item label="是否开启" prop="isOpen">
+          <el-select v-model="form.isOpen" placeholder="请选择是否开启"> 
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="控制开始时间" prop="beginTime">
+        <el-form-item label="控制时间" prop="beginTime">
           <el-date-picker clearable
-            v-model="form.beginTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择控制开始时间">
+            v-model="form.createTime"
+            type="daterange"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="请选择控制时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="控制结束时间" prop="endTime">
-          <el-date-picker clearable
-            v-model="form.endTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择控制结束时间">
-          </el-date-picker>
-        </el-form-item>
+        
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -213,9 +199,15 @@
 
 <script>
 import { listGameLbWinConfig, getGameLbWinConfig, delGameLbWinConfig, addGameLbWinConfig, updateGameLbWinConfig } from "@/api/game/gameLbWinConfig";
+import GameInfoSelect from '@/components/GameInfoSelect'
+import MemberInfoSelect from '@/components/MemberInfoSelect'
 
 export default {
   name: "GameLbWinConfig",
+  components: {
+    GameInfoSelect,
+    MemberInfoSelect
+  },
   data() {
     return {
       // 遮罩层
@@ -238,6 +230,7 @@ export default {
       open: false,
       // 查询参数
       queryParams: {
+        createTime: [], 
         pageNum: 1,
         pageSize: 10,
         mbId: null,
@@ -250,7 +243,9 @@ export default {
         endTime: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        createTime: [], 
+      },
       // 表单校验
       rules: {
         mbId: [
@@ -293,7 +288,8 @@ export default {
         createTime: null,
         createBy: null,
         updateTime: null,
-        updateBy: null
+        updateBy: null,
+        createTime: []
       };
       this.resetForm("form");
     },
@@ -323,6 +319,11 @@ export default {
     handleUpdate(row) {
       this.reset();
       const configId = row.configId || this.ids
+      if (row.beginTime && row.endTime) {
+        this.form.createTime = [row.beginTime, row.endTime]
+      } else {
+        this.form.createTime = []
+      }
       getGameLbWinConfig(configId).then(response => {
         this.form = response.data;
         this.open = true;
@@ -333,14 +334,19 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          const params = {
+            ...this.form,
+            beginTime: this.form.createTime[0],
+            endTime: this.form.createTime[1]
+          }
           if (this.form.configId != null) {
-            updateGameLbWinConfig(this.form).then(response => {
+            updateGameLbWinConfig(params).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addGameLbWinConfig(this.form).then(response => {
+            addGameLbWinConfig(params).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

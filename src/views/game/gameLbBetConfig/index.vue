@@ -2,12 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="游戏id" prop="gameid">
-        <el-input
-          v-model="queryParams.gameid"
-          placeholder="请输入游戏id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          <GameInfoSelect v-model="queryParams.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -99,7 +94,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="游戏id" prop="gameid">
-          <el-input v-model="form.gameid" placeholder="请输入游戏id" />
+          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="倍率列表" prop="betRate">
           <el-input v-model="form.betRate" type="textarea" placeholder="请输入内容" />
@@ -118,9 +113,13 @@
 
 <script>
 import { listGameLbBetConfig, getGameLbBetConfig, delGameLbBetConfig, addGameLbBetConfig, updateGameLbBetConfig } from "@/api/game/gameLbBetConfig";
+import GameInfoSelect from '@/components/GameInfoSelect'
 
 export default {
   name: "GameLbBetConfig",
+  components: {
+    GameInfoSelect
+  },
   data() {
     return {
       // 遮罩层
