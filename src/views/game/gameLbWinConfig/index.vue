@@ -98,7 +98,11 @@
       <el-table-column label="游戏id" align="center" prop="gameid" />
       <el-table-column label="匹配金额,金额匹配成功开始控制" align="center" prop="amountLimit" />
       <el-table-column label="倍率列表" align="center" prop="betRateList" />
-      <el-table-column label="下注次数，最大支持100次" align="center" prop="betCount" />
+      <el-table-column label="下注次数" align="center" prop="betCount" >
+        <template slot-scope="scope">
+          <span>{{ scope.row.betCount }}次</span>
+        </template>
+      </el-table-column>
       <el-table-column label="是否开启" align="center" prop="isOpen" />
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180">
         <template slot-scope="scope">
@@ -143,10 +147,10 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="会员id" prop="mbId">
-          <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery" />
+          <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery"  style="width: 100%;"/>
         </el-form-item>
         <el-form-item label="游戏id" prop="gameid">
-          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" />
+          <GameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;"/>
         </el-form-item>
         <el-form-item label="匹配金额" prop="amountLimit">
           <span slot="label">
@@ -166,8 +170,14 @@
           </span>
           <el-input v-model="form.betRateList" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="下注次数，最大支持100次" prop="betCount">
-          <el-input v-model="form.betCount" placeholder="请输入下注次数，最大支持100次" />
+        <el-form-item label="下注次数" prop="betCount">
+          <span slot="label">
+            <span>下注次数</span>
+            <el-tooltip content="最大支持100次" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+            </span>
+          <el-input v-model="form.betCount" placeholder="请输入下注次数" />
         </el-form-item>
         <el-form-item label="是否开启" prop="isOpen">
           <el-select v-model="form.isOpen" placeholder="请选择是否开启"> 
@@ -197,7 +207,7 @@
 </template>
 
 <script>
-import { listGameLbWinConfig, getGameLbWinConfig, delGameLbWinConfig, addGameLbWinConfig, updateGameLbWinConfig } from "@/api/game/gameLbWinConfig";
+import { listGameLbWinConfig, getGameLbWinConfig, delGameLbWinConfig, addGameLbWinConfig, updateGameLbWinConfig, gameLbWinConfig } from "@/api/game/gameLbWinConfig";
 import GameInfoSelect from '@/components/GameInfoSelect'
 import MemberInfoSelect from '@/components/MemberInfoSelect'
 

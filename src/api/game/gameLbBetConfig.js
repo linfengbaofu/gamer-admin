@@ -42,3 +42,11 @@ export function delGameLbBetConfig(configId) {
     method: 'delete'
   })
 }
+// 生成游戏倍率
+export function gameLbWinConfig(data) {
+  return request({
+    url: '/game/gameLbWinConfig/gen',
+    method: 'post',
+    data: data
+  })
+}
