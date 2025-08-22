@@ -107,8 +107,8 @@
         </template>
       </el-table-column>
       <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
- 
       </el-table-column>
+      <!-- <el-table-column label="零率" align="center" prop="zeroRate" width="100"></el-table-column> -->
       <el-table-column label="下注次数" align="center" prop="betCount" width="100">
 
       </el-table-column>
@@ -206,14 +206,14 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="零率" prop="zeroRate">
+            <el-form-item v-if="!isEdit" label="零率" prop="zeroRate">
               <span slot="label">
                 <span>零率</span>
                 <el-tooltip content="范围为0-1，赔率为0的概率" placement="top">
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-input v-model="form.zeroRate" placeholder="零率"  :readonly="isEdit" />
+              <el-input v-model="form.zeroRate" placeholder="零率" />
             </el-form-item>
             <el-form-item label="要赢的金额" prop="winAmount">
               <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" :readonly="isEdit" />
