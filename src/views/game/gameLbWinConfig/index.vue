@@ -128,6 +128,7 @@
       </el-table-column>
       <el-table-column label="要赢的金额" align="center" prop="winAmount" width="100" />
       <el-table-column label="误差率" align="center" prop="allowRate" />
+      <el-table-column label="总赢金额" align="center" prop="totalWinAmount" width="100" />
       <el-table-column label="是否开启" align="center" prop="isOpen" >
         <template slot-scope="scope">
           <span>{{ scope.row.isOpen === 1 ? '是' : '否' }}</span>
@@ -207,6 +208,11 @@
             </el-form-item>
             <el-form-item label="误差率" prop="allowRate">
               <el-input v-model="form.allowRate" placeholder="请输入误差率" @input="checkCanClickRandomButton" />
+            </el-form-item>
+            
+            <!-- 总赢金额显示 -->
+            <el-form-item label="总赢金额" prop="totalWinAmount">
+              <el-input v-model="form.totalWinAmount" placeholder="总赢金额" readonly />
             </el-form-item>
             
             <!-- 随机生成按钮 -->
@@ -318,6 +324,7 @@ export default {
         winAmount: null,
         allowRate: null,  
         isOpen: 1,
+        totalWinAmount: null,
       },
       // 是否显示随机生成按钮
       canClickRandomButton: false,
@@ -383,6 +390,7 @@ export default {
         createTime: [],
         winAmount: null,
         allowRate: null,
+        totalWinAmount: null,
       };
       this.resetForm("form");
     },
@@ -419,7 +427,7 @@ export default {
       } else {
         this.form.createTime = []
       }
-      getGameLbWinConfig(params).then(response => {
+      getGameLbWinConfig(configId).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改游戏输赢控制";
@@ -472,20 +480,7 @@ export default {
     
     /** 随机生成参数 */
     generateRandomParams() {
-      // 生成随机参数
-      // const randomParams = {
-      //   amountLimit: (Math.random() * 1000 + 100).toFixed(2),
-      //   winAmount: (Math.random() * 500 + 50).toFixed(2),
-      //   betCount: Math.floor(Math.random() * 100) + 1,
-      //   allowRate: (Math.random() * 0.5 + 0.1).toFixed(3),
-      //   gameid: this.form.gameid
-      // };
-      
-      // // 更新表单
-      // this.form.amountLimit = randomParams.amountLimit;
-      // this.form.winAmount = randomParams.winAmount;
-      // this.form.betCount = randomParams.betCount;
-      // this.form.allowRate = randomParams.allowRate;
+      // 调用gameLbWinConfig接口进行参数验证和获取回显数据
       const randomParams = {
         amountLimit: this.form.amountLimit,
         winAmount: this.form.winAmount,
@@ -493,14 +488,20 @@ export default {
         allowRate: this.form.allowRate,
         gameid: this.form.gameid
       };
+      
       // 调用gameLbWinConfig接口进行参数验证
       gameLbWinConfig(randomParams).then(response => {
         const formData = response.data;
-        this.form.betRateList = formData.betRateList;
-        this.form.totalWinAmount = formData.totalWinAmount;
-        this.$modal.msgSuccess("随机参数生成成功，验证通过！");
+        // 回显接口返回的数据
+        if (formData.betRateList) {
+          this.form.betRateList = formData.betRateList;
+        }
+        if (formData.totalWinAmount) {
+          this.form.totalWinAmount = formData.totalWinAmount;
+        }
+        this.$modal.msgSuccess("参数验证成功，数据已回显！");
       }).catch(error => {
-        this.$modal.msgError("随机参数验证失败：" + (error.message || "未知错误"));
+        this.$modal.msgError("参数验证失败：" + (error.message || "未知错误"));
       });
     },
     
