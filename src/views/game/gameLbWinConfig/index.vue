@@ -17,19 +17,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
->
       <el-form-item label="是否开启" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启"> 
           <el-option label="是" value="1"></el-option>
           <el-option label="否" value="0"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="控制开始时间" prop="beginTime">
+      <el-form-item label="控制时间" prop="createTime">
         <el-date-picker clearable
           v-model="queryParams.createTime"
           type="daterange"
           value-format="yyyy-MM-dd HH:mm:ss"
-          placeholder="请选择控制开始时间">
+          placeholder="请选择控制时间">
         </el-date-picker>
       </el-form-item>
       <!-- <el-form-item label="控制结束时间" prop="endTime">
@@ -100,7 +99,7 @@
       <el-table-column label="匹配金额,金额匹配成功开始控制" align="center" prop="amountLimit" />
       <el-table-column label="倍率列表" align="center" prop="betRateList" />
       <el-table-column label="下注次数，最大支持100次" align="center" prop="betCount" />
-      <el-table-column label="是否开启(0-否;1-是)" align="center" prop="isOpen" />
+      <el-table-column label="是否开启" align="center" prop="isOpen" />
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.beginTime, '{y}-{m}-{d}') }}</span>
@@ -142,7 +141,7 @@
 
     <!-- 添加或修改游戏输赢控制对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="会员id" prop="mbId">
           <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery" />
         </el-form-item>
