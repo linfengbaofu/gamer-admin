@@ -175,7 +175,7 @@
               <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery"  style="width: 100%;" :disabled="isEdit"/>
             </el-form-item>
             <el-form-item label="游戏id" prop="gameid">
-              <BetGameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="checkCanClickRandomButton" :disabled="isEdit"/>
+              <BetGameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="handleGameChange" :disabled="isEdit"/>
             </el-form-item>
             <el-form-item label="是否开启" prop="isOpen">
               <el-select v-model="form.isOpen" placeholder="请选择是否开启" style="width: 100%;"> 
@@ -211,7 +211,14 @@
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-input v-model="form.amountLimit" placeholder="请输入匹配金额" @input="checkCanClickRandomButton" :readonly="isEdit" />
+              <el-select v-model="form.amountLimit" placeholder="请选择匹配金额" @change="checkCanClickRandomButton" :disabled="isEdit" style="width: 100%;">
+                <el-option
+                  v-for="amount in betAmountOptions"
+                  :key="amount"
+                  :label="amount"
+                  :value="amount"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="要赢的金额" prop="winAmount">
               <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" :readonly="isEdit" />
@@ -326,6 +333,8 @@ export default {
       isEdit: false,
       // 提交按钮loading状态
       submitLoading: false,
+      // 下注金额选项列表
+      betAmountOptions: [],
       // 表单校验
       rules: {
         mbId: [
@@ -403,6 +412,7 @@ export default {
       this.isEdit = false;
       this.resetForm("form");
       this.canClickRandomButton = false; // 重置随机生成按钮状态
+      this.betAmountOptions = []; // 重置匹配金额选项
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -540,6 +550,28 @@ export default {
                                  this.form.gameid &&
                                  this.form.totalWinAmount &&
                                  this.form.betRateList);
+    },
+    
+    /** 处理游戏选择变化 */
+    handleGameChange(data) {
+      if (data && data.selectedItems && !this.isEdit) {
+        // 从选中的游戏信息中获取betAmount
+        const selectedGame = data.selectedItems;
+        if (selectedGame.betAmount) {
+          // 解析betAmount字符串，格式如："1,2,3"
+          this.betAmountOptions = selectedGame.betAmount.split(',').map(item => item.trim()).filter(item => item);
+          // 清空之前选择的匹配金额
+          this.form.amountLimit = null;
+          // 触发检查随机生成按钮状态
+          this.$nextTick(() => {
+            this.checkCanClickRandomButton();
+          });
+        } else {
+          // 如果没有betAmount，清空选项
+          this.betAmountOptions = [];
+          this.form.amountLimit = null;
+        }
+      }
     }
   }
 };
