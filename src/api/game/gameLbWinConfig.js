@@ -42,3 +42,12 @@ export function delGameLbWinConfig(configId) {
     method: 'delete'
   })
 }
+
+// 新增时的参数验证接口
+export function gameLbWinConfig(data) {
+  return request({
+    url: '/game/gameLbWinConfig/validate',
+    method: 'post',
+    data: data
+  })
+}

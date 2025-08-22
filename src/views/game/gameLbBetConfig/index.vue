@@ -157,6 +157,12 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        gameid: [
+          { required: true, message: "游戏id不能为空", trigger: "change" }
+        ],
+        betRate: [
+          { required: true, message: "倍率列表不能为空", trigger: "change" }
+        ]
       }
     };
   },
