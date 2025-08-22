@@ -66,7 +66,7 @@
       <el-table-column label="游戏名称" align="center" prop="twName" />
       <el-table-column label="下注金额" align="center" prop="betAmount" width="100" show-overflow-tooltip/>
       <el-table-column label="倍率列表" align="center" prop="betRate" show-overflow-tooltip />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
           <el-button
