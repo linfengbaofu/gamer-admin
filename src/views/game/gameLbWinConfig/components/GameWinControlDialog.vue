@@ -68,22 +68,13 @@
             <div class="form-tip" style="font-size: 12px; color: #909399; margin-top: 5px;">
               允许范围：{{ getMinWinAmount() }} 到无限大
             </div>
-          </el-form-item>
-
-          
-          <!-- 总赢金额显示 -->
-          <el-form-item label="总赢金额" prop="totalWinAmount">
-            <el-input v-model="form.totalWinAmount" placeholder="总赢金额" readonly  />
-          </el-form-item>
-          
+          </el-form-item>     
         </el-col>
       </el-row>
       <el-divider content-position="center">
         <el-switch v-model="form.enableAdvanced" active-text="显示高级配置" inactive-text="隐藏高级配置" />
       </el-divider>
       <div v-if="form.enableAdvanced">
-        
-
           <!-- 高级配置选项 -->
           <template v-if="form.enableAdvanced">
             <el-form-item label="是否开启" prop="isOpen">
@@ -107,7 +98,7 @@
           </template>
       </div>
       <!-- 轮次列表（生成参数后显示） -->
-      <el-divider v-if="showRoundList" content-position="left">轮次配置</el-divider>
+      <el-divider v-if="showRoundList" content-position="left">轮次配置 总赢金额：{{ form.totalWinAmount }}</el-divider>
       
       <div v-if="showRoundList" class="round-list-section">
         <el-table :data="roundList" border style="width: 100%;height: 300px;overflow-y: auto;" show-summary :summary-method="getRoundSummary">
@@ -447,7 +438,7 @@ export default {
       const total = this.roundList.reduce((sum, round) => {
         return sum + (Number(round.betAmount) || 0);
       }, 0);
-      this.form.totalWinAmount = Number(total.toFixed(8));
+      this.form.totalWinAmount = Number(Number(total.toFixed(8)));
     },
 
 
