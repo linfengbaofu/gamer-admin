@@ -101,7 +101,7 @@
       <el-divider v-if="showRoundList" content-position="left">轮次配置 总赢金额：{{ form.totalWinAmount }}</el-divider>
       
       <div v-if="showRoundList" class="round-list-section">
-        <el-table :data="roundList" border style="width: 100%;height: 300px;overflow-y: auto;" show-summary :summary-method="getRoundSummary">
+        <el-table height="300" :data="roundList" border style="width: 100%;overflow-y: auto;" show-summary :summary-method="getRoundSummary">
           <el-table-column label="轮次" type="index" width="100" align="center"></el-table-column>
           <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
           <el-table-column label="倍率" align="center" >
