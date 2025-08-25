@@ -9,9 +9,11 @@
     <div style="height: 500px; overflow-y: auto">
       <el-descriptions :column="2" border>
         <el-descriptions-item label="会员ID">{{ detailData.mbId }}</el-descriptions-item>
+        <el-descriptions-item label="会员账号">{{ detailData.mbAccount }}</el-descriptions-item>
         <el-descriptions-item label="游戏ID">{{
           detailData.gameid
         }}</el-descriptions-item>
+        <el-descriptions-item label="游戏名称">{{ detailData.twName }}</el-descriptions-item>
         <el-descriptions-item label="匹配下注金额">{{
           detailData.amountLimit
         }}</el-descriptions-item>

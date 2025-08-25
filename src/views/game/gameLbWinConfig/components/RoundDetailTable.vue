@@ -60,9 +60,9 @@ export default {
           });
           if (!values.every(value => value === 0)) {
             const total = values.reduce((prev, curr) => {
-              return prev + curr;
+              return Number(Number(prev) + Number(curr)).toFixed(8);
             }, 0);
-            sums[index] = total.toFixed(6);
+            sums[index] = total
           } else {
             sums[index] = 'N/A';
           }

@@ -1,22 +1,38 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="会员id" prop="mbId">
-        <el-input
-          v-model="queryParams.mbId"
-          placeholder="请输入会员id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="游戏id" prop="gameid">
-        <el-input
-          v-model="queryParams.gameid"
-          placeholder="请输入游戏id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+                  <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form-item label="会员ID" prop="mbId">
+          <el-input
+            v-model="queryParams.mbId"
+            placeholder="请输入会员ID"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="会员账号" prop="mbAccount">
+          <el-input
+            v-model="queryParams.mbAccount"
+            placeholder="请输入会员账号"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="游戏ID" prop="gameid">
+          <el-input
+            v-model="queryParams.gameid"
+            placeholder="请输入游戏ID"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="游戏名称" prop="twName">
+          <el-input
+            v-model="queryParams.twName"
+            placeholder="请输入游戏名称"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
         <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启"> 
           <el-option label="是" :value="1"></el-option>
@@ -91,11 +107,13 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="gameLbWinConfigList" @selection-change="handleSelectionChange">
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <!-- <el-table-column label="主键ID" align="center" prop="configId" width="170" :fixed="true"/> -->
-      <el-table-column label="会员id" align="center" prop="mbId" width="170" :fixed="true"/>
-      <el-table-column label="游戏id" align="center" prop="gameid" />
+                   <el-table v-loading="loading" :data="gameLbWinConfigList" @selection-change="handleSelectionChange">
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
+        <!-- <el-table-column label="主键ID" align="center" prop="configId" width="170" :fixed="true"/> -->
+        <el-table-column label="会员ID" align="center" prop="mbId" width="170" :fixed="true"/>
+        <el-table-column label="会员账号" align="center" prop="mbAccount" width="120"  show-overflow-tooltip/>
+        <el-table-column label="游戏ID" align="center" prop="gameid" width="100" />
+        <el-table-column label="游戏名称" align="center" prop="twName" width="120"  show-overflow-tooltip/>
       <el-table-column align="center" prop="amountLimit" width="120">
         <template>
           <div slot="header">
@@ -151,7 +169,7 @@
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180"></el-table-column>
       <el-table-column label="控制结束时间" align="center" prop="endTime" width="180"></el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" width="180" fixed="right" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="240" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -189,14 +207,20 @@
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row :gutter="20">
-          <!-- 左列 -->
-          <el-col :span="12">
-            <el-form-item label="会员id" prop="mbId">
-              <MemberInfoSelect v-model="form.mbId" placeholder="请选择会员" clearable @keyup.enter.native="handleQuery"  style="width: 100%;" :disabled="isEdit"/>
-            </el-form-item>
-            <el-form-item label="游戏id" prop="gameid">
-              <BetGameInfoSelect v-model="form.gameid" placeholder="请选择游戏" clearable @keyup.enter.native="handleQuery" style="width: 100%;" @change="handleGameChange" :disabled="isEdit"/>
-            </el-form-item>
+                                           <!-- 左列 -->
+            <el-col :span="12">
+              <el-form-item label="会员ID" prop="mbId">
+                <el-input v-model="form.mbId" placeholder="请输入会员ID" :readonly="isEdit" style="width: 100%;"/>
+              </el-form-item>
+              <el-form-item label="会员账号" prop="mbAccount">
+                <el-input v-model="form.mbAccount" placeholder="请输入会员账号" :readonly="isEdit" style="width: 100%;"/>
+              </el-form-item>
+              <el-form-item label="游戏ID" prop="gameid">
+                <el-input v-model="form.gameid" placeholder="请输入游戏ID" :readonly="isEdit" style="width: 100%;"/>
+              </el-form-item>
+              <el-form-item label="游戏名称" prop="twName">
+                <el-input v-model="form.twName" placeholder="请输入游戏名称" :readonly="isEdit" style="width: 100%;"/>
+              </el-form-item>
             <el-form-item label="是否开启" prop="isOpen">
               <el-select v-model="form.isOpen" placeholder="请选择是否开启" style="width: 100%;"> 
                 <el-option label="是" :value="1"></el-option>
@@ -345,29 +369,35 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      // 查询参数
-      queryParams: {
-        createTime: [], 
-        pageNum: 1,
-        pageSize: 10,
-        mbId: null,
-        gameid: null,
-        amountLimit: null,
-        betRateList: null,
-        betCount: null,
-        isOpen: null,
-        beginTime: null,
-        endTime: null,
-      },
-      // 表单参数
-      form: {
-        zeroRate: null,
-        createTime: [],
-        winAmount: null,
-        allowRate: null,  
-        isOpen: 1,
-        totalWinAmount: null,
-      },
+                           // 查询参数
+        queryParams: {
+          createTime: [], 
+          pageNum: 1,
+          pageSize: 10,
+          mbId: null,
+          mbAccount: null,
+          gameid: null,
+          twName: null,
+          amountLimit: null,
+          betRateList: null,
+          betCount: null,
+          isOpen: null,
+          beginTime: null,
+          endTime: null,
+        },
+                           // 表单参数
+        form: {
+          mbId: null,
+          mbAccount: null,
+          gameid: null,
+          twName: null,
+          zeroRate: null,
+          createTime: [],
+          winAmount: null,
+          allowRate: null,  
+          isOpen: 1,
+          totalWinAmount: null,
+        },
       // 是否显示随机生成按钮
       canClickRandomButton: false,
       // 是否为编辑模式
@@ -378,14 +408,20 @@ export default {
       randomParamsLoading: false,
       // 下注金额选项列表
       betAmountOptions: [],
-      // 表单校验
-      rules: {
-        mbId: [
-          { required: true, message: "会员id不能为空", trigger: "blur" }
-        ],
-        gameid: [
-          { required: true, message: "游戏id不能为空", trigger: "blur" }
-        ],
+                           // 表单校验
+        rules: {
+          mbId: [
+            { required: true, message: "会员ID不能为空", trigger: "blur" }
+          ],
+          mbAccount: [
+            { required: true, message: "会员账号不能为空", trigger: "blur" }
+          ],
+          gameid: [
+            { required: true, message: "游戏ID不能为空", trigger: "blur" }
+          ],
+          twName: [
+            { required: true, message: "游戏名称不能为空", trigger: "blur" }
+          ],
         isOpen: [
           { required: true, message: "是否开启不能为空", trigger: "change" }
         ],
@@ -415,27 +451,29 @@ export default {
           { required: true, message: "控制时间不能为空", trigger: "blur" }
         ]
       },
-             // 查看详情对话框相关
-       detailOpen: false,
-       detailForm: {
-         configId: null,
-         mbId: null,
-         gameid: null,
-         amountLimit: null,
-         betRateList: null,
-         betCount: null,
-         isOpen: null,
-         beginTime: null,
-         endTime: null,
-         remark: null,
-         createBy: null,
-         updateTime: null,
-         updateBy: null,
-         createTime: [],
-         winAmount: null,
-         allowRate: null,
-         totalWinAmount: null,
-       }
+                                         // 查看详情对话框相关
+         detailOpen: false,
+         detailForm: {
+           configId: null,
+           mbId: null,
+           mbAccount: null,
+           gameid: null,
+           twName: null,
+           amountLimit: null,
+           betRateList: null,
+           betCount: null,
+           isOpen: null,
+           beginTime: null,
+           endTime: null,
+           remark: null,
+           createBy: null,
+           updateTime: null,
+           updateBy: null,
+           createTime: [],
+           winAmount: null,
+           allowRate: null,
+           totalWinAmount: null,
+         }
     };
   },
   created() {
@@ -471,27 +509,29 @@ export default {
       this.reset();
       this.submitLoading = false; // 重置提交按钮loading状态
     },
-    // 表单重置
-    reset() {
-      this.form = {
-        configId: null,
-        mbId: null,
-        gameid: null,
-        amountLimit: null,
-        betRateList: null,
-        betCount: null,
-        isOpen: 1,
-        beginTime: null,
-        endTime: null,
-        remark: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null,
-        createTime: [],
-        winAmount: null,
-        allowRate: null,
-        totalWinAmount: null,
-      };
+                   // 表单重置
+      reset() {
+        this.form = {
+          configId: null,
+          mbId: null,
+          mbAccount: null,
+          gameid: null,
+          twName: null,
+          amountLimit: null,
+          betRateList: null,
+          betCount: null,
+          isOpen: 1,
+          beginTime: null,
+          endTime: null,
+          remark: null,
+          createBy: null,
+          updateTime: null,
+          updateBy: null,
+          createTime: [],
+          winAmount: null,
+          allowRate: null,
+          totalWinAmount: null,
+        };
       this.isEdit = false;
       this.resetForm("form");
       this.canClickRandomButton = false; // 重置随机生成按钮状态
@@ -601,15 +641,16 @@ export default {
       // 设置loading状态
       this.randomParamsLoading = true;
       
-      // 调用gameLbWinConfig接口进行参数验证和获取回显数据
-      const randomParams = {
-        amountLimit: this.form.amountLimit,
-        winAmount: this.form.winAmount,
-        betCount: this.form.betCount,
-        allowRate: this.form.allowRate,
-        gameid: this.form.gameid,
-        zeroRate: this.form.zeroRate
-      };
+                           // 调用gameLbWinConfig接口进行参数验证和获取回显数据
+        const randomParams = {
+          amountLimit: this.form.amountLimit,
+          winAmount: this.form.winAmount,
+          betCount: this.form.betCount,
+          allowRate: this.form.allowRate,
+          mbId: this.form.mbId,
+          gameid: this.form.gameid,
+          zeroRate: this.form.zeroRate
+        };
       
       // 调用gameLbWinConfig接口进行参数验证
       gameLbWinConfig(randomParams).then(response => {
@@ -630,15 +671,16 @@ export default {
       });
     },
     
-    /** 检查是否显示随机生成按钮 */
-    checkCanClickRandomButton() {
-      // 检查必填字段是否都已填写
-      this.canClickRandomButton = !!(this.form.amountLimit && 
-                                 this.form.winAmount && 
-                                 this.form.betCount && 
-                                 this.form.allowRate && 
-                                 this.form.gameid);
-    },
+                   /** 检查是否显示随机生成按钮 */
+      checkCanClickRandomButton() {
+        // 检查必填字段是否都已填写
+        this.canClickRandomButton = !!(this.form.amountLimit && 
+                                   this.form.winAmount && 
+                                   this.form.betCount && 
+                                   this.form.allowRate && 
+                                   this.form.mbId && 
+                                   this.form.gameid);
+      },
     
     /** 处理游戏选择变化 */
     handleGameChange(data) {
