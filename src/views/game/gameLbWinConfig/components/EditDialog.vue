@@ -17,7 +17,12 @@
         <el-descriptions-item label="要赢的金额">{{ formData.winAmount }}</el-descriptions-item>
         <el-descriptions-item label="下注次数">{{ formData.betCount }}</el-descriptions-item>
         <el-descriptions-item label="误差率">{{ formData.allowRate }}</el-descriptions-item>
-        <el-descriptions-item label="总赢金额">{{ formData.totalWinAmount }}</el-descriptions-item>
+        <el-descriptions-item label="总赢金额">
+          {{ formData.totalWinAmount }}
+          <el-tooltip content="总赢金额= 多轮下注获奖金额总和 - (单局下注金额 * 下注次数)" placement="top">
+            <i class="el-icon-question" style="margin-left: 5px; color: #909399;"></i>
+          </el-tooltip>
+        </el-descriptions-item>
         <el-descriptions-item label="备注" :span="2">{{ formData.remark || "无" }}</el-descriptions-item>
       </el-descriptions>
 

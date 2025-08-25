@@ -100,6 +100,9 @@
       <!-- 轮次列表（生成参数后显示） -->
       <el-divider v-if="showRoundList" content-position="left">轮次配置
         <span style="color: red;">总赢金额：{{ form.totalWinAmount }}</span>
+        <el-tooltip content="总赢金额= 多轮下注获奖金额总和 - (单局下注金额 * 下注次数)" placement="top">
+          <i class="el-icon-question" style="margin-left: 5px; color: #909399;"></i>
+        </el-tooltip>
       </el-divider>
       
       <div v-if="showRoundList" class="round-list-section">
