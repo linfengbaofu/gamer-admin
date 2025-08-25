@@ -10,6 +10,9 @@
           <el-form-item label="下注反水比例" prop="betCommissionRate">
             <el-input v-model="form.betCommissionRate" placeholder="请输入下注反水比例" />
           </el-form-item>
+          <el-form-item label="零率" prop="zeroRate">
+            <el-input v-model="form.zeroRate" placeholder="请输入零率" />
+          </el-form-item>
           <!-- <el-form-item label="USDT兑换比率" prop="exchangeRate">
             <el-input
               type="number"
@@ -157,6 +160,7 @@ export default {
         activeTab: "basic",
         // 配置表单数据
         form: {
+          zeroRate: null, // 零率
           id: null, // 配置ID
           createBy: null, // 创建人
           createTime: null, // 创建时间

@@ -43,34 +43,10 @@
 
       <el-divider content-position="left">详细配置信息</el-divider>
 
-      <!-- 合并后的配置信息表格 -->
+      <!-- 轮次详情表格 -->
       <div class="detail-section">
-        <h4>配置详情</h4>
-        <el-table
-          :data="combinedTableData"
-          border
-          style="width: 100%"
-          show-summary
-          :summary-method="getSummary"
-        >
-          <el-table-column
-            label="轮次"
-            type="index"
-            width="60"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            label="匹配下注金额"
-            prop="amountLimit"
-            align="center"
-          ></el-table-column>
-          <el-table-column label="倍率" prop="rate" align="center"></el-table-column>
-          <el-table-column
-            label="对应金额"
-            prop="betAmount"
-            align="center"
-          ></el-table-column>
-        </el-table>
+        <h4>轮次详情</h4>
+        <RoundDetailTable :detailData="detailData" />
       </div>
     </div>
 
@@ -81,8 +57,13 @@
 </template>
 
 <script>
+import RoundDetailTable from './RoundDetailTable.vue'
+
 export default {
   name: "DetailDialog",
+  components: {
+    RoundDetailTable
+  },
   props: {
     visible: {
       type: Boolean,
@@ -94,17 +75,9 @@ export default {
     },
   },
   data() {
-    return {
-      combinedTableData: [],
-    };
+    return {};
   },
-  watch: {
-    visible(newVal) {
-      if (newVal && this.detailData) {
-        this.initTableData();
-      }
-    },
-  },
+  watch: {},
   methods: {
     /** 初始化表格数据 */
     initTableData() {
@@ -116,55 +89,11 @@ export default {
           ? this.detailData.betAmountMatch.split(",")
           : [];
 
-        rates.forEach((rate, index) => {
-          this.combinedTableData.push({
-            amountLimit: this.detailData.amountLimit,
-            rate: rate,
-            betAmount: amounts[index] || "N/A",
-          });
-        });
+        // 数据现在由子组件处理
       }
     },
 
-    /** 计算表格汇总行 */
-    getSummary(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = "汇总";
-          return;
-        }
-        if (index === 1) {
-          // 匹配下注金额列，显示第一个值
-          // sums[index] = data.length > 0 ? data[0].amountLimit : '';
-          return;
-        }
-        if (index === 2) {
-          // 倍率列，显示"合计"
-          // sums[index] = '合计';
-          return;
-        }
-        if (index === 3) {
-          // 对应金额列，计算总和
-          const values = data.map((item) => {
-            const amount = parseFloat(item.betAmount);
-            return isNaN(amount) ? 0 : amount;
-          });
-          if (!values.every((value) => value === 0)) {
-            const total = values.reduce((prev, curr) => {
-              return Number((Number(prev) + Number(curr)).toFixed(8));
-            }, 0);
-            sums[index] = total;
-          } else {
-            sums[index] = "N/A";
-          }
-          return;
-        }
-        sums[index] = "";
-      });
-      return sums;
-    },
+    // 汇总方法现在由子组件处理
 
     /** 关闭对话框 */
     handleClose() {

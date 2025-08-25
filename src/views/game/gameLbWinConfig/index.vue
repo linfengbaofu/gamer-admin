@@ -106,6 +106,32 @@
           </div>
         </template>
       </el-table-column>
+      
+      <!-- 轮次列表列 -->
+      <el-table-column label="轮次列表" align="center" width="120">
+        <template slot-scope="scope">
+          <el-popover
+            placement="top-start"
+            width="300"
+            trigger="hover"
+            v-if="scope.row.betRateList"
+          >
+            <div>
+              <h4 style="margin: 0 0 10px 0; color: #303133;">轮次详情</h4>
+              <el-table :data="getRoundTableData(scope.row)" border size="mini" style="width: 100%;">
+                <el-table-column label="轮次" prop="round" align="center" width="60"></el-table-column>
+                <el-table-column label="赔率" prop="rate" align="center" width="80"></el-table-column>
+                <el-table-column label="下注金额" prop="amount" align="center" width="100"></el-table-column>
+              </el-table>
+            </div>
+            <div slot="reference" style="cursor: pointer; color: #409EFF;">
+              <i class="el-icon-view"></i>
+              查看轮次
+            </div>
+          </el-popover>
+          <span v-else style="color: #C0C4CC;">-</span>
+        </template>
+      </el-table-column>
    
       <!-- <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
       </el-table-column>
@@ -276,41 +302,12 @@
       </div>
     </el-dialog>
 
-    <!-- 查看详情对话框 -->
-    <el-dialog title="查看详情" :visible.sync="detailOpen" width="900px" append-to-body>
-      <div style="height: 500px;overflow-y: auto;">
-        <el-descriptions :column="2" border>
-          <el-descriptions-item label="会员ID">{{ detailForm.mbId }}</el-descriptions-item>
-          <el-descriptions-item label="游戏ID">{{ detailForm.gameid }}</el-descriptions-item>
-          <el-descriptions-item label="匹配下注金额">{{ detailForm.amountLimit }}</el-descriptions-item>
-          <el-descriptions-item label="要赢的金额">{{ detailForm.winAmount }}</el-descriptions-item>
-          <el-descriptions-item label="下注次数">{{ detailForm.betCount }}</el-descriptions-item>
-          <el-descriptions-item label="误差率">{{ detailForm.allowRate }}</el-descriptions-item>
-          <el-descriptions-item label="总赢金额">{{ detailForm.totalWinAmount }}</el-descriptions-item>
-          <el-descriptions-item label="是否开启">{{ detailForm.isOpen === 1 ? '是' : '否' }}</el-descriptions-item>
-          <el-descriptions-item label="控制开始时间">{{ detailForm.beginTime }}</el-descriptions-item>
-          <el-descriptions-item label="控制结束时间">{{ detailForm.endTime }}</el-descriptions-item>
-          <el-descriptions-item label="备注" :span="2">{{ detailForm.remark || '无' }}</el-descriptions-item>
-        </el-descriptions>
-        
-               <el-divider content-position="left">详细配置信息</el-divider>
-         
-                   <!-- 合并后的配置信息表格 -->
-          <div class="detail-section">
-            <h4>配置详情</h4>
-            <el-table :data="combinedTableData" border style="width: 100%;" show-summary :summary-method="getSummary">
-              <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
-              <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
-              <el-table-column label="倍率" prop="rate" align="center"></el-table-column>
-              <el-table-column label="对应金额" prop="betAmount" align="center"></el-table-column>
-            </el-table>
-          </div>
-      </div>
-      
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="detailOpen = false">关 闭</el-button>
-      </div>
-    </el-dialog>
+         <!-- 查看详情对话框 -->
+     <DetailDialog 
+       :visible.sync="detailOpen" 
+       :detailData="detailForm"
+       @close="handleDetailClose"
+     />
   </div>
 </template>
 
@@ -319,12 +316,14 @@
 import { listGameLbWinConfig, getGameLbWinConfig, delGameLbWinConfig, addGameLbWinConfig, updateGameLbWinConfig, gameLbWinConfig } from "@/api/game/gameLbWinConfig";
 import BetGameInfoSelect from './BetGameInfoSelect/index.vue'
 import MemberInfoSelect from '@/components/MemberInfoSelect'
+import DetailDialog from './components/DetailDialog.vue'
 
 export default {
   name: "GameLbWinConfig",
   components: {
     BetGameInfoSelect,
-    MemberInfoSelect
+    MemberInfoSelect,
+    DetailDialog
   },
   data() {
     return {
@@ -416,28 +415,27 @@ export default {
           { required: true, message: "控制时间不能为空", trigger: "blur" }
         ]
       },
-      // 查看详情对话框相关
-      detailOpen: false,
-      detailForm: {
-        configId: null,
-        mbId: null,
-        gameid: null,
-        amountLimit: null,
-        betRateList: null,
-        betCount: null,
-        isOpen: null,
-        beginTime: null,
-        endTime: null,
-        remark: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null,
-        createTime: [],
-        winAmount: null,
-        allowRate: null,
-        totalWinAmount: null,
-      },
-             combinedTableData: [],
+             // 查看详情对话框相关
+       detailOpen: false,
+       detailForm: {
+         configId: null,
+         mbId: null,
+         gameid: null,
+         amountLimit: null,
+         betRateList: null,
+         betCount: null,
+         isOpen: null,
+         beginTime: null,
+         endTime: null,
+         remark: null,
+         createBy: null,
+         updateTime: null,
+         updateBy: null,
+         createTime: [],
+         winAmount: null,
+         allowRate: null,
+         totalWinAmount: null,
+       }
     };
   },
   created() {
@@ -669,25 +667,16 @@ export default {
       this.showDetailDialog(row);
     },
 
-         /** 显示详情对话框 */
+                                       /** 显示详情对话框 */
      showDetailDialog(row) {
        this.detailForm = row;
        this.detailOpen = true;
-       this.combinedTableData = [];
-
-       if (this.detailForm.betRateList && this.detailForm.amountLimit) {
-         const rates = this.detailForm.betRateList.split(',');
-         const amounts = this.detailForm.betAmountMatch ? this.detailForm.betAmountMatch.split(',') : [];
-         
-                   rates.forEach((rate, index) => {
-            this.combinedTableData.push({
-              amountLimit: this.detailForm.amountLimit,
-              rate: rate,
-              betAmount: amounts[index] || 'N/A'
-            });
-          });
-        }
-      },
+     },
+     
+     /** 处理详情对话框关闭 */
+     handleDetailClose() {
+       this.detailOpen = false;
+     },
 
       /** 计算表格汇总行 */
       getSummary(param) {
@@ -727,6 +716,20 @@ export default {
           sums[index] = '';
         });
         return sums;
+      },
+      
+      /** 生成轮次表格数据 */
+      getRoundTableData(row) {
+        if (!row.betRateList) return [];
+        
+        const rates = row.betRateList.split(',');
+        const amountLimit = Number(row.amountLimit || 0);
+        
+        return rates.map((rate, index) => ({
+          round: `第${index + 1}轮`,
+          rate: rate,
+          amount: amountLimit > 0 ? (amountLimit * Number(rate)).toFixed(6) : 'N/A'
+        }));
       }
   }
 };
