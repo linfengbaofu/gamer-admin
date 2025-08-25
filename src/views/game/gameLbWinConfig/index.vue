@@ -125,31 +125,32 @@
         </template>
       </el-table-column>
       
-      <!-- 轮次列表列 -->
-      <el-table-column label="轮次列表" align="center" width="120">
-        <template slot-scope="scope">
-          <el-popover
-            placement="top-start"
-            width="300"
-            trigger="hover"
-            v-if="scope.row.betRateList"
-          >
-            <div>
-              <h4 style="margin: 0 0 10px 0; color: #303133;">轮次详情</h4>
-              <el-table :data="getRoundTableData(scope.row)" border size="mini" style="width: 100%;">
-                <el-table-column label="轮次" prop="round" align="center" width="60"></el-table-column>
-                <el-table-column label="赔率" prop="rate" align="center" width="80"></el-table-column>
-                <el-table-column label="下注金额" prop="amount" align="center" width="100"></el-table-column>
-              </el-table>
-            </div>
-            <div slot="reference" style="cursor: pointer; color: #409EFF;">
-              <i class="el-icon-view"></i>
-              查看轮次
-            </div>
-          </el-popover>
-          <span v-else style="color: #C0C4CC;">-</span>
-        </template>
-      </el-table-column>
+             <!-- 轮次列表列 -->
+       <el-table-column label="轮次列表" align="center" width="120">
+         <template slot-scope="scope">
+           <el-popover
+             placement="top-start"
+             width="500"
+             trigger="hover"
+             v-if="scope.row.betRateList"
+           >
+             <div >
+               <h4 style="margin: 0 0 10px 0; color: #303133;">轮次详情</h4>
+               <el-table height="300" :data="getRoundTableData(scope.row)" border style="width: 100%; max-height: 300px; overflow-y: auto;" show-summary :summary-method="getRoundSummary">
+                 <el-table-column label="轮次" type="index" width="60" align="center"></el-table-column>
+                 <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
+                 <el-table-column label="赔率" prop="rate" align="center"></el-table-column>
+                 <el-table-column label="对应金额" prop="betAmount" align="center"></el-table-column>
+               </el-table>
+             </div>
+             <div slot="reference" style="cursor: pointer; color: #409EFF;">
+               <i class="el-icon-view"></i>
+               查看轮次
+             </div>
+           </el-popover>
+           <span v-else style="color: #C0C4CC;">-</span>
+         </template>
+       </el-table-column>
    
       <!-- <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
       </el-table-column>
@@ -760,19 +761,58 @@ export default {
         return sums;
       },
       
-      /** 生成轮次表格数据 */
-      getRoundTableData(row) {
-        if (!row.betRateList) return [];
+                    /** 生成轮次表格数据 */
+        getRoundTableData(row) {
+          if (!row.betRateList) return [];
+          
+          const rates = row.betRateList.split(',');
+          const amountLimit = Number(row.amountLimit || 0);
+          const amounts = row.betAmountMatch ? row.betAmountMatch.split(',') : [];
+          
+          return rates.map((rate, index) => ({
+            amountLimit: amountLimit,
+            rate: rate,
+            betAmount: amounts[index] || (amountLimit > 0 ? Number(Number(Number(amountLimit) * Number(rate)).toFixed(8)) : 'N/A')
+          }));
+        },
         
-        const rates = row.betRateList.split(',');
-        const amountLimit = Number(row.amountLimit || 0);
-        
-        return rates.map((rate, index) => ({
-          round: `第${index + 1}轮`,
-          rate: rate,
-          amount: amountLimit > 0 ? (amountLimit * Number(rate)).toFixed(6) : 'N/A'
-        }));
-      }
+        /** 计算轮次表格汇总行 */
+        getRoundSummary(param) {
+          const { columns, data } = param;
+          const sums = [];
+          columns.forEach((column, index) => {
+            if (index === 0) {
+              sums[index] = '汇总';
+              return;
+            }
+            if (index === 1) {
+              // 匹配下注金额列，不显示汇总内容
+              return;
+            }
+            if (index === 2) {
+              // 赔率列，不显示汇总内容
+              return;
+            }
+            if (index === 3) {
+              // 对应金额列，计算总和
+              const values = data.map(item => {
+                const amount = parseFloat(item.betAmount);
+                return isNaN(amount) ? 0 : amount;
+              });
+              if (!values.every(value => value === 0)) {
+                const total = values.reduce((prev, curr) => {
+                  return Number(Number(Number(Number(prev) + Number(curr)).toFixed(8)));
+                }, 0);
+                sums[index] = total;
+              } else {
+                sums[index] = 'N/A';
+              }
+              return;
+            }
+            sums[index] = '';
+          });
+          return sums;
+        }
   }
 };
 </script>
