@@ -6,8 +6,12 @@
     :disabled="disabled"
     :multiple="multiple"
     :filterable="filterable"
+    :remote="true"
+    :remote-method="remoteSearch"
+    :loading="loading"
     @change="handleChange"
     @clear="handleClear"
+    @focus="handleFocus"
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -57,33 +61,117 @@ export default {
   data() {
     return {
       memberInfoList: [],
-      selectedValue: this.value
+      selectedValue: this.value,
+      loading: false,
+      searchKeyword: '',
+      hasInitialized: false
     }
   },
   watch: {
-    value(newVal) {
-      this.selectedValue = newVal
+    value: {
+      handler(newVal) {
+        this.selectedValue = newVal
+        // 如果value有值且还未初始化，则根据mbId搜索
+        if (newVal && !this.hasInitialized) {
+          this.searchByMbId(newVal)
+        }
+      },
+      immediate: true
     },
     selectedValue(newVal) {
       this.$emit('input', newVal)
     }
   },
   created() {
-    this.loadMemberInfoList()
+    // 如果初始值存在，则根据mbId搜索；否则加载默认列表
+    if (this.value) {
+      this.searchByMbId(this.value)
+    } else {
+      this.loadDefaultMemberList()
+    }
   },
   methods: {
-    async loadMemberInfoList() {
+    // 根据mbId搜索会员
+    async searchByMbId(mbId) {
+      if (!mbId) return
+      
+      this.loading = true
       try {
         const response = await listInfo({
           pageNum: 1,
-          pageSize: 9999 // 获取所有会员信息
+          pageSize: 10,
+          mbId: mbId
+        })
+        
+        if (response.rows && response.rows.length > 0) {
+          this.memberInfoList = response.rows
+          this.hasInitialized = true
+        } else {
+          // 如果没找到，尝试加载默认列表
+          this.loadDefaultMemberList()
+        }
+      } catch (error) {
+        console.error('根据mbId搜索会员失败:', error)
+        this.$message.error('搜索会员失败')
+        this.loadDefaultMemberList()
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    // 加载默认会员列表
+    async loadDefaultMemberList() {
+      this.loading = true
+      try {
+        const response = await listInfo({
+          pageNum: 1,
+          pageSize: 20 // 减少默认加载数量
         })
         this.memberInfoList = response.rows || []
       } catch (error) {
         console.error('加载会员信息失败:', error)
         this.$message.error('加载会员信息失败')
+      } finally {
+        this.loading = false
       }
     },
+    
+    // 远程搜索方法
+    async remoteSearch(query) {
+      if (query === '') {
+        // 如果搜索词为空，加载默认列表
+        this.loadDefaultMemberList()
+        return
+      }
+      
+      this.searchKeyword = query
+      this.loading = true
+      
+      try {
+        const response = await listInfo({
+          pageNum: 1,
+          pageSize: 20,
+          mbAccount: query // 使用mbAccount进行搜索
+        })
+        
+        this.memberInfoList = response.rows || []
+      } catch (error) {
+        console.error('远程搜索会员失败:', error)
+        this.$message.error('搜索会员失败')
+        this.memberInfoList = []
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    // 处理焦点事件
+    handleFocus() {
+      // 如果当前没有数据且没有搜索关键词，加载默认列表
+      if (this.memberInfoList.length === 0 && !this.searchKeyword) {
+        this.loadDefaultMemberList()
+      }
+    },
+    
     handleChange(value) {
       this.selectedValue = value
       const selectedItems = this.multiple 
@@ -95,13 +183,17 @@ export default {
         selectedItems
       })
     },
+    
     handleClear() {
       this.selectedValue = this.multiple ? [] : null
+      this.searchKeyword = ''
+      this.loadDefaultMemberList() // 清空后重新加载默认列表
       this.$emit('change', {
         value: this.selectedValue,
         selectedItems: this.multiple ? [] : null
       })
     },
+    
     // 获取选中项的完整数据
     getSelectedData() {
       if (this.multiple) {

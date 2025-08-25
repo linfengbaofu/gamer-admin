@@ -98,7 +98,9 @@
           </template>
       </div>
       <!-- 轮次列表（生成参数后显示） -->
-      <el-divider v-if="showRoundList" content-position="left">轮次配置 总赢金额：{{ form.totalWinAmount }}</el-divider>
+      <el-divider v-if="showRoundList" content-position="left">轮次配置
+        <span style="color: red;">总赢金额：{{ form.totalWinAmount }}</span>
+      </el-divider>
       
       <div v-if="showRoundList" class="round-list-section">
         <el-table height="300" :data="roundList" border style="width: 100%;overflow-y: auto;" show-summary :summary-method="getRoundSummary">

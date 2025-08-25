@@ -9,6 +9,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="用户账号" prop="mbAccount">
+        <el-input
+          v-model="queryParams.mbAccount"
+          placeholder="请输入用户账号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -64,6 +72,7 @@
     <el-table v-loading="loading" :data="mbList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="用户ID" align="center" prop="mbId" />
+      <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="余额" align="center" prop="optionsBalance" />
       <el-table-column label="下单状态" align="center" prop="orderStatus">
         <template slot-scope="scope">
@@ -104,6 +113,12 @@
     <!-- 添加或修改期权用户对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="用户ID" prop="mbId">
+          <el-input v-model="form.mbId" placeholder="用户ID" :readonly="form.mbId != null" />
+        </el-form-item>
+        <el-form-item label="用户账号" prop="mbAccount">
+          <el-input v-model="form.mbAccount" placeholder="用户账号" :readonly="form.mbId != null" />
+        </el-form-item>
         <el-form-item label="余额" prop="optionsBalance">
           <el-input v-model="form.optionsBalance" placeholder="请输入余额" />
         </el-form-item>
@@ -163,6 +178,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         mbId: null,
+        mbAccount: null,
         orderStatus: null,
       },
       // 表单参数
@@ -194,6 +210,7 @@ export default {
     reset() {
       this.form = {
         mbId: null,
+        mbAccount: null,
         optionsBalance: null,
         orderStatus: [],
         balanceOperations: null,
