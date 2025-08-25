@@ -176,13 +176,11 @@ export default {
       type: Object,
       default: () => ({})
     },
-    betAmountOptions: {
-      type: Array,
-      default: () => []
-    }
+
   },
   data() {
     return {
+      betAmountOptions: [],
       form: {
         configId: null,
         mbId: null,
@@ -245,9 +243,9 @@ export default {
         betCount: [
           { required: true, message: "下注次数不能为空", trigger: "blur" }
         ],
-        totalWinAmount: [
-          { required: true, message: "总赢金额不能为空", trigger: "blur" }
-        ],
+        // totalWinAmount: [
+        //   { required: true, message: "总赢金额不能为空", trigger: "blur" }
+        // ],
         betRateList: [
           { required: true, message: "倍率列表不能为空", trigger: "blur" }
         ],
@@ -371,7 +369,7 @@ export default {
         amountLimit: this.form.amountLimit,
         winAmount: this.form.winAmount,
         betCount: this.form.betCount,
-        allowRate: this.form.allowRate,
+        zeroRate: this.form.zeroRate,
         mbId: this.form.mbId,
         gameid: this.form.gameid
       };
@@ -560,13 +558,17 @@ export default {
     
     handleMemberChange(data) {
       console.log(data);
-      this.form.mbAccount = data.selectedItems.mbAccount;
+      if(data.selectedItems){
+        this.form.mbAccount = data.selectedItems.mbAccount;
+      }
     },
     
     handleGameChange(data) {
       console.log(data);
-      this.form.twName = data.selectedItems.twName;
-      this.betAmountOptions = data.selectedItems.betAmount.split(',') || [];
+      if(data.selectedItems){
+        this.form.twName = data.selectedItems.twName;
+        this.betAmountOptions = data.selectedItems.betAmount.split(',') || [];
+      }
     }
   }
 };
