@@ -47,7 +47,16 @@
               />
             </el-select>
           </el-form-item>
-
+          
+          <el-form-item label="下注次数" prop="betCount">
+            <span slot="label">
+              <span>下注次数</span>
+              <el-tooltip content="最大支持100次" placement="top">
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </span>
+            <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="handleBetCountChange" />
+          </el-form-item>
           <el-form-item label="要赢的金额" prop="winAmount">
             <el-input 
               v-model="form.winAmount" 
@@ -60,34 +69,13 @@
               允许范围：{{ getMinWinAmount() }} 到无限大
             </div>
           </el-form-item>
-          
-          <el-form-item label="下注次数" prop="betCount">
-            <span slot="label">
-              <span>下注次数</span>
-              <el-tooltip content="最大支持100次" placement="top">
-                <i class="el-icon-question"></i>
-              </el-tooltip>
-            </span>
-            <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="handleBetCountChange" />
-          </el-form-item>
+
           
           <!-- 总赢金额显示 -->
           <el-form-item label="总赢金额" prop="totalWinAmount">
             <el-input v-model="form.totalWinAmount" placeholder="总赢金额" readonly  />
           </el-form-item>
           
-          <!-- 随机生成按钮 -->
-          <el-form-item>
-            <el-button 
-              type="warning" 
-              icon="el-icon-refresh" 
-              @click="generateRandomParams"
-              :loading="randomParamsLoading"
-              :disabled="!canClickRandomButton || randomParamsLoading"
-              style="width: 100%;">
-              {{ randomParamsLoading ? '生成中...' : '随机生成参数' }}
-            </el-button>
-          </el-form-item>
         </el-col>
       </el-row>
       <el-divider content-position="center">
@@ -122,10 +110,10 @@
       <el-divider v-if="showRoundList" content-position="left">轮次配置</el-divider>
       
       <div v-if="showRoundList" class="round-list-section">
-        <el-table :data="roundList" border style="width: 100%;" show-summary :summary-method="getRoundSummary">
-          <el-table-column label="轮次" type="index" width="60" align="center"></el-table-column>
-          <el-table-column label="匹配下注金额" prop="amountLimit" align="center" width="120"></el-table-column>
-          <el-table-column label="倍率" align="center" width="120">
+        <el-table :data="roundList" border style="width: 100%;height: 300px;overflow-y: auto;" show-summary :summary-method="getRoundSummary">
+          <el-table-column label="轮次" type="index" width="100" align="center"></el-table-column>
+          <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
+          <el-table-column label="倍率" align="center" >
             <template slot-scope="scope">
               <el-input 
                 v-model="scope.row.rate" 
@@ -135,17 +123,24 @@
               </el-input>
             </template>
           </el-table-column>
-          <el-table-column label="对应金额" prop="betAmount" align="center" width="120"></el-table-column>
+          <el-table-column label="对应金额" prop="betAmount" align="center" ></el-table-column>
         </el-table>
         
         <div class="round-actions" style="margin-top: 15px;">
-          <el-button type="primary" size="mini" @click="addRound">添加轮次</el-button>
-          <el-button type="danger" size="mini" @click="removeRound" :disabled="roundList.length <= 1">删除轮次</el-button>
           <el-button type="success" size="mini" @click="recalculateTotal">重新计算</el-button>
         </div>
       </div>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-button 
+        type="warning" 
+        icon="el-icon-refresh" 
+        @click="generateRandomParams"
+        :loading="randomParamsLoading"
+        :disabled="!canClickRandomButton || randomParamsLoading"
+        >
+        {{ randomParamsLoading ? '生成中...' : '随机生成参数' }}
+      </el-button>
       <el-button type="primary" @click="submitForm" :loading="submitLoading" :disabled="submitLoading">确 定</el-button>
       <el-button @click="handleClose" :disabled="submitLoading">取 消</el-button>
     </div>
@@ -312,6 +307,15 @@ export default {
     handleWinAmountChange() {
       this.checkCanClickRandomButton();
       this.validateWinAmount();
+      this.resetRoundList();
+    },
+
+    /** 重置轮次列表 */
+    resetRoundList() {
+      this.roundList = [];
+      this.showRoundList = false;
+      this.form.betRateList = null;
+      this.form.totalWinAmount = null;
     },
 
     /** 验证要赢金额是否在允许范围内 */
@@ -353,12 +357,14 @@ export default {
     handleAmountLimitChange() {
       this.checkCanClickRandomButton();
       this.validateWinAmount();
+      this.resetRoundList();
     },
 
     /** 处理下注次数变化 */
     handleBetCountChange() {
       this.checkCanClickRandomButton();
       this.validateWinAmount();
+      this.resetRoundList();
     },
     
     /** 随机生成参数 */
@@ -444,30 +450,7 @@ export default {
       this.form.totalWinAmount = Number(total.toFixed(8));
     },
 
-    /** 添加轮次 */
-    addRound() {
-      const newIndex = this.roundList.length;
-      const amountLimit = Number(this.form.amountLimit || 0);
-      
-      this.roundList.push({
-        index: newIndex,
-        amountLimit: amountLimit,
-        rate: 1.0,
-        betAmount: amountLimit
-      });
-      
-      this.updateBetRateList();
-      this.calculateTotalWinAmount();
-    },
 
-    /** 删除轮次 */
-    removeRound() {
-      if (this.roundList.length > 1) {
-        this.roundList.pop();
-        this.updateBetRateList();
-        this.calculateTotalWinAmount();
-      }
-    },
 
     /** 重新计算 */
     recalculateTotal() {
@@ -482,7 +465,7 @@ export default {
       const sums = [];
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = '汇总';
+          sums[index] = '总赢金额';
           return;
         }
         if (index === 1) {
@@ -519,11 +502,17 @@ export default {
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
+          // 检查是否有轮次配置数据
+          if (!this.showRoundList || this.roundList.length === 0) {
+            this.$message.warning('请先点击"随机生成参数"按钮生成轮次配置数据');
+            return;
+          }
+          
           // 如果没有开启高级配置，设置默认值
           if (!this.form.enableAdvanced) {
             this.form.isOpen = 1;
             this.form.remark = '';
-            this.form.allowRate = 0.01; // 默认误差率
+            this.form.zeroRate = this.form.zeroRate || 0.01; // 使用已设置的零率或默认值
           }
           
           this.submitLoading = true;
