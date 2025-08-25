@@ -96,12 +96,8 @@ export default {
       }
     };
   },
-  watch: {
-    visible(newVal) {
-      if (newVal && this.formData) {
-        this.initEditForm();
-      }
-    }
+  created() {
+    this.initEditForm();
   },
   methods: {
     /** 初始化编辑表单数据 */
