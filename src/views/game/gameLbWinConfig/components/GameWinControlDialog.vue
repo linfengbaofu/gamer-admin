@@ -409,6 +409,9 @@ export default {
           betAmount: betAmount
         };
       });
+      
+      // 生成轮次列表后，计算总赢金额
+      this.calculateTotalWinAmount();
     },
 
     /** 处理倍率变化 */
@@ -435,10 +438,18 @@ export default {
 
     /** 计算总赢金额 */
     calculateTotalWinAmount() {
-      const total = this.roundList.reduce((sum, round) => {
+      // 计算对应金额总和
+      const totalBetAmount = this.roundList.reduce((sum, round) => {
         return sum + (Number(round.betAmount) || 0);
       }, 0);
-      this.form.totalWinAmount = Number(Number(total.toFixed(8)));
+      
+      // 计算下注次数 * 匹配下注金额
+      const betCount = Number(this.form.betCount || 0);
+      const amountLimit = Number(this.form.amountLimit || 0);
+      const totalBetCost = betCount * amountLimit;
+      
+      // 总赢金额 = 对应金额总和 - （下注次数 * 匹配下注金额）
+      this.form.totalWinAmount = Number(Number((totalBetAmount - totalBetCost).toFixed(8)));
     },
 
 
