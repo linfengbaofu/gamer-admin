@@ -124,7 +124,9 @@ export default {
             configId: this.editForm.configId,
             isOpen: this.editForm.isOpen,
             beginTime: this.editForm.createTime[0],
-            endTime: this.editForm.createTime[1]
+            endTime: this.editForm.createTime[1],
+            gameid: this.formData.gameid,
+            mbId: this.formData.mbId,
           };
           
           updateGameLbWinConfig(params).then(response => {
