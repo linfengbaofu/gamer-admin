@@ -56,7 +56,7 @@
           v-hasPermi="['game:gameLbWinConfig:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -66,8 +66,8 @@
           @click="handleUpdate"
           v-hasPermi="['game:gameLbWinConfig:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="danger"
           plain
@@ -77,7 +77,7 @@
           @click="handleDelete"
           v-hasPermi="['game:gameLbWinConfig:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -92,9 +92,9 @@
     </el-row>
 
     <el-table v-loading="loading" :data="gameLbWinConfigList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="configId" width="170" :fixed="true"/>
-      <el-table-column label="会员id" align="center" prop="mbId" width="170"/>
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <!-- <el-table-column label="主键ID" align="center" prop="configId" width="170" :fixed="true"/> -->
+      <el-table-column label="会员id" align="center" prop="mbId" width="170" :fixed="true"/>
       <el-table-column label="游戏id" align="center" prop="gameid" />
       <el-table-column align="center" prop="amountLimit" width="120">
         <template>
@@ -125,8 +125,14 @@
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180"></el-table-column>
       <el-table-column label="控制结束时间" align="center" prop="endTime" width="180"></el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" width="120" fixed="right" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="180" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleViewDetail(scope.row)"
+          >查看详情</el-button>
           <el-button
             size="mini"
             type="text"
@@ -269,6 +275,42 @@
         <el-button @click="cancel" :disabled="submitLoading">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 查看详情对话框 -->
+    <el-dialog title="查看详情" :visible.sync="detailOpen" width="900px" append-to-body>
+      <div style="height: 500px;overflow-y: auto;">
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="会员ID">{{ detailForm.mbId }}</el-descriptions-item>
+          <el-descriptions-item label="游戏ID">{{ detailForm.gameid }}</el-descriptions-item>
+          <el-descriptions-item label="匹配下注金额">{{ detailForm.amountLimit }}</el-descriptions-item>
+          <el-descriptions-item label="要赢的金额">{{ detailForm.winAmount }}</el-descriptions-item>
+          <el-descriptions-item label="下注次数">{{ detailForm.betCount }}</el-descriptions-item>
+          <el-descriptions-item label="误差率">{{ detailForm.allowRate }}</el-descriptions-item>
+          <el-descriptions-item label="总赢金额">{{ detailForm.totalWinAmount }}</el-descriptions-item>
+          <el-descriptions-item label="是否开启">{{ detailForm.isOpen === 1 ? '是' : '否' }}</el-descriptions-item>
+          <el-descriptions-item label="控制开始时间">{{ detailForm.beginTime }}</el-descriptions-item>
+          <el-descriptions-item label="控制结束时间">{{ detailForm.endTime }}</el-descriptions-item>
+          <el-descriptions-item label="备注" :span="2">{{ detailForm.remark || '无' }}</el-descriptions-item>
+        </el-descriptions>
+        
+               <el-divider content-position="left">详细配置信息</el-divider>
+         
+                   <!-- 合并后的配置信息表格 -->
+          <div class="detail-section">
+            <h4>配置详情</h4>
+            <el-table :data="combinedTableData" border style="width: 100%;" show-summary :summary-method="getSummary">
+              <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+              <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
+              <el-table-column label="倍率" prop="rate" align="center"></el-table-column>
+              <el-table-column label="对应金额" prop="betAmount" align="center"></el-table-column>
+            </el-table>
+          </div>
+      </div>
+      
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="detailOpen = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -373,7 +415,29 @@ export default {
         createTime: [
           { required: true, message: "控制时间不能为空", trigger: "blur" }
         ]
-      }
+      },
+      // 查看详情对话框相关
+      detailOpen: false,
+      detailForm: {
+        configId: null,
+        mbId: null,
+        gameid: null,
+        amountLimit: null,
+        betRateList: null,
+        betCount: null,
+        isOpen: null,
+        beginTime: null,
+        endTime: null,
+        remark: null,
+        createBy: null,
+        updateTime: null,
+        updateBy: null,
+        createTime: [],
+        winAmount: null,
+        allowRate: null,
+        totalWinAmount: null,
+      },
+             combinedTableData: [],
     };
   },
   created() {
@@ -598,7 +662,97 @@ export default {
           this.form.amountLimit = null;
         }
       }
-    }
+    },
+
+    /** 查看详情按钮操作 */
+    handleViewDetail(row) {
+      this.showDetailDialog(row);
+    },
+
+         /** 显示详情对话框 */
+     showDetailDialog(row) {
+       this.detailForm = row;
+       this.detailOpen = true;
+       this.combinedTableData = [];
+
+       if (this.detailForm.betRateList && this.detailForm.amountLimit) {
+         const rates = this.detailForm.betRateList.split(',');
+         const amounts = this.detailForm.betAmountMatch ? this.detailForm.betAmountMatch.split(',') : [];
+         
+                   rates.forEach((rate, index) => {
+            this.combinedTableData.push({
+              amountLimit: this.detailForm.amountLimit,
+              rate: rate,
+              betAmount: amounts[index] || 'N/A'
+            });
+          });
+        }
+      },
+
+      /** 计算表格汇总行 */
+      getSummary(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '汇总';
+            return;
+          }
+          if (index === 1) {
+            // 匹配下注金额列，显示第一个值
+            sums[index] = data.length > 0 ? data[0].amountLimit : '';
+            return;
+          }
+          if (index === 2) {
+            // 倍率列，显示"合计"
+            sums[index] = '合计';
+            return;
+          }
+          if (index === 3) {
+            // 对应金额列，计算总和
+            const values = data.map(item => {
+              const amount = parseFloat(item.betAmount);
+              return isNaN(amount) ? 0 : amount;
+            });
+            if (!values.every(value => value === 0)) {
+              const total = values.reduce((prev, curr) => {
+                return prev + curr;
+              }, 0);
+              sums[index] = total.toFixed(6);
+            } else {
+              sums[index] = 'N/A';
+            }
+            return;
+          }
+          sums[index] = '';
+        });
+        return sums;
+      }
   }
 };
 </script>
+
+<style scoped>
+.detail-section {
+  margin-bottom: 20px;
+}
+
+.detail-section h4 {
+  margin: 0 0 15px 0;
+  color: #303133;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.el-descriptions {
+  margin-bottom: 20px;
+}
+
+.el-divider {
+  margin: 20px 0;
+}
+
+.el-table {
+  margin-bottom: 20px;
+}
+</style>
