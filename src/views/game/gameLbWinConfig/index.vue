@@ -93,8 +93,8 @@
 
     <el-table v-loading="loading" :data="gameLbWinConfigList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
-      <el-table-column label="会员id" align="center" prop="mbId" />
+      <el-table-column label="主键ID" align="center" prop="configId" width="170" :fixed="true"/>
+      <el-table-column label="会员id" align="center" prop="mbId" width="170"/>
       <el-table-column label="游戏id" align="center" prop="gameid" />
       <el-table-column align="center" prop="amountLimit" width="120">
         <template>
@@ -107,14 +107,13 @@
         </template>
       </el-table-column>
    
-      <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
+      <!-- <el-table-column label="倍率列表" align="center" prop="betRateList" width="100">
       </el-table-column>
       <el-table-column label="倍率金额列表" align="center" prop="betAmountMatch" width="100">
       </el-table-column>
-      <!-- <el-table-column label="零率" align="center" prop="zeroRate" width="100"></el-table-column> -->
       <el-table-column label="下注次数" align="center" prop="betCount" width="100">
-
       </el-table-column>
+       -->
       <el-table-column label="要赢的金额" align="center" prop="winAmount" width="100" />
       <el-table-column label="误差率" align="center" prop="allowRate" />
       <el-table-column label="总赢金额" align="center" prop="totalWinAmount" width="100" />
@@ -126,7 +125,7 @@
       <el-table-column label="控制开始时间" align="center" prop="beginTime" width="180"></el-table-column>
       <el-table-column label="控制结束时间" align="center" prop="endTime" width="180"></el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" width="180" fixed="right" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" width="120" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
