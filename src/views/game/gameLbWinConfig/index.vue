@@ -111,7 +111,7 @@
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <!-- <el-table-column label="主键ID" align="center" prop="configId" width="170" :fixed="true"/> -->
         <el-table-column label="会员ID" align="center" prop="mbId" width="170" :fixed="true"/>
-        <el-table-column label="会员账号" align="center" prop="mbAccount" width="120"  show-overflow-tooltip/>
+        <el-table-column label="会员账号" align="center" prop="mbAccount" width="170"  show-overflow-tooltip/>
         <el-table-column label="游戏ID" align="center" prop="gameid" width="100" />
         <el-table-column label="游戏名称" align="center" prop="twName" width="120"  show-overflow-tooltip/>
       <el-table-column align="center" prop="amountLimit" width="120">
