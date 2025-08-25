@@ -456,7 +456,7 @@ export default {
       const sums = [];
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = '总赢金额';
+          sums[index] = '总计';
           return;
         }
         if (index === 1) {
@@ -470,7 +470,7 @@ export default {
         if (index === 3) {
           // 对应金额列，计算总和
           const values = data.map(item => {
-            if (item.betAmount === 'N/A') return 0;
+            if (item.betAmount === '0') return 0;
             const amount = parseFloat(item.betAmount);
             return isNaN(amount) ? 0 : amount;
           });
@@ -480,7 +480,7 @@ export default {
             }, 0);
             sums[index] = total;
           } else {
-            sums[index] = 'N/A';
+            sums[index] = '0';
           }
           return;
         }
