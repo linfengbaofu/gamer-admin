@@ -13,7 +13,7 @@
         <el-descriptions-item label="会员账号">{{ formData.mbAccount }}</el-descriptions-item>
         <el-descriptions-item label="游戏ID">{{ formData.gameid }}</el-descriptions-item>
         <el-descriptions-item label="游戏名称">{{ formData.twName }}</el-descriptions-item>
-        <el-descriptions-item label="匹配下注金额">{{ formData.amountLimit }}</el-descriptions-item>
+        <el-descriptions-item label="单局下注金额">{{ formData.amountLimit }}</el-descriptions-item>
         <el-descriptions-item label="要赢的金额">{{ formData.winAmount }}</el-descriptions-item>
         <el-descriptions-item label="下注次数">{{ formData.betCount }}</el-descriptions-item>
         <el-descriptions-item label="误差率">{{ formData.allowRate }}</el-descriptions-item>

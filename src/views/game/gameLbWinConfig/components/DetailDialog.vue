@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="查看详情"
-    :visible.sync="visible"
+    :visible="value"
     width="900px"
     append-to-body
     @close="handleClose"
@@ -14,7 +14,7 @@
           detailData.gameid
         }}</el-descriptions-item>
         <el-descriptions-item label="游戏名称">{{ detailData.twName }}</el-descriptions-item>
-        <el-descriptions-item label="匹配下注金额">{{
+        <el-descriptions-item label="单局下注金额">{{
           detailData.amountLimit
         }}</el-descriptions-item>
         <el-descriptions-item label="要赢的金额">{{
@@ -67,7 +67,7 @@ export default {
     RoundDetailTable
   },
   props: {
-    visible: {
+    value: {
       type: Boolean,
       default: false,
     },
@@ -79,7 +79,6 @@ export default {
   data() {
     return {};
   },
-  watch: {},
   methods: {
     /** 初始化表格数据 */
     initTableData() {

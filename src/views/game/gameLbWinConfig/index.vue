@@ -117,7 +117,7 @@
       <el-table-column align="center" prop="amountLimit" width="120">
         <template>
           <div slot="header">
-            <span>匹配下注金额</span>
+            <span>单局下注金额</span>
             <el-tooltip content="金额匹配成功开始控制" placement="top">
               <i class="el-icon-question"></i>
             </el-tooltip>
@@ -138,9 +138,9 @@
                <h4 style="margin: 0 0 10px 0; color: #303133;">轮次详情</h4>
                <el-table height="300" :data="getRoundTableData(scope.row)" border style="width: 100%; max-height: 300px; overflow-y: auto;" show-summary :summary-method="getRoundSummary">
                  <el-table-column label="轮次" type="index" width="60" align="center"></el-table-column>
-                 <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
+                 <el-table-column label="单局下注金额" prop="amountLimit" align="center"></el-table-column>
                  <el-table-column label="赔率" prop="rate" align="center"></el-table-column>
-                 <el-table-column label="对应金额" prop="betAmount" align="center"></el-table-column>
+                 <el-table-column label="单局获奖金额" prop="betAmount" align="center"></el-table-column>
                </el-table>
              </div>
              <div slot="reference" style="cursor: pointer; color: #409EFF;">
@@ -226,7 +226,8 @@
 
     <!-- 查看详情对话框 -->
     <DetailDialog 
-      :visible.sync="detailOpen" 
+      v-if="detailOpen"
+      v-model="detailOpen" 
       :detailData="detailForm"
       @close="handleDetailClose"
     />
@@ -477,6 +478,11 @@ export default {
           this.betAmountOptions = selectedGame.betAmount.split(',').map(item => item.trim()).filter(item => item);
           // 清空之前选择的匹配金额
           this.form.amountLimit = null;
+          // 重置其他相关字段
+          this.form.betCount = null;
+          this.form.winAmount = null;
+          this.form.betRateList = null;
+          this.form.totalWinAmount = null;
           // 触发检查随机生成按钮状态
           this.$nextTick(() => {
             this.checkCanClickRandomButton();
@@ -485,6 +491,11 @@ export default {
           // 如果没有betAmount，清空选项
           this.betAmountOptions = [];
           this.form.amountLimit = null;
+          // 重置其他相关字段
+          this.form.betCount = null;
+          this.form.winAmount = null;
+          this.form.betRateList = null;
+          this.form.totalWinAmount = null;
         }
       }
     },

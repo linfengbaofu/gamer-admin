@@ -31,9 +31,9 @@
         
         <!-- 右列 -->
         <el-col :span="11">
-          <el-form-item label="匹配下注金额" prop="amountLimit">
+          <el-form-item label="单局下注金额" prop="amountLimit">
             <span slot="label">
-              <span>匹配下注金额</span>
+              <span>单局下注金额</span>
               <el-tooltip content="金额匹配成功开始控制" placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
@@ -105,7 +105,7 @@
       <div v-if="showRoundList" class="round-list-section">
         <el-table height="300" :data="roundList" border style="width: 100%;overflow-y: auto;" show-summary :summary-method="getRoundSummary">
           <el-table-column label="轮次" type="index" width="100" align="center"></el-table-column>
-          <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
+          <el-table-column label="单局下注金额" prop="amountLimit" align="center"></el-table-column>
           <el-table-column label="倍率" align="center" >
             <template slot-scope="scope">
               <el-input 
@@ -116,7 +116,7 @@
               </el-input>
             </template>
           </el-table-column>
-          <el-table-column label="对应金额" prop="betAmount" align="center" ></el-table-column>
+          <el-table-column label="单局获奖金额" prop="betAmount" align="center" ></el-table-column>
         </el-table>
         
         <div class="round-actions" style="margin-top: 15px;">
@@ -440,17 +440,17 @@ export default {
 
     /** 计算总赢金额 */
     calculateTotalWinAmount() {
-      // 计算对应金额总和
+      // 计算单局获奖金额总和
       const totalBetAmount = this.roundList.reduce((sum, round) => {
         return sum + (Number(round.betAmount) || 0);
       }, 0);
       
-      // 计算下注次数 * 匹配下注金额
+      // 计算下注次数 * 单局下注金额
       const betCount = Number(this.form.betCount || 0);
       const amountLimit = Number(this.form.amountLimit || 0);
       const totalBetCost = betCount * amountLimit;
       
-      // 总赢金额 = 对应金额总和 - （下注次数 * 匹配下注金额）
+      // 总赢金额 = 单局获奖金额总和 - （下注次数 * 匹配下注金额）
       this.form.totalWinAmount = Number(Number((totalBetAmount - totalBetCost).toFixed(8)));
     },
 
@@ -481,7 +481,7 @@ export default {
           return;
         }
         if (index === 3) {
-          // 对应金额列，计算总和
+          // 单局获奖金额列，计算总和
           const values = data.map(item => {
             if (item.betAmount === '0') return 0;
             const amount = parseFloat(item.betAmount);
@@ -553,6 +553,22 @@ export default {
       console.log(data);
       if(data.selectedItems){
         this.form.mbAccount = data.selectedItems.mbAccount;
+        this.form.mbId = data.selectedItems.mbId;
+        
+        // 会员变化时重置相关字段和数据
+        this.form.amountLimit = null; // 重置匹配下注金额
+        this.form.betCount = null; // 重置下注次数
+        this.form.winAmount = null; // 重置要赢的金额
+        this.form.betRateList = null; // 重置倍率列表
+        this.form.totalWinAmount = null; // 重置总赢金额
+        
+        // 重置轮次列表
+        this.resetRoundList();
+        
+        // 重新检查随机生成按钮状态
+        this.$nextTick(() => {
+          this.checkCanClickRandomButton();
+        });
       }
     },
     
@@ -561,6 +577,21 @@ export default {
       if(data.selectedItems){
         this.form.twName = data.selectedItems.twName;
         this.betAmountOptions = data.selectedItems.betAmount.split(',') || [];
+        
+        // 游戏变化时重置相关字段和数据
+        this.form.amountLimit = null; // 重置匹配下注金额
+        this.form.betCount = null; // 重置下注次数
+        this.form.winAmount = null; // 重置要赢的金额
+        this.form.betRateList = null; // 重置倍率列表
+        this.form.totalWinAmount = null; // 重置总赢金额
+        
+        // 重置轮次列表
+        this.resetRoundList();
+        
+        // 重新检查随机生成按钮状态
+        this.$nextTick(() => {
+          this.checkCanClickRandomButton();
+        });
       }
     }
   }

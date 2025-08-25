@@ -2,9 +2,9 @@
   <div>
     <el-table :data="tableData" border style="width: 100%;" show-summary :summary-method="getSummary">
       <el-table-column label="轮次" type="index" width="60" align="center"></el-table-column>
-      <el-table-column label="匹配下注金额" prop="amountLimit" align="center"></el-table-column>
+      <el-table-column label="单局下注金额" prop="amountLimit" align="center"></el-table-column>
       <el-table-column label="赔率" prop="rate" align="center"></el-table-column>
-      <el-table-column label="对应金额" prop="betAmount" align="center"></el-table-column>
+      <el-table-column label="单局获奖金额" prop="betAmount" align="center"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
           return;
         }
         if (index === 1) {
-          // 匹配下注金额列，不显示汇总内容
+          // 单局下注金额列，不显示汇总内容
           return;
         }
         if (index === 2) {
@@ -59,7 +59,7 @@ export default {
           return;
         }
         if (index === 3) {
-          // 对应金额列，计算总和
+          // 单局获奖金额列，计算总和
           const values = data.map(item => {
             if (item.betAmount === '0') return 0;
             const amount = parseFloat(item.betAmount);
