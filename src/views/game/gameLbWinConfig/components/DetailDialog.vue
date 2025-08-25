@@ -23,8 +23,8 @@
         <el-descriptions-item label="下注次数">{{
           detailData.betCount
         }}</el-descriptions-item>
-        <el-descriptions-item label="误差率">{{
-          detailData.allowRate
+        <el-descriptions-item label="零率">{{
+          detailData.zeroRate
         }}</el-descriptions-item>
         <el-descriptions-item label="总赢金额">{{
           detailData.totalWinAmount
