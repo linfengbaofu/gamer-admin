@@ -25,13 +25,19 @@ export default {
       }
       
       const rates = this.detailData.betRateList.split(',');
-      const amounts = this.detailData.betAmountMatch ? this.detailData.betAmountMatch.split(',') : [];
+      const amountLimit = Number(this.detailData.amountLimit || 0);
       
-      return rates.map((rate, index) => ({
-        amountLimit: this.detailData.amountLimit,
-        rate: rate,
-        betAmount: amounts[index] || 'N/A'
-      }));
+      return rates.map((rate, index) => {
+        const rateValue = Number(rate || 0);
+        const betAmount = amountLimit > 0 && rateValue > 0 ? 
+          Number(Number((amountLimit * rateValue).toFixed(8))) : 'N/A';
+        
+        return {
+          amountLimit: this.detailData.amountLimit,
+          rate: rate,
+          betAmount: betAmount
+        };
+      });
     }
   },
   methods: {
@@ -55,14 +61,15 @@ export default {
         if (index === 3) {
           // 对应金额列，计算总和
           const values = data.map(item => {
+            if (item.betAmount === 'N/A') return 0;
             const amount = parseFloat(item.betAmount);
             return isNaN(amount) ? 0 : amount;
           });
           if (!values.every(value => value === 0)) {
             const total = values.reduce((prev, curr) => {
-              return Number(Number(prev) + Number(curr)).toFixed(8);
+              return Number(Number(Number(prev) + Number(curr)).toFixed(8));
             }, 0);
-            sums[index] = total
+            sums[index] = total;
           } else {
             sums[index] = 'N/A';
           }

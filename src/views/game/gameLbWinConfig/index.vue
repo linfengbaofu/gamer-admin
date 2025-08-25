@@ -203,24 +203,32 @@
       @pagination="getList"
     />
 
-    <!-- 游戏输赢控制对话框 -->
+    <!-- 新增游戏输赢控制对话框 -->
     <GameWinControlDialog
-      v-if="open"
-      v-model="open"
-      :title="title"
+      v-if="addOpen"
+      v-model="addOpen"
+      title="添加游戏输赢控制"
       :form-data="form"
-      :is-edit="isEdit"
       :bet-amount-options="betAmountOptions"
-      @success="handleDialogSuccess"
-      @close="handleDialogClose"
+      @success="handleAddDialogSuccess"
+      @close="handleAddDialogClose"
     />
 
-         <!-- 查看详情对话框 -->
-     <DetailDialog 
-       :visible.sync="detailOpen" 
-       :detailData="detailForm"
-       @close="handleDetailClose"
-     />
+    <!-- 修改游戏输赢控制对话框 -->
+    <EditDialog
+      v-if="editOpen"
+      :visible.sync="editOpen"
+      :form-data="editForm"
+      @success="handleEditDialogSuccess"
+      @close="handleEditDialogClose"
+    />
+
+    <!-- 查看详情对话框 -->
+    <DetailDialog 
+      :visible.sync="detailOpen" 
+      :detailData="detailForm"
+      @close="handleDetailClose"
+    />
   </div>
 </template>
 
@@ -230,13 +238,14 @@ import { listGameLbWinConfig, getGameLbWinConfig, delGameLbWinConfig } from "@/a
 
 import DetailDialog from './components/DetailDialog.vue'
 import GameWinControlDialog from './components/GameWinControlDialog.vue'
+import EditDialog from './components/EditDialog.vue'
 
 export default {
   name: "GameLbWinConfig",
   components: { 
-
     DetailDialog,
-    GameWinControlDialog
+    GameWinControlDialog,
+    EditDialog
   },
   data() {
     return {
@@ -254,10 +263,10 @@ export default {
       total: 0,
       // 游戏输赢控制表格数据
       gameLbWinConfigList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
+      // 是否显示新增弹出层
+      addOpen: false,
+      // 是否显示修改弹出层
+      editOpen: false,
                            // 查询参数
         queryParams: {
           createTime: [], 
@@ -287,8 +296,28 @@ export default {
           isOpen: 1,
           totalWinAmount: null,
         },
-      // 是否为编辑模式
-      isEdit: false,
+              // 修改表单数据
+        editForm: {
+          configId: null,
+          mbId: null,
+          mbAccount: null,
+          gameid: null,
+          twName: null,
+          amountLimit: null,
+          betRateList: null,
+          betCount: null,
+          isOpen: null,
+          beginTime: null,
+          endTime: null,
+          remark: null,
+          createBy: null,
+          updateTime: null,
+          updateBy: null,
+          createTime: [],
+          winAmount: null,
+          allowRate: null,
+          totalWinAmount: null,
+        },
       // 下注金额选项列表
       betAmountOptions: [],
                                          // 查看详情对话框相关
@@ -324,19 +353,6 @@ export default {
     getList() {
       this.loading = true;
       listGameLbWinConfig(this.queryParams).then(response => {
-        const tableData = response.rows;
-        tableData.forEach(item => {
-          const amountLimit = Number(item.amountLimit || 0);
-          const betRateList = item.betRateList ? item.betRateList.split(',') : [];
-          const templateArr = [];
-          if (betRateList.length > 0) {
-            betRateList.forEach(rate => {
-              templateArr.push(Number(amountLimit * Number(rate).toFixed(6)));
-            });
-          }
-          item.betAmountMatch = templateArr.join(',');
-          // item.betRateList = item.betRateList.join(',');
-        });
         this.gameLbWinConfigList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -366,8 +382,6 @@ export default {
           allowRate: null,
           totalWinAmount: null,
         };
-      this.isEdit = false;
-
       
       this.betAmountOptions = []; // 重置匹配下注金额选项
     },
@@ -390,39 +404,39 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.isEdit = false;
-      this.open = true;
-      this.title = "添加游戏输赢控制";
+      this.addOpen = true;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      this.isEdit = true;
       const configId = row.configId || this.ids
    
       getGameLbWinConfig(configId).then(response => {
         const formData = response.data;
-        if (formData.beginTime && formData.endTime) {
-          formData.createTime = [formData.beginTime, formData.endTime]
-        } else {
-          formData.createTime = []
-        }
-        this.form = formData;
-        this.open = true;
-        this.title = "修改游戏输赢控制";
+        this.editForm = formData;
+        this.editOpen = true;
       });
     },
-    /** 对话框提交成功处理 */
-    handleDialogSuccess() {
-      this.open = false;
+    /** 新增对话框提交成功处理 */
+    handleAddDialogSuccess() {
+      this.addOpen = false;
       this.getList();
     },
     
-    /** 对话框关闭处理 */
-    handleDialogClose() {
-      this.open = false;
-      this.isEdit = false;
+    /** 新增对话框关闭处理 */
+    handleAddDialogClose() {
+      this.addOpen = false;
       this.reset();
+    },
+
+    /** 修改对话框提交成功处理 */
+    handleEditDialogSuccess() {
+      this.editOpen = false;
+      this.getList();
+    },
+    
+    /** 修改对话框关闭处理 */
+    handleEditDialogClose() {
+      this.editOpen = false;
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -447,7 +461,7 @@ export default {
     
     /** 处理游戏选择变化 */
     handleGameChange(data) {
-      if (data && data.selectedItems && !this.isEdit) {
+      if (data && data.selectedItems) {
         // 从选中的游戏信息中获取betAmount
         const selectedGame = data.selectedItems;
         if (selectedGame.betAmount) {
@@ -529,13 +543,18 @@ export default {
           
           const rates = row.betRateList.split(',');
           const amountLimit = Number(row.amountLimit || 0);
-          const amounts = row.betAmountMatch ? row.betAmountMatch.split(',') : [];
           
-          return rates.map((rate, index) => ({
-            amountLimit: amountLimit,
-            rate: rate,
-            betAmount: amounts[index] || (amountLimit > 0 ? Number(Number(Number(amountLimit) * Number(rate)).toFixed(8)) : 'N/A')
-          }));
+          return rates.map((rate, index) => {
+            const rateValue = Number(rate || 0);
+            const betAmount = amountLimit > 0 && rateValue > 0 ? 
+              Number((amountLimit * rateValue).toFixed(8)) : 'N/A';
+            
+            return {
+              amountLimit: amountLimit,
+              rate: rate,
+              betAmount: betAmount
+            };
+          });
         },
         
         /** 计算轮次表格汇总行 */
@@ -558,12 +577,13 @@ export default {
             if (index === 3) {
               // 对应金额列，计算总和
               const values = data.map(item => {
+                if (item.betAmount === 'N/A') return 0;
                 const amount = parseFloat(item.betAmount);
                 return isNaN(amount) ? 0 : amount;
               });
               if (!values.every(value => value === 0)) {
                 const total = values.reduce((prev, curr) => {
-                  return Number(Number(Number(Number(prev) + Number(curr)).toFixed(8)));
+                  return Number(Number(prev) + Number(curr)).toFixed(8);
                 }, 0);
                 sums[index] = total;
               } else {

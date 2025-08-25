@@ -5,13 +5,11 @@
         <!-- 左列 -->
         <el-col :span="12">
           <el-form-item label="会员ID" prop="mbId">
-            <!-- <el-input v-model="form.mbId" placeholder="请输入会员ID" :readonly="isEdit" style="width: 100%;"/> -->
-            <MemberInfoSelect v-model="form.mbId" :readonly="isEdit" style="width: 100%;" @change="handleMemberChange"/>
+            <MemberInfoSelect v-model="form.mbId" style="width: 100%;" @change="handleMemberChange"/>
           </el-form-item>
 
           <el-form-item label="游戏ID" prop="gameid">
-            <!-- <el-input v-model="form.gameid" placeholder="请输入游戏ID" :readonly="isEdit" style="width: 100%;"/> -->
-            <BetGameInfoSelect v-model="form.gameid" :readonly="isEdit" style="width: 100%;" @change="handleGameChange"/>
+            <BetGameInfoSelect v-model="form.gameid" style="width: 100%;" @change="handleGameChange"/>
           </el-form-item>
 
           <el-form-item label="是否开启" prop="isOpen">
@@ -30,7 +28,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
-            <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" :readonly="isEdit"/>
+            <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
           </el-form-item>
         </el-col>
         
@@ -48,7 +46,7 @@
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </span>
-            <el-select v-model="form.amountLimit" placeholder="请选择匹配下注金额" @change="checkCanClickRandomButton" :disabled="isEdit" style="width: 100%;">
+            <el-select v-model="form.amountLimit" placeholder="请选择匹配下注金额" @change="checkCanClickRandomButton" style="width: 100%;">
               <el-option
                 v-for="amount in betAmountOptions"
                 :key="amount"
@@ -57,17 +55,17 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="!isEdit" label="零率" prop="zeroRate">
+          <el-form-item label="误差率" prop="allowRate">
             <span slot="label">
-              <span>零率</span>
-              <el-tooltip content="范围为0-1，赔率为0的概率" placement="top">
+              <span>误差率</span>
+              <el-tooltip content="误差率范围" placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </span>
-            <el-input v-model="form.zeroRate" placeholder="零率" />
+            <el-input v-model="form.allowRate" placeholder="请输入误差率" />
           </el-form-item>
           <el-form-item label="要赢的金额" prop="winAmount">
-            <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" :readonly="isEdit" />
+            <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" />
           </el-form-item>
           <el-form-item label="下注次数" prop="betCount">
             <span slot="label">
@@ -76,7 +74,7 @@
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </span>
-            <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="checkCanClickRandomButton" :readonly="isEdit" />
+            <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="checkCanClickRandomButton" />
           </el-form-item>
           
           <!-- 总赢金额显示 -->
@@ -95,7 +93,7 @@
           </el-form-item>
           
           <!-- 随机生成按钮 -->
-          <el-form-item v-if="!isEdit">
+          <el-form-item>
             <el-button 
               type="warning" 
               icon="el-icon-refresh" 
@@ -117,7 +115,7 @@
 </template>
 
 <script>
-import { addGameLbWinConfig, updateGameLbWinConfig, gameLbWinConfig } from "@/api/game/gameLbWinConfig";
+import { addGameLbWinConfig, gameLbWinConfig } from "@/api/game/gameLbWinConfig";
 import { getBaseConfig } from "@/api/billard/baseConfig";
 import BetGameInfoSelect from '../BetGameInfoSelect/index.vue'
 import MemberInfoSelect from '@/components/MemberInfoSelect'
@@ -140,10 +138,7 @@ export default {
       type: Object,
       default: () => ({})
     },
-    isEdit: {
-      type: Boolean,
-      default: false
-    },
+
     betAmountOptions: {
       type: Array,
       default: () => []
@@ -171,7 +166,7 @@ export default {
         winAmount: null,
         allowRate: null,
         totalWinAmount: null,
-        zeroRate: null
+
       },
       // 是否显示随机生成按钮
       canClickRandomButton: false,
@@ -211,8 +206,8 @@ export default {
         betRateList: [
           { required: true, message: "倍率列表不能为空", trigger: "blur" }
         ],
-        zeroRate: [
-          { required: true, message: "零率不能为空", trigger: "blur" }
+        allowRate: [
+          { required: true, message: "误差率不能为空", trigger: "blur" }
         ],
         createTime: [
           { required: true, message: "控制时间不能为空", trigger: "blur" }
@@ -227,9 +222,7 @@ export default {
   },
   methods: {
     getConfig() { 
-      getBaseConfig().then(response => {
-        this.form.zeroRate = response.data.zeroRate;
-      });
+      // 可以在这里获取其他配置信息
     },
     /** 初始化表单数据 */
     initForm() {
@@ -278,8 +271,7 @@ export default {
         betCount: this.form.betCount,
         allowRate: this.form.allowRate,
         mbId: this.form.mbId,
-        gameid: this.form.gameid,
-        zeroRate: this.form.zeroRate
+        gameid: this.form.gameid
       };
       
       gameLbWinConfig(randomParams).then(response => {
@@ -310,11 +302,8 @@ export default {
           };
           delete params.createTime;
           
-          const submitMethod = this.form.configId ? updateGameLbWinConfig : addGameLbWinConfig;
-          const successMessage = this.form.configId ? "修改成功" : "新增成功";
-          
-          submitMethod(params).then(response => {
-            this.$modal.msgSuccess(successMessage);
+          addGameLbWinConfig(params).then(response => {
+            this.$modal.msgSuccess("新增成功");
             this.$emit('success');
             this.handleClose();
           }).catch(() => {
