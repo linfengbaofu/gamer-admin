@@ -188,6 +188,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            :loading="deleteLoading"
             @click="handleDelete(scope.row)"
             v-hasPermi="['game:gameLbWinConfig:remove']"
           >删除</el-button>
@@ -251,6 +252,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 删除loading状态
+      deleteLoading: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -441,12 +444,17 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const configIds = row.configId || this.ids;
-      this.$modal.confirm('是否确认删除游戏输赢控制编号为"' + configIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除游戏输赢控制编号为"' + configIds + '"的数据项？').then(() => {
+        this.deleteLoading = true;
         return delGameLbWinConfig(configIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+        // 删除失败时也要关闭loading
+      }).finally(() => {
+        this.deleteLoading = false;
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
