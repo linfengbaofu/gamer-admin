@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="title" :visible="value" width="800px" append-to-body @close="handleClose">
-    <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="120px">
       <el-row :gutter="20">
         <!-- 左列 -->
         <el-col :span="12">
@@ -12,12 +12,7 @@
             <BetGameInfoSelect v-model="form.gameid" style="width: 100%;" @change="handleGameChange"/>
           </el-form-item>
 
-          <el-form-item label="是否开启" prop="isOpen">
-            <el-select v-model="form.isOpen" placeholder="请选择是否开启" style="width: 100%;"> 
-              <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="0"></el-option>
-            </el-select>
-          </el-form-item>
+
           <el-form-item label="控制时间" prop="createTime">
             <el-date-picker clearable
               v-model="form.createTime"
@@ -26,9 +21,6 @@
               placeholder="请选择控制时间"
               style="width: 100%;">
             </el-date-picker>
-          </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
           </el-form-item>
         </el-col>
         
@@ -46,7 +38,7 @@
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </span>
-            <el-select v-model="form.amountLimit" placeholder="请选择匹配下注金额" @change="checkCanClickRandomButton" style="width: 100%;">
+            <el-select v-model="form.amountLimit" placeholder="请选择匹配下注金额" @change="handleAmountLimitChange" style="width: 100%;">
               <el-option
                 v-for="amount in betAmountOptions"
                 :key="amount"
@@ -55,18 +47,20 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="误差率" prop="allowRate">
-            <span slot="label">
-              <span>误差率</span>
-              <el-tooltip content="误差率范围" placement="top">
-                <i class="el-icon-question"></i>
-              </el-tooltip>
-            </span>
-            <el-input v-model="form.allowRate" placeholder="请输入误差率" />
-          </el-form-item>
+
           <el-form-item label="要赢的金额" prop="winAmount">
-            <el-input v-model="form.winAmount" placeholder="请输入要赢的金额" @input="checkCanClickRandomButton" />
+            <el-input 
+              v-model="form.winAmount" 
+              placeholder="请输入要赢的金额" 
+              @input="handleWinAmountChange"
+              type="number"
+              :min="getMinWinAmount()"
+              step="0.01" />
+            <div class="form-tip" style="font-size: 12px; color: #909399; margin-top: 5px;">
+              允许范围：{{ getMinWinAmount() }} 到无限大
+            </div>
           </el-form-item>
+          
           <el-form-item label="下注次数" prop="betCount">
             <span slot="label">
               <span>下注次数</span>
@@ -74,22 +68,12 @@
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </span>
-            <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="checkCanClickRandomButton" />
+            <el-input v-model="form.betCount" placeholder="请输入下注次数" @input="handleBetCountChange" />
           </el-form-item>
           
           <!-- 总赢金额显示 -->
           <el-form-item label="总赢金额" prop="totalWinAmount">
             <el-input v-model="form.totalWinAmount" placeholder="总赢金额" readonly  />
-          </el-form-item>
-          
-          <el-form-item label="倍率列表" prop="betRateList">
-            <span slot="label">
-              <span>倍率列表</span>
-              <el-tooltip content="请输入倍率列表，格式为：1.0,2.0,3.0" placement="top">
-                <i class="el-icon-question"></i>
-              </el-tooltip>
-            </span>
-            <el-input v-model="form.betRateList" type="textarea" placeholder="请输入内容" readonly />
           </el-form-item>
           
           <!-- 随机生成按钮 -->
@@ -106,6 +90,60 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-divider content-position="center">
+        <el-switch v-model="form.enableAdvanced" active-text="显示高级配置" inactive-text="隐藏高级配置" />
+      </el-divider>
+      <div v-if="form.enableAdvanced">
+        
+
+          <!-- 高级配置选项 -->
+          <template v-if="form.enableAdvanced">
+            <el-form-item label="是否开启" prop="isOpen">
+              <el-select v-model="form.isOpen" placeholder="请选择是否开启" style="width: 100%;"> 
+                <el-option label="是" :value="1"></el-option>
+                <el-option label="否" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="零率" prop="zeroRate">
+              <span slot="label">
+                <span>零率</span>
+                <el-tooltip content="零率范围" placement="top">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+              <el-input v-model="form.zeroRate" placeholder="请输入零率" />
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
+            </el-form-item>
+          </template>
+      </div>
+      <!-- 轮次列表（生成参数后显示） -->
+      <el-divider v-if="showRoundList" content-position="left">轮次配置</el-divider>
+      
+      <div v-if="showRoundList" class="round-list-section">
+        <el-table :data="roundList" border style="width: 100%;" show-summary :summary-method="getRoundSummary">
+          <el-table-column label="轮次" type="index" width="60" align="center"></el-table-column>
+          <el-table-column label="匹配下注金额" prop="amountLimit" align="center" width="120"></el-table-column>
+          <el-table-column label="倍率" align="center" width="120">
+            <template slot-scope="scope">
+              <el-input 
+                v-model="scope.row.rate" 
+                size="mini" 
+                @input="handleRateChange(scope.$index)"
+                placeholder="请输入倍率">
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="对应金额" prop="betAmount" align="center" width="120"></el-table-column>
+        </el-table>
+        
+        <div class="round-actions" style="margin-top: 15px;">
+          <el-button type="primary" size="mini" @click="addRound">添加轮次</el-button>
+          <el-button type="danger" size="mini" @click="removeRound" :disabled="roundList.length <= 1">删除轮次</el-button>
+          <el-button type="success" size="mini" @click="recalculateTotal">重新计算</el-button>
+        </div>
+      </div>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="submitForm" :loading="submitLoading" :disabled="submitLoading">确 定</el-button>
@@ -116,7 +154,7 @@
 
 <script>
 import { addGameLbWinConfig, gameLbWinConfig } from "@/api/game/gameLbWinConfig";
-import { getBaseConfig } from "@/api/billard/baseConfig";
+import { getBaseConfig } from "@/api/billard/baseConfig"; 
 import BetGameInfoSelect from '../BetGameInfoSelect/index.vue'
 import MemberInfoSelect from '@/components/MemberInfoSelect'
 export default {
@@ -138,7 +176,6 @@ export default {
       type: Object,
       default: () => ({})
     },
-
     betAmountOptions: {
       type: Array,
       default: () => []
@@ -164,10 +201,14 @@ export default {
         updateBy: null,
         createTime: [],
         winAmount: null,
-        allowRate: null,
+        zeroRate: null,
         totalWinAmount: null,
-
+        enableAdvanced: false
       },
+      // 轮次列表
+      roundList: [],
+      // 是否显示轮次列表
+      showRoundList: false,
       // 是否显示随机生成按钮
       canClickRandomButton: false,
       // 提交按钮loading状态
@@ -195,7 +236,11 @@ export default {
           { required: true, message: "匹配下注金额不能为空", trigger: "blur" }
         ],
         winAmount: [
-          { required: true, message: "要赢的金额不能为空", trigger: "blur" }
+          { required: true, message: "要赢的金额不能为空", trigger: "blur" },
+          { 
+            validator: this.validateWinAmountRule, 
+            trigger: "blur" 
+          }
         ],
         betCount: [
           { required: true, message: "下注次数不能为空", trigger: "blur" }
@@ -217,12 +262,14 @@ export default {
   },
 
   created() { 
-    this.getConfig();
     this.initForm();
+    this.getConfig();
   },
   methods: {
-    getConfig() { 
-      // 可以在这里获取其他配置信息
+    getConfig() {
+      getBaseConfig().then(response => {
+        this.form.zeroRate = response.data.zeroRate;
+      });
     },
     /** 初始化表单数据 */
     initForm() {
@@ -242,7 +289,9 @@ export default {
     
     /** 重置表单 */
     resetForm() {
-      
+
+      this.roundList = [];
+      this.showRoundList = false;
       this.canClickRandomButton = false;
       this.$nextTick(() => {
         if (this.$refs.form) {
@@ -253,12 +302,65 @@ export default {
     
     /** 检查是否显示随机生成按钮 */
     checkCanClickRandomButton() {
+      console.log(this.form.amountLimit, this.form.winAmount, this.form.betCount, this.form.mbId, this.form.gameid);
       this.canClickRandomButton = !!(this.form.amountLimit && 
                                      this.form.winAmount && 
                                      this.form.betCount && 
-                                     this.form.allowRate && 
                                      this.form.mbId && 
                                      this.form.gameid);
+    },
+
+    /** 处理要赢金额变化 */
+    handleWinAmountChange() {
+      this.checkCanClickRandomButton();
+      this.validateWinAmount();
+    },
+
+    /** 验证要赢金额是否在允许范围内 */
+    validateWinAmount() {
+      const minAmount = this.getMinWinAmount();
+      const currentAmount = Number(this.form.winAmount);
+      
+      if (this.form.winAmount !== '' && currentAmount < minAmount) {
+        this.$message.warning(`要赢的金额不能小于 ${minAmount}`);
+        this.form.winAmount = minAmount;
+      }
+    },
+
+    /** 计算最小允许的要赢金额 */
+    getMinWinAmount() {
+      const amountLimit = Number(this.form.amountLimit || 0);
+      const betCount = Number(this.form.betCount || 0);
+      return -(amountLimit * betCount);
+    },
+
+    /** 要赢金额的自定义验证器 */
+    validateWinAmountRule(rule, value, callback) {
+      if (value === '' || value === null) {
+        callback();
+        return;
+      }
+      
+      const minAmount = this.getMinWinAmount();
+      const currentAmount = Number(value);
+      
+      if (currentAmount < minAmount) {
+        callback(new Error(`要赢的金额不能小于 ${minAmount}`));
+      } else {
+        callback();
+      }
+    },
+
+    /** 处理匹配下注金额变化 */
+    handleAmountLimitChange() {
+      this.checkCanClickRandomButton();
+      this.validateWinAmount();
+    },
+
+    /** 处理下注次数变化 */
+    handleBetCountChange() {
+      this.checkCanClickRandomButton();
+      this.validateWinAmount();
     },
     
     /** 随机生成参数 */
@@ -278,10 +380,13 @@ export default {
         const formData = response.data;
         if (formData.betRateList) {
           this.form.betRateList = formData.betRateList;
+          // 生成轮次列表
+          this.generateRoundList();
         }
         if (formData.totalWinAmount) {
           this.form.totalWinAmount = formData.totalWinAmount;
         }
+        this.showRoundList = true;
         this.$modal.msgSuccess("参数验证成功，数据已回显！");
       }).catch(error => {
         this.$modal.msgError("参数验证失败：" + (error.message || "未知错误"));
@@ -289,11 +394,140 @@ export default {
         this.randomParamsLoading = false;
       });
     },
+
+    /** 生成轮次列表 */
+    generateRoundList() {
+      if (!this.form.betRateList || !this.form.amountLimit) return;
+      
+      const rates = this.form.betRateList.split(',');
+      const amountLimit = Number(this.form.amountLimit || 0);
+      
+      this.roundList = rates.map((rate, index) => {
+        const rateValue = Number(rate || 0);
+        const betAmount = amountLimit > 0 && rateValue > 0 ? 
+          Number(Number((amountLimit * rateValue).toFixed(8))) : 0;
+        
+        return {
+          index: index,
+          amountLimit: amountLimit,
+          rate: rateValue,
+          betAmount: betAmount
+        };
+      });
+    },
+
+    /** 处理倍率变化 */
+    handleRateChange(index) {
+      const round = this.roundList[index];
+      const amountLimit = Number(this.form.amountLimit || 0);
+      const rateValue = Number(round.rate || 0);
+      
+      if (amountLimit > 0 && rateValue > 0) {
+        round.betAmount = Number(Number((amountLimit * rateValue).toFixed(8)));
+      } else {
+        round.betAmount = 0;
+      }
+      
+      // 更新倍率列表和总赢金额
+      this.updateBetRateList();
+      this.calculateTotalWinAmount();
+    },
+
+    /** 更新倍率列表 */
+    updateBetRateList() {
+      this.form.betRateList = this.roundList.map(round => round.rate).join(',');
+    },
+
+    /** 计算总赢金额 */
+    calculateTotalWinAmount() {
+      const total = this.roundList.reduce((sum, round) => {
+        return sum + (Number(round.betAmount) || 0);
+      }, 0);
+      this.form.totalWinAmount = Number(total.toFixed(8));
+    },
+
+    /** 添加轮次 */
+    addRound() {
+      const newIndex = this.roundList.length;
+      const amountLimit = Number(this.form.amountLimit || 0);
+      
+      this.roundList.push({
+        index: newIndex,
+        amountLimit: amountLimit,
+        rate: 1.0,
+        betAmount: amountLimit
+      });
+      
+      this.updateBetRateList();
+      this.calculateTotalWinAmount();
+    },
+
+    /** 删除轮次 */
+    removeRound() {
+      if (this.roundList.length > 1) {
+        this.roundList.pop();
+        this.updateBetRateList();
+        this.calculateTotalWinAmount();
+      }
+    },
+
+    /** 重新计算 */
+    recalculateTotal() {
+      this.roundList.forEach((round, index) => {
+        this.handleRateChange(index);
+      });
+    },
+
+    /** 计算轮次表格汇总行 */
+    getRoundSummary(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        if (index === 1) {
+          // 匹配下注金额列，不显示汇总内容
+          return;
+        }
+        if (index === 2) {
+          // 倍率列，不显示汇总内容
+          return;
+        }
+        if (index === 3) {
+          // 对应金额列，计算总和
+          const values = data.map(item => {
+            if (item.betAmount === 'N/A') return 0;
+            const amount = parseFloat(item.betAmount);
+            return isNaN(amount) ? 0 : amount;
+          });
+          if (!values.every(value => value === 0)) {
+            const total = values.reduce((prev, curr) => {
+              return Number(Number(prev) + Number(curr)).toFixed(8);
+            }, 0);
+            sums[index] = total;
+          } else {
+            sums[index] = 'N/A';
+          }
+          return;
+        }
+        sums[index] = '';
+      });
+      return sums;
+    },
     
     /** 提交表单 */
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
+          // 如果没有开启高级配置，设置默认值
+          if (!this.form.enableAdvanced) {
+            this.form.isOpen = 1;
+            this.form.remark = '';
+            this.form.allowRate = 0.01; // 默认误差率
+          }
+          
           this.submitLoading = true;
           const params = {
             ...this.form,
@@ -301,6 +535,7 @@ export default {
             endTime: this.form.createTime[1]
           };
           delete params.createTime;
+          delete params.enableAdvanced;
           
           addGameLbWinConfig(params).then(response => {
             this.$modal.msgSuccess("新增成功");
@@ -322,11 +557,16 @@ export default {
       this.$emit('close');
       this.resetForm();
     },
+    
     handleMemberChange(data) {
-      this.form.mbAccount = data.mbAccount;
+      console.log(data);
+      this.form.mbAccount = data.selectedItems.mbAccount;
     },
+    
     handleGameChange(data) {
-      this.form.twName = data.twName;
+      console.log(data);
+      this.form.twName = data.selectedItems.twName;
+      this.betAmountOptions = data.selectedItems.betAmount.split(',') || [];
     }
   }
 };
@@ -344,5 +584,17 @@ export default {
 .el-divider--vertical {
   height: 100%;
   margin: 0;
+}
+
+.round-list-section {
+  margin-top: 20px;
+}
+
+.round-actions {
+  text-align: center;
+}
+
+.round-actions .el-button {
+  margin: 0 5px;
 }
 </style>

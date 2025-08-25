@@ -547,7 +547,7 @@ export default {
           return rates.map((rate, index) => {
             const rateValue = Number(rate || 0);
             const betAmount = amountLimit > 0 && rateValue > 0 ? 
-              Number((amountLimit * rateValue).toFixed(8)) : 'N/A';
+              Number(Number((amountLimit * rateValue).toFixed(8))) : 'N/A';
             
             return {
               amountLimit: amountLimit,
@@ -583,7 +583,7 @@ export default {
               });
               if (!values.every(value => value === 0)) {
                 const total = values.reduce((prev, curr) => {
-                  return Number(Number(prev) + Number(curr)).toFixed(8);
+                  return Number(Number(Number(prev) + Number(curr)).toFixed(8));
                 }, 0);
                 sums[index] = total;
               } else {
