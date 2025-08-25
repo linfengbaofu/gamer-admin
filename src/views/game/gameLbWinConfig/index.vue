@@ -700,12 +700,12 @@ export default {
           }
           if (index === 1) {
             // 匹配下注金额列，显示第一个值
-            sums[index] = data.length > 0 ? data[0].amountLimit : '';
+            // sums[index] = data.length > 0 ? data[0].amountLimit : '';
             return;
           }
           if (index === 2) {
             // 倍率列，显示"合计"
-            sums[index] = '合计';
+            // sums[index] = '合计';
             return;
           }
           if (index === 3) {
@@ -716,9 +716,9 @@ export default {
             });
             if (!values.every(value => value === 0)) {
               const total = values.reduce((prev, curr) => {
-                return prev + curr;
+                return Number((Number(prev) + Number(curr)).toFixed(8));
               }, 0);
-              sums[index] = total.toFixed(6);
+              sums[index] = total;
             } else {
               sums[index] = 'N/A';
             }
