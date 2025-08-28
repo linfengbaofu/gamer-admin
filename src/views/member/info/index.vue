@@ -44,7 +44,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="记录类型" prop="recordTypeList">
+      <!-- <el-form-item label="记录类型" prop="recordTypeList">
         <el-select 
           v-model="queryParams.recordTypeList" 
           placeholder="请选择记录类型" 
@@ -58,7 +58,7 @@
           <el-option label="手动活动充值" :value="16"></el-option>
           <el-option label="手动活动退分" :value="17"></el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -96,7 +96,6 @@
       <el-table-column label="平台余额" align="center" prop="mbPoint" show-overflow-tooltip />
 
       <el-table-column label="账号" align="center" prop="mbAccount" show-overflow-tooltip width="150"/>
-      <el-table-column label="合营id" align="center" prop="hyId" show-overflow-tooltip width="150"/>
 
       <el-table-column label="头像地址" align="center" prop="avatar" show-overflow-tooltip >
         <template slot-scope="scope">
@@ -104,29 +103,22 @@
           <span v-else>无头像</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户昵称" align="center" prop="nickName" show-overflow-tooltip />
-      <el-table-column label="帐号状态" align="center" prop="status" show-overflow-tooltip >
+      <!-- <el-table-column label="用户昵称" align="center" prop="nickName" show-overflow-tooltip /> -->
+      <!-- <el-table-column label="帐号状态" align="center" prop="status" show-overflow-tooltip >
         <template slot-scope="scope">
           <dict-tag :options="dict.type.billard_member_info_status" :value="scope.row.status"/>
         </template>
-      </el-table-column>
-      <el-table-column label="邀请码" align="center" prop="incode" show-overflow-tooltip width="100"/>
+      </el-table-column> -->
 
-      <el-table-column label="邀请人id" align="center" prop="inMbId" show-overflow-tooltip />
+      <el-table-column label="邀请码" align="center" prop="incode" show-overflow-tooltip width="100"/>
+      <el-table-column label="合营id" align="center" prop="hyId" show-overflow-tooltip width="150"/>
+      <!-- <el-table-column label="邀请人id" align="center" prop="inMbId" show-overflow-tooltip /> -->
       <el-table-column label="注册url" align="center" prop="registerUrl" show-overflow-tooltip />
-      <el-table-column label="注册时间" align="center" prop="registerTime" width="180" show-overflow-tooltip >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.registerTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="最后登录时间" align="center" prop="loginDate" width="180" show-overflow-tooltip >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.loginDate, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="注册时间" align="center" prop="registerTime" width="180" show-overflow-tooltip></el-table-column>
+      <el-table-column label="最后登录时间" align="center" prop="loginDate" width="180" show-overflow-tooltip></el-table-column>
       <el-table-column label="最后登录IP" align="center" prop="loginIp" width="180" show-overflow-tooltip />
       <el-table-column label="备注" align="center" prop="remark" show-overflow-tooltip />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="150"/>
+      <!-- <el-table-column label="创建时间" align="center" prop="createTime" width="150"/> -->
       
       <el-table-column label="操作" :show-overflow-tooltip="false" align="center" fixed="right" width="280" class-name="small-padding fixed-width">
 

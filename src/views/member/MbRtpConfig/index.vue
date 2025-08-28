@@ -123,21 +123,27 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户" prop="mbId">
           <member-info-select
+            v-if="form.id == null"
             v-model="form.mbId"
             placeholder="请选择用户"
             @change="handleFormMemberChange"
             style="width: 100%;"
           />
+          <el-input v-else v-model="form.mbAccount" readonly />
         </el-form-item>
         <!-- (7000,7500,8000,8500,9000,9500,9700,10200,分别对应：70%-102%) -->
         <el-form-item label="rtp" prop="rtp">
-          <el-input 
-            v-model="form.rtp" 
-            placeholder="请输入rtp(7000-10200)" 
-            type="number"
-            :min="7000"
-            :max="10200"
-          />
+         
+          <el-select v-model="form.rtp" placeholder="请选择rtp" style="width: 100%;">
+            <el-option label="7000" :value="7000"></el-option>
+            <el-option label="7500" :value="7500"></el-option>
+            <el-option label="8000" :value="8000"></el-option>
+            <el-option label="8500" :value="8500"></el-option>
+            <el-option label="9000" :value="9000"></el-option>
+            <el-option label="9500" :value="9500"></el-option>
+            <el-option label="9700" :value="9700"></el-option>
+            <el-option label="10200" :value="10200"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="开关" prop="isOpen">
           <el-select v-model="form.isOpen" placeholder="请选择开关" style="width: 100%;">

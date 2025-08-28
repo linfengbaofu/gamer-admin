@@ -97,7 +97,7 @@
     <el-table v-loading="loading" :data="MbKycCheckList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center"  /> -->
       <el-table-column label="id" align="center" width="150" :fixed="true" prop="id" />
-      <el-table-column label="用户id" align="center" prop="mbId" width="150"  />
+      <el-table-column label="用户id" align="center" prop="mbId" width="150"  fixed="left"/>
       <el-table-column label="用户账号" align="center" prop="mbAccount" width="150" />
       <el-table-column label="名字" align="center" prop="name" />
       <el-table-column label="国家/地区" align="center" prop="country" />

@@ -83,10 +83,10 @@
     </el-row>
 
     <el-table v-loading="loading" :data="MbWithdrawalConfigList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="用户id" align="center" prop="mbId" />
-      <el-table-column label="用户账号" align="center" prop="mbAccount" />
-      <el-table-column label="钱包名称" align="center" prop="walletName" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column label="用户id" align="center" prop="mbId" :fixed="true" :show-overflow-tooltip="true"/>
+      <el-table-column label="用户账号" align="center" prop="mbAccount" show-overflow-tooltip/>
+      <el-table-column label="钱包名称" align="center" prop="walletName" show-overflow-tooltip/>
       <el-table-column label="币种" align="center" prop="coin" width="150">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.record_coin_type" :value="scope.row.coin" />
@@ -97,7 +97,7 @@
           <dict-tag :options="dict.type.chain_type" :value="scope.row.chainType" />
         </template>
       </el-table-column>
-      <el-table-column label="钱包地址" align="center" prop="addr" />
+      <el-table-column label="钱包地址" align="center" prop="addr" width="400"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button

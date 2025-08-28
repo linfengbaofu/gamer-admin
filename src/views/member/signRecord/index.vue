@@ -71,16 +71,16 @@
 
     <el-table v-loading="loading" :data="signRecordList" @selection-change="handleSelectionChange">
       <el-table-column label="记录ID" align="center" prop="recordId" width="150" :fixed="true" show-overflow-tooltip/>
-      <el-table-column label="申请人ID" align="center" prop="mbId" width="150" show-overflow-tooltip/>
-      <el-table-column label="申请人账号" align="center" prop="mbAccount" show-overflow-tooltip width="150"/>
-      <el-table-column label="签到时间" align="center" prop="signTime" width="180" show-overflow-tooltip>
+      <el-table-column label="申请人ID" align="center" prop="mbId" show-overflow-tooltip/>
+      <el-table-column label="申请人账号" align="center" prop="mbAccount" show-overflow-tooltip/>
+      <el-table-column label="签到时间" align="center" prop="signTime"  show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.signTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="奖励积分" align="center" prop="rewardPoints" show-overflow-tooltip />
-      <el-table-column label="连续签到天数" align="center" prop="continuousDays" width="180" show-overflow-tooltip/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="150"/>
+      <el-table-column label="连续签到天数" align="center" prop="continuousDays" show-overflow-tooltip/>
+      <el-table-column label="创建时间" align="center" prop="createTime"/>
 
       <!-- <el-table-column label="审批人" align="center" prop="auditBy" />
       <el-table-column label="审批时间" align="center" prop="auditTime" width="180">
