@@ -72,7 +72,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="GameRecordList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="游戏记录id" align="center" prop="id" :fixed="true" width="150" />
       <el-table-column label="用户id" align="center" prop="mbId" width="150" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" width="150" />

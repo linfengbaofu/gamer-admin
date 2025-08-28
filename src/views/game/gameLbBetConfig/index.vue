@@ -64,8 +64,61 @@
       <el-table-column label="主键ID" align="center" prop="configId" :fixed="true"/>
       <el-table-column label="游戏id" align="center" prop="gameid" />
       <el-table-column label="游戏名称" align="center" prop="twName" />
-      <el-table-column label="下注金额" align="center" prop="betAmount" width="100" show-overflow-tooltip/>
-      <el-table-column label="倍率列表" align="center" prop="betRate" show-overflow-tooltip />
+      
+      <!-- 下注金额列 -->
+      <el-table-column label="下注金额" align="center" width="120">
+        <template slot-scope="scope">
+          <el-popover
+            placement="top-start"
+            width="400"
+            trigger="hover"
+            v-if="scope.row.betAmount"
+          >
+            <div>
+              <h4 style="margin: 0 0 10px 0; color: #303133;">下注金额列表</h4>
+              <div style="max-height: 200px; overflow-y: auto;">
+                <el-table :data="getBetAmountTableData(scope.row)" border style="width: 100%;" size="mini">
+                  <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+                  <el-table-column label="下注金额" prop="amount" align="center"></el-table-column>
+                </el-table>
+              </div>
+            </div>
+            <div slot="reference" style="cursor: pointer; color: #409EFF;">
+              <i class="el-icon-view"></i>
+              查看金额
+            </div>
+          </el-popover>
+          <span v-else style="color: #C0C4CC;">-</span>
+        </template>
+      </el-table-column>
+      
+      <!-- 倍率列表列 -->
+      <el-table-column label="倍率列表" align="center" width="120">
+        <template slot-scope="scope">
+          <el-popover
+            placement="top-start"
+            width="500"
+            trigger="hover"
+            v-if="scope.row.betRate"
+          >
+            <div>
+              <h4 style="margin: 0 0 10px 0; color: #303133;">倍率详情</h4>
+              <el-table height="300" :data="getBetRateTableData(scope.row)" border style="width: 100%; max-height: 300px; overflow-y: auto;" show-summary :summary-method="getBetRateSummary">
+                <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+                <!-- <el-table-column label="下注金额" prop="betAmount" align="center"></el-table-column> -->
+                <el-table-column label="倍率" prop="rate" align="center"></el-table-column>
+                <!-- <el-table-column label="对应金额" prop="correspondingAmount" align="center"></el-table-column> -->
+              </el-table>
+            </div>
+            <div slot="reference" style="cursor: pointer; color: #409EFF;">
+              <i class="el-icon-view"></i>
+              查看倍率
+            </div>
+          </el-popover>
+          <span v-else style="color: #C0C4CC;">-</span>
+        </template>
+      </el-table-column>
+      
       <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="scope">
@@ -102,6 +155,12 @@
           <GameInfoSelect :params="{formType: '1'}" v-model="form.gameid" placeholder="请选择游戏" clearable @change="handleGameChange" @keyup.enter.native="handleQuery" style="width: 100%;"/>
         </el-form-item>
         <el-form-item label="下注金额" prop="betAmount">
+          <span slot="label">
+            <span>下注金额</span>
+            <el-tooltip content="请输入下注金额列表，格式为：1,2,3,5,10" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </span>
           <el-input v-model="form.betAmount" placeholder="请输入下注金额" />
         </el-form-item>
         <el-form-item label="倍率列表" prop="betRate">
@@ -179,7 +238,9 @@ export default {
         ]
       },
       // 提交loading状态
-      submitLoading: false
+      submitLoading: false,
+      // 是否为编辑模式
+      isEdit: false
     };
   },
   created() {
@@ -215,6 +276,7 @@ export default {
         twName: null,
       };
       this.resetForm("form");
+      this.isEdit = false; // 重置编辑模式
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -237,6 +299,7 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加游戏倍率";
+      this.isEdit = false; // 设置为新增模式
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -246,6 +309,7 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改游戏倍率";
+        this.isEdit = true; // 设置为编辑模式
       });
     },
     /** 提交按钮 */
@@ -293,6 +357,81 @@ export default {
       if (data && data.selectedItems && !this.isEdit) {
         this.form.twName = data.selectedItems.twName || data.selectedItems.usName || data.selectedItems.gameid;
       }
+    },
+    
+    /** 获取下注金额详情表格数据 */
+    getBetAmountTableData(row) {
+      if (!row.betAmount) {
+        return [];
+      }
+      // 解析下注金额字符串，格式如："1,2,3"
+      const amounts = row.betAmount.split(',').map(item => item.trim()).filter(item => item);
+      return amounts.map((amount, index) => ({
+        index: index + 1,
+        amount: amount
+      }));
+    },
+    
+    /** 获取倍率详情表格数据 */
+    getBetRateTableData(row) {
+      if (!row.betRate) {
+        return [];
+      }
+      // 解析倍率字符串，格式如："0,0.5,1,2,3,5,10,20"
+      const rates = row.betRate.split(',').map(item => item.trim()).filter(item => item);
+      const betAmount = Number(row.betAmount || 0);
+      
+      return rates.map((rate, index) => {
+        const rateValue = Number(rate || 0);
+        const correspondingAmount = betAmount >= 0 && rateValue >= 0 ? 
+          Number(Number((betAmount * rateValue).toFixed(8))) : '0';
+        
+        return {
+          index: index + 1,
+          betAmount: betAmount,
+          rate: rate,
+          correspondingAmount: correspondingAmount
+        };
+      });
+    },
+    
+    /** 计算倍率详情表格汇总行 */
+    getBetRateSummary(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        if (index === 1) {
+          // 下注金额列，不显示汇总内容
+          return;
+        }
+        if (index === 2) {
+          // 倍率列，不显示汇总内容
+          return;
+        }
+        if (index === 3) {
+          // 对应金额列，计算总和
+          const values = data.map(item => {
+            if (item.correspondingAmount === '0') return 0;
+            const amount = parseFloat(item.correspondingAmount);
+            return isNaN(amount) ? 0 : amount;
+          });
+          if (!values.every(value => value === 0)) {
+            const total = values.reduce((prev, curr) => {
+              return Number(Number(Number(prev) + Number(curr)).toFixed(8));
+            }, 0);
+            sums[index] = total;
+          } else {
+            sums[index] = '0';
+          }
+          return;
+        }
+        sums[index] = '';
+      });
+      return sums;
     }
   }
 };
