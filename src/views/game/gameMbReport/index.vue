@@ -103,11 +103,11 @@
 
     <el-table v-loading="loading" :data="gameMbReportList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <el-table-column label="id" align="center" prop="id" :fixed="true"/>
+      <el-table-column label="id" align="center" prop="id" :fixed="true" width="200"/>
       <el-table-column label="用户id" align="center" prop="mbId" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="邀请人id" align="center" prop="inMbId" />
-      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" />
+      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150" />
       <el-table-column label="派奖金额" align="center" prop="gameWin" />
       <el-table-column label="盈利" align="center" prop="income" />
       <el-table-column label="合营id" align="center" prop="hyId" />
@@ -119,7 +119,6 @@
       <el-table-column label="盈亏比" align="center" prop="incomeRate" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="创建时间" fixed="right" align="center" prop="createTime" width="180">
-
       </el-table-column>
       <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">

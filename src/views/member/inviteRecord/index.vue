@@ -64,11 +64,11 @@
 
     <el-table v-loading="loading" :data="inviteRecordList" @selection-change="handleSelectionChange">
       
-      <el-table-column label="ID" :fixed="true" align="center" prop="recordId" width="180" />
+      <el-table-column label="ID" :fixed="true" align="center" prop="recordId" width="180"/>
       <el-table-column label="邀请人ID" align="center" prop="inviterMbId"/>
-      <el-table-column label="邀请人账号" align="center" prop="mbAccount" width="150" />
-      <el-table-column label="被邀请人ID" align="center" prop="inviteeMbId" width="150" />
-      <el-table-column label="被邀请人账号" align="center" prop="inviteeMbAccount" width="150"/>
+      <el-table-column label="邀请人账号" align="center" prop="mbAccount"/>
+      <el-table-column label="被邀请人ID" align="center" prop="inviteeMbId"/>
+      <el-table-column label="被邀请人账号" align="center" prop="inviteeMbAccount"/>
       <el-table-column label="邀请时间" align="center" prop="inviteTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.inviteTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>

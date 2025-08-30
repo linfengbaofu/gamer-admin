@@ -106,7 +106,7 @@
       <el-table-column label="用户id" align="center" prop="mbId" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="邀请人id" align="center" prop="inMbId" />
-      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" />
+      <el-table-column label="邀请人账号" align="center" prop="inMbAccount" width="150"/>
       <el-table-column label="报表时间" align="center" prop="reportDate" />
       <el-table-column label="派奖金额" align="center" prop="gameWin" />
       <el-table-column label="盈利" align="center" prop="income" />
