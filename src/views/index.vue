@@ -1,12 +1,24 @@
 <template>
   <div class="dashboard-editor-container">
-
+    <!-- 数据概览卡片 -->
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
+    <!-- 趋势图表 -->
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
     </el-row>
 
+    <!-- 排行榜区域 -->
+    <el-row :gutter="32" style="margin-bottom: 32px;">
+      <el-col :xs="24" :sm="24" :lg="12">
+        <ranking-list type="recharge" title="充值排行榜" :limit="8" />
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="12">
+        <ranking-list type="withdrawal" title="提现排行榜" :limit="8" />
+      </el-col>
+    </el-row>
+
+    <!-- 其他图表 -->
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
@@ -24,8 +36,6 @@
         </div>
       </el-col>
     </el-row>
-
-    
   </div>
 </template>
 
@@ -35,23 +45,33 @@ import LineChart from './dashboard/LineChart'
 import RaddarChart from './dashboard/RaddarChart'
 import PieChart from './dashboard/PieChart'
 import BarChart from './dashboard/BarChart'
+import RankingList from './dashboard/RankingList'
 
 const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
+  totalRecharge: {
+    expectedData: [1200, 1500, 1800, 1600, 2000, 2200, 2500],
+    actualData: [1100, 1400, 1700, 1500, 1900, 2100, 2400]
   },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
+  totalWithdrawal: {
+    expectedData: [800, 1000, 1200, 1100, 1300, 1400, 1600],
+    actualData: [750, 950, 1150, 1050, 1250, 1350, 1550]
   },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
+  todayRecharge: {
+    expectedData: [50, 80, 120, 100, 150, 180, 200],
+    actualData: [45, 75, 110, 95, 140, 170, 190]
   },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
+  todayWithdrawal: {
+    expectedData: [30, 50, 80, 60, 90, 100, 120],
+    actualData: [25, 45, 75, 55, 85, 95, 115]
+  },
+  // 新增：注册人数和在线人数数据
+  userRegistration: {
+    expectedData: [120, 150, 180, 160, 200, 220, 250],
+    actualData: [110, 140, 170, 150, 190, 210, 240]
+  },
+  onlineUsers: {
+    expectedData: [800, 1000, 1200, 1100, 1300, 1400, 1600],
+    actualData: [750, 950, 1150, 1050, 1250, 1350, 1550]
   }
 }
 
@@ -62,16 +82,17 @@ export default {
     LineChart,
     RaddarChart,
     PieChart,
-    BarChart
+    BarChart,
+    RankingList
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      lineChartData: lineChartData.userRegistration
     }
   },
   methods: {
     handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+      this.lineChartData = lineChartData[type] || lineChartData.totalRecharge
     }
   }
 }

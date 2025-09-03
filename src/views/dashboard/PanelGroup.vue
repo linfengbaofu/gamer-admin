@@ -1,54 +1,54 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            访客
-          </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            消息
-          </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
+      <div class="card-panel" @click="handleSetLineChartData('totalRecharge')">
+        <div class="card-panel-icon-wrapper icon-recharge">
           <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            金额
+            总充值金额
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalRechargeAmount" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
-        <div class="card-panel-icon-wrapper icon-shopping">
+      <div class="card-panel" @click="handleSetLineChartData('totalWithdrawal')">
+        <div class="card-panel-icon-wrapper icon-withdrawal">
           <svg-icon icon-class="shopping" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            订单
+            总提现金额
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalWithdrawalAmount" :duration="3000" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('userRegistration')">
+        <div class="card-panel-icon-wrapper icon-registration">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            注册人数
+          </div>
+          <count-to :start-val="0" :end-val="registrationCount" :duration="3200" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('onlineUsers')">
+        <div class="card-panel-icon-wrapper icon-online">
+          <svg-icon icon-class="message" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            今日在线
+          </div>
+          <count-to :start-val="0" :end-val="onlineUserCount" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -62,9 +62,32 @@ export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      totalRechargeAmount: 1256800,
+      totalWithdrawalAmount: 856400,
+      registrationCount: 15680,
+      onlineUserCount: 3240
+    }
+  },
+  mounted() {
+    this.loadData()
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    loadData() {
+      // 使用假数据，模拟数据加载
+      console.log('加载假数据...')
+      
+      // 模拟数据加载延迟
+      setTimeout(() => {
+        this.totalRechargeAmount = 1256800
+        this.totalWithdrawalAmount = 856400
+        this.registrationCount = 15680
+        this.onlineUserCount = 3240
+      }, 500)
     }
   }
 }
@@ -94,37 +117,37 @@ export default {
         color: #fff;
       }
 
-      .icon-people {
-        background: #40c9c6;
+      .icon-recharge {
+        background: #67c23a;
       }
 
-      .icon-message {
-        background: #36a3f7;
+      .icon-withdrawal {
+        background: #f56c6c;
       }
 
-      .icon-money {
-        background: #f4516c;
+      .icon-registration {
+        background: #409eff;
       }
 
-      .icon-shopping {
-        background: #34bfa3
+      .icon-online {
+        background: #e6a23c;
       }
     }
 
-    .icon-people {
-      color: #40c9c6;
+    .icon-recharge {
+      color: #67c23a;
     }
 
-    .icon-message {
-      color: #36a3f7;
+    .icon-withdrawal {
+      color: #f56c6c;
     }
 
-    .icon-money {
-      color: #f4516c;
+    .icon-registration {
+      color: #409eff;
     }
 
-    .icon-shopping {
-      color: #34bfa3
+    .icon-online {
+      color: #e6a23c;
     }
 
     .card-panel-icon-wrapper {
