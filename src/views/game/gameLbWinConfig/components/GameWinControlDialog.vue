@@ -111,12 +111,19 @@
           <el-table-column label="单局下注金额" prop="amountLimit" align="center"></el-table-column>
           <el-table-column label="倍率" align="center" >
             <template slot-scope="scope">
-              <el-input 
+              <el-select 
                 v-model="scope.row.rate" 
                 size="mini" 
-                @input="handleRateChange(scope.$index)"
-                placeholder="请输入倍率">
-              </el-input>
+                @change="handleRateChange(scope.$index)"
+                placeholder="请选择倍率"
+                style="width: 100%;">
+                <el-option
+                  v-for="rate in betRateOptions"
+                  :key="rate"
+                  :label="rate"
+                  :value="rate">
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="单局获奖金额" prop="betAmount" align="center" ></el-table-column>
@@ -172,6 +179,7 @@ export default {
   data() {
     return {
       betAmountOptions: [],
+      betRateOptions: [], // 倍率下拉选项
       form: {
         configId: null,
         mbId: null,
@@ -580,6 +588,13 @@ export default {
       if(data.selectedItems){
         this.form.twName = data.selectedItems.twName;
         this.betAmountOptions = data.selectedItems.betAmount.split(',') || [];
+        
+        // 解析倍率选项
+        if(data.selectedItems.betRate) {
+          this.betRateOptions = data.selectedItems.betRate.split(',').map(rate => Number(rate.trim()));
+        } else {
+          this.betRateOptions = [];
+        }
         
         // 游戏变化时重置相关字段和数据
         this.form.amountLimit = null; // 重置匹配下注金额
