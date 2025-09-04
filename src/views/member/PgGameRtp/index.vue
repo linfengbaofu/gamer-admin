@@ -93,7 +93,7 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
+      <el-table-column width="140" label="操作" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -310,7 +310,7 @@ export default {
         gameName: null,
         gameLogo: null,
         rtp: null,
-        isOpen: 1,
+        isOpen: '1',
         createTime: null,
         createBy: null,
         updateTime: null,
