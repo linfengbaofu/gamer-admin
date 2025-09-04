@@ -33,14 +33,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="游戏logo" prop="gameLogo">
-        <el-input
-          v-model="queryParams.gameLogo"
-          placeholder="请输入游戏logo"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+     
       <el-form-item label="rtp" prop="rtp">
         <el-input
           v-model="queryParams.rtp"
@@ -50,12 +43,10 @@
         />
       </el-form-item>
       <el-form-item label="是否开启" prop="isOpen">
-        <el-input
-          v-model="queryParams.isOpen"
-          placeholder="请输入是否开启"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isOpen" placeholder="请选择是否开启" style="width: 100%;">
+          <el-option label="开启" value="1" />
+          <el-option label="关闭" value="0" />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -73,17 +64,6 @@
           @click="handleAdd"
           v-hasPermi="['member:PgMbRtp:add']"
         >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['member:PgMbRtp:edit']"
-        >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -116,11 +96,19 @@
       <el-table-column label="用户账号" align="center" prop="mbAccount" />
       <el-table-column label="游戏id" align="center" prop="gameId" />
       <el-table-column label="游戏名称" align="center" prop="gameName" />
-      <el-table-column label="游戏logo" align="center" prop="gameLogo" />
+      <el-table-column label="游戏logo" align="center" prop="gameLogo" >
+        <template slot-scope="scope">
+          <el-image :src="scope.row.gameLogo" style="width: 50px; height: 50px;" />
+        </template>
+      </el-table-column>
       <el-table-column label="rtp" align="center" prop="rtp" />
-      <el-table-column label="是否开启" align="center" prop="isOpen" />
+      <el-table-column label="是否开启" align="center" prop="isOpen" >
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.isOpen === '1' ? 'success' : 'danger'">{{ scope.row.isOpen === '1' ? '开启' : '关闭' }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" fixed="right" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
