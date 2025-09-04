@@ -1,7 +1,24 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="90px">
-      <el-form-item label="用户id" prop="mbId">
+      <el-form-item label="游戏类型" prop="formType">
+        <el-select v-model="queryParams.formType" placeholder="请选择游戏类型">
+          <el-option v-for="item in dict.type.record_form_type" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="时间范围" prop="dateTimeRange">
+        <el-date-picker
+          v-model="queryParams.dateTimeRange"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          format="yyyy-MM-dd HH:mm:ss"
+          clearable
+        />
+      </el-form-item>
+      <!-- <el-form-item label="用户id" prop="mbId">
         <el-input
           v-model="queryParams.mbId"
           placeholder="请输入用户id"
@@ -33,23 +50,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      
-      <el-form-item label="传回游戏记录id" prop="recordId">
-        <el-input
-          v-model="queryParams.recordId"
-          placeholder="请输入传回游戏记录id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="合营id" prop="hyId">
-        <el-input
-          v-model="queryParams.hyId"
-          placeholder="请输入合营id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+       -->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -72,9 +73,14 @@
     </el-row>
 
     <el-table v-loading="loading" :data="GameRecordList" @selection-change="handleSelectionChange">
-      <el-table-column label="游戏记录id" align="center" prop="id" :fixed="true" width="150" />
+      <el-table-column label="游戏记录id" align="center" prop="id" :fixed="true" width="180" />
       <el-table-column label="用户id" align="center" prop="mbId" width="150" />
       <el-table-column label="用户账号" align="center" prop="mbAccount" width="150" />
+      <el-table-column label="游戏类型" align="center" prop="formType" width="150" >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.record_form_type" :value="scope.row.formType" />
+        </template>
+      </el-table-column>
       <el-table-column label="游戏id" align="center" prop="gameId" width="150"/>
       <el-table-column label="牌局id" align="center" prop="roundId" width="150"/>
       <el-table-column label="游戏初始金额" align="center" prop="enterMoney" width="150" />
@@ -83,6 +89,7 @@
       <el-table-column label="派奖金额" align="center" prop="gameWin" width="150" />
       <el-table-column label="传回游戏记录id" align="center" prop="recordId" width="150" />
       <el-table-column label="盈利" align="center" prop="income" width="150" />
+      <el-table-column label="邀请人" align="center" prop="inMbAccount" width="150" />
       <el-table-column label="合营id" align="center" prop="hyId" width="150" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="150" />
 
@@ -145,6 +152,7 @@
 import { listGameRecord, getGameRecord, delGameRecord, addGameRecord, updateGameRecord } from "@/api/member/GameRecord";
 
 export default {
+  dicts: ['record_form_type'],
   name: "GameRecord",
   data() {
     return {
@@ -180,7 +188,10 @@ export default {
         gameWin: null,
         recordId: null,
         income: null,
-        hyId: null
+        hyId: null,
+        dateTimeRange: [],
+        startTime: null,
+        endTime: null
       },
       // 表单参数
       form: {},
@@ -196,7 +207,14 @@ export default {
     /** 查询注单记录列表 */
     getList() {
       this.loading = true;
-      listGameRecord(this.queryParams).then(response => {
+      const { dateTimeRange, ...rest } = this.queryParams;
+      const queryParams = { ...rest };
+      console.log(dateTimeRange);
+      if (dateTimeRange) {
+        queryParams.startTime = dateTimeRange[0];
+        queryParams.endTime = dateTimeRange[1];
+      }
+      listGameRecord(queryParams).then(response => {
         this.GameRecordList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -293,6 +311,16 @@ export default {
       this.download('member/GameRecord/export', {
         ...this.queryParams
       }, `GameRecord_${new Date().getTime()}.xlsx`)
+    },
+    /** 处理日期时间范围变化 */
+    handleDateTimeRangeChange(value) {
+      if (value && value.length === 2) {
+        this.queryParams.startTime = value[0];
+        this.queryParams.endTime = value[1];
+      } else {
+        this.queryParams.startTime = null;
+        this.queryParams.endTime = null;
+      }
     }
   }
 };

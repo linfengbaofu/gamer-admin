@@ -23,6 +23,27 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    chartData: {
+      type: Object,
+      default: () => ({
+        title: '每日数据统计',
+        xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        series: [
+          {
+            name: '充值金额',
+            data: [1200, 1500, 1800, 1600, 2000, 2200, 2500]
+          },
+          {
+            name: '提现金额',
+            data: [800, 1000, 1200, 1100, 1300, 1400, 1600]
+          },
+          {
+            name: '新用户',
+            data: [50, 80, 120, 100, 150, 180, 200]
+          }
+        ]
+      })
     }
   },
   data() {
@@ -62,7 +83,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: this.chartData.xAxisData,
           axisTick: {
             alignWithLabel: true
           }
@@ -73,28 +94,14 @@ export default {
             show: false
           }
         }],
-        series: [{
-          name: 'pageA',
+        series: this.chartData.series.map(item => ({
+          name: item.name,
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: [79, 52, 200, 334, 390, 330, 220],
+          data: item.data,
           animationDuration
-        }, {
-          name: 'pageB',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [80, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: 'pageC',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [30, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }]
+        }))
       })
     }
   }

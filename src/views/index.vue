@@ -19,23 +19,23 @@
     </el-row>
 
     <!-- 其他图表 -->
-    <el-row :gutter="32">
+    <!-- <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
+          <raddar-chart :chart-data="radarChartData" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart />
+          <pie-chart :chart-data="pieChartData" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart />
+          <bar-chart :chart-data="barChartData" />
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
   </div>
 </template>
 
@@ -87,7 +87,62 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.userRegistration
+      lineChartData: lineChartData.userRegistration,
+      // 雷达图数据 - 游戏类型分布
+      radarChartData: {
+        indicators: [
+          { name: '台球', max: 1000 },
+          { name: '扑克', max: 1000 },
+          { name: '麻将', max: 1000 },
+          { name: '老虎机', max: 1000 },
+          { name: '体育', max: 1000 },
+          { name: '彩票', max: 1000 }
+        ],
+        data: [
+          {
+            value: [500, 700, 800, 600, 400, 300],
+            name: '用户活跃度'
+          },
+          {
+            value: [300, 500, 600, 400, 200, 100],
+            name: '充值金额'
+          },
+          {
+            value: [200, 300, 400, 200, 100, 50],
+            name: '提现金额'
+          }
+        ]
+      },
+      // 饼图数据 - 用户类型分布
+      pieChartData: {
+        title: '用户类型分布',
+        data: [
+          { value: 320, name: 'VIP用户' },
+          { value: 240, name: '普通用户' },
+          { value: 149, name: '新用户' },
+          { value: 100, name: '活跃用户' },
+          { value: 59, name: '流失用户' }
+        ]
+      },
+      // 柱状图数据 - 每日数据统计
+      barChartData: {
+        title: '每日数据统计',
+        xAxisData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        series: [
+          {
+            name: '充值金额',
+            data: [1200, 1500, 1800, 1600, 2000, 2200, 2500]
+          },
+          {
+            name: '提现金额',
+            data: [800, 1000, 1200, 1100, 1300, 1400, 1600]
+          },
+          {
+            name: '新用户',
+            data: [50, 80, 120, 100, 150, 180, 200]
+          }
+        ]
+      }
     }
   },
   methods: {

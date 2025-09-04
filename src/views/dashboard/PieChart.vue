@@ -21,6 +21,19 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    chartData: {
+      type: Object,
+      default: () => ({
+        title: '用户类型分布',
+        data: [
+          { value: 320, name: 'VIP用户' },
+          { value: 240, name: '普通用户' },
+          { value: 149, name: '新用户' },
+          { value: 100, name: '活跃用户' },
+          { value: 59, name: '流失用户' }
+        ]
+      })
     }
   },
   data() {
@@ -52,22 +65,16 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: this.chartData.data.map(item => item.name)
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: this.chartData.title,
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
-            ],
+            data: this.chartData.data,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

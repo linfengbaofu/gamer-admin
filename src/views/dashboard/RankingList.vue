@@ -73,7 +73,12 @@ export default {
       // 模拟API调用延迟
       setTimeout(() => {
         this.list = this.generateMockData()
-        this.displayList = [...this.list, ...this.list] // 复制一份用于无缝滚动
+        // 复制一份用于无缝滚动，并为每个复制的项目生成新的唯一ID
+        const duplicatedList = this.list.map((item, index) => ({
+          ...item,
+          id: `${item.id}_duplicate_${index}`
+        }))
+        this.displayList = [...this.list, ...duplicatedList]
         this.currentIndex = 0
         this.loading = false
       }, 300)
@@ -87,7 +92,7 @@ export default {
         const randomAmount = Math.floor(Math.random() * 80000) + baseAmount
         
         mockData.push({
-          id: i + 1,
+          id: `ranking_${this.type}_${i}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           username: userNames[i] || `玩家${i + 1}`,
           amount: randomAmount,
           createTime: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()

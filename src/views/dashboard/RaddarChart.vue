@@ -23,6 +23,33 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    chartData: {
+      type: Object,
+      default: () => ({
+        indicators: [
+          { name: '台球', max: 1000 },
+          { name: '扑克', max: 1000 },
+          { name: '麻将', max: 1000 },
+          { name: '老虎机', max: 1000 },
+          { name: '体育', max: 1000 },
+          { name: '彩票', max: 1000 }
+        ],
+        data: [
+          {
+            value: [500, 700, 800, 600, 400, 300],
+            name: '用户活跃度'
+          },
+          {
+            value: [300, 500, 600, 400, 200, 100],
+            name: '充值金额'
+          },
+          {
+            value: [200, 300, 400, 200, 100, 50],
+            name: '提现金额'
+          }
+        ]
+      })
     }
   },
   data() {
@@ -67,19 +94,12 @@ export default {
               shadowOffsetY: 15
             }
           },
-          indicator: [
-            { name: 'Sales', max: 10000 },
-            { name: 'Administration', max: 20000 },
-            { name: 'Information Techology', max: 20000 },
-            { name: 'Customer Support', max: 20000 },
-            { name: 'Development', max: 20000 },
-            { name: 'Marketing', max: 20000 }
-          ]
+          indicator: this.chartData.indicators
         },
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
+          data: this.chartData.data.map(item => item.name)
         },
         series: [{
           type: 'radar',
@@ -93,20 +113,7 @@ export default {
               opacity: 1
             }
           },
-          data: [
-            {
-              value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: 'Allocated Budget'
-            },
-            {
-              value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: 'Expected Spending'
-            },
-            {
-              value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: 'Actual Spending'
-            }
-          ],
+          data: this.chartData.data,
           animationDuration: animationDuration
         }]
       })
